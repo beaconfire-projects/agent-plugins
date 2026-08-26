@@ -4,6 +4,10 @@ This private Claude Code plugin connects to the existing Beaconfireinc MGT MCP s
 
 The plugin does **not** start a local copy of the Python server. The MCP server must already be deployed at a stable HTTPS URL.
 
+## Bundled skill
+
+The `mgt-order-search` skill documents how to search the order list, including supported filters, response fields, and the pagination convention that the first page uses `offset=1`.
+
 ## Local test
 
 From the repository root:
