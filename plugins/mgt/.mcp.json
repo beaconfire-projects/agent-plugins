@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "authsome-mgt": {
+    "mgt": {
       "type": "http",
       "url": "https://api-mcp-oauth-dev.beaconfireinc.com/mcp"
     }

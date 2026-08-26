@@ -1,0 +1,86 @@
+# Beaconfireinc Agent Plugins
+
+Beaconfireinc 内部 Claude Code 插件市场，当前提供 `mgt` 插件，用于连接 Beaconfireinc 的 MGT MCP 服务并通过 OAuth 完成认证。
+
+- GitHub：<https://github.com/beaconfire-projects/agent-plugins>
+- Marketplace：`beaconfireinc`
+- 当前插件：`mgt`
+- MCP endpoint：`https://api-mcp-oauth-dev.beaconfireinc.com/mcp`
+
+> 本仓库及插件面向内部使用，请勿提交到公开插件市场，也不要在仓库中保存密钥、Token 或员工凭据。
+
+## 前置条件
+
+- 已安装并登录 [Claude Code](https://docs.anthropic.com/en/docs/claude-code)
+- 拥有 Beaconfireinc MGT MCP 服务的访问权限
+- 能够访问公司的 OAuth / IdP 服务
+
+## 使用方式
+
+### 方式一：从 GitHub 添加 Marketplace
+
+在 Claude Code 中执行：
+
+```text
+/plugin marketplace add https://github.com/beaconfire-projects/agent-plugins
+/plugin install mgt@beaconfireinc
+```
+
+安装后重启 Claude Code，或按照 Claude Code 的提示重新加载插件。
+
+### 方式二：从本地仓库加载
+
+```bash
+git clone https://github.com/beaconfire-projects/agent-plugins.git
+cd agent-plugins
+claude --plugin-dir ./plugins/mgt
+```
+
+也可以在 Claude Code 中添加本地 Marketplace：
+
+```text
+/plugin marketplace add /path/to/agent-plugins
+/plugin install mgt@beaconfireinc
+```
+
+### 完成 OAuth 认证
+
+1. 打开 Claude Code 的 MCP 面板。
+2. 找到 `mgt` 服务。
+3. 选择 **Authenticate**。
+4. 在浏览器中完成公司的 OAuth 登录和授权。
+5. 返回 Claude Code 后即可使用 MGT MCP 工具。
+
+OAuth Token 由 Claude Code 管理，无需手动填写到配置文件中。
+
+## 本地配置
+
+插件配置位于：
+
+```text
+plugins/mgt/.mcp.json
+```
+
+当前默认连接开发环境：
+
+```text
+https://api-mcp-oauth-dev.beaconfireinc.com/mcp
+```
+
+该 MCP 服务需要：
+
+- 使用 HTTPS；
+- 在 `/mcp` 暴露 Streamable HTTP MCP endpoint；
+- 提供 OAuth protected-resource metadata 和有效的 `WWW-Authenticate` challenge；
+- 配置固定的 FastMCP OIDC proxy 回调：`${BASE_URL}/auth/callback`。
+
+如需切换环境，请先确认目标环境和 OAuth 配置，再修改 `.mcp.json`，不要提交任何敏感信息。
+
+## 故障排查
+
+- **找不到 Marketplace**：确认仓库地址或本地路径可访问，并检查是否拥有私有仓库权限。
+- **找不到插件**：确认已执行 `/plugin install mgt@beaconfireinc`，并重新加载 Claude Code。
+- **认证失败**：确认账号已获授权，并检查 MCP 服务是否返回正确的 OAuth 元数据和 `WWW-Authenticate` challenge。
+- **连接失败**：确认网络可以访问 `api-mcp-oauth-dev.beaconfireinc.com`，以及 endpoint 地址为 `/mcp`。
+
+更多插件专属说明请参阅 [`plugins/mgt/README.md`](plugins/mgt/README.md)。

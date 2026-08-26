@@ -1,17 +1,17 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "authsome-internal",
-  "description": "Authsome internal Claude Code plugins",
+  "name": "beaconfireinc",
+  "description": "Beaconfireinc Claude Code plugins",
   "owner": {
-    "name": "Authsome Engineering"
+    "name": "Beaconfire Engineering"
   },
   "plugins": [
     {
-      "name": "mcp-oauth-test",
-      "source": "./plugins/mcp-oauth-test",
-      "description": "Connect Claude Code to the authenticated Authsome MGT MCP server.",
+      "name": "mgt",
+      "source": "./plugins/mgt",
+      "description": "Connect Claude Code to the authenticated Beaconfireinc MGT MCP server.",
       "category": "integration",
-      "tags": ["mcp", "oauth", "authsome", "mgt"]
+      "tags": ["mcp", "oauth", "beaconfireinc", "mgt"]
     }
   ]
 }

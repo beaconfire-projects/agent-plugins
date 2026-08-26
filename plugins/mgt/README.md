@@ -1,6 +1,6 @@
-# Authsome MGT MCP Claude Code Plugin
+# Beaconfireinc MGT MCP Claude Code Plugin
 
-This private Claude Code plugin connects to the existing Authsome MGT MCP server over Streamable HTTP and lets Claude Code authenticate with OAuth.
+This private Claude Code plugin connects to the existing Beaconfireinc MGT MCP server over Streamable HTTP and lets Claude Code authenticate with OAuth.
 
 The plugin does **not** start a local copy of the Python server. The MCP server must already be deployed at a stable HTTPS URL.
 
@@ -9,7 +9,7 @@ The plugin does **not** start a local copy of the Python server. The MCP server 
 From the repository root:
 
 ```bash
-claude --plugin-dir ./plugins/mcp-oauth-test
+claude --plugin-dir ./plugins/mgt
 ```
 
 The plugin is preconfigured with the development MCP endpoint:
@@ -18,15 +18,15 @@ The plugin is preconfigured with the development MCP endpoint:
 https://api-mcp-oauth-dev.beaconfireinc.com/mcp
 ```
 
-Open the MCP panel and choose **Authenticate** for `authsome-mgt` if OAuth is required.
+Open the MCP panel and choose **Authenticate** for `mgt` if OAuth is required.
 
 ## Private team distribution
 
 This repository root is a private marketplace. From a trusted checkout, add it to Claude Code:
 
 ```text
-/plugin marketplace add /path/to/mcp-oauth-test
-/plugin install mcp-oauth-test@authsome-internal
+/plugin marketplace add /path/to/mgt
+/plugin install mgt@beaconfireinc
 ```
 
 The marketplace should remain in the company's private GitHub repository. Do not submit it to a public marketplace.
