@@ -19,6 +19,13 @@
       "description": "Create CRM reminders and manage customer records through the Beaconfireinc CRM Copilot development MCP service.",
       "category": "integration",
       "tags": ["mcp", "crm", "reminders", "calendar", "beaconfireinc", "development"]
+    },
+    {
+      "name": "marketing-data-warehouse",
+      "source": "./plugins/marketing-data-warehouse",
+      "description": "Connect Claude Code to the Beaconfireinc Marketing Data Warehouse MCP server.",
+      "category": "integration",
+      "tags": ["mcp", "beaconfireinc", "marketing", "data-warehouse"]
     }
   ]
 }

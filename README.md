@@ -4,10 +4,13 @@ Beaconfireinc 内部 Claude Code 插件市场，当前提供以下插件：
 
 - `mgt`：连接 Beaconfireinc MGT MCP 服务并通过 OAuth 完成认证。
 - `crm-reminder-dev`：连接 Beaconfireinc CRM Copilot 开发环境，用于 CRM 客户查询、客户更新和提醒管理。
+- `marketing-data-warehouse`：连接 Beaconfireinc Marketing Data Warehouse MCP 服务。
 
 - GitHub：<https://github.com/beaconfire-projects/agent-plugins>
 - Marketplace：`beaconfireinc`
-- 当前插件：`mgt`、`crm-reminder-dev`
+- 当前插件：`mgt`、`crm-reminder-dev`、`marketing-data-warehouse`
+- MGT MCP endpoint：`https://api-mcp-oauth-dev.beaconfireinc.com/mcp`
+- Marketing Data Warehouse MCP endpoint：`https://marketing-data-warehouse-dev.beaconfireinc.com/mcp`
 
 > 本仓库及插件面向内部使用，请勿提交到公开插件市场，也不要在仓库中保存密钥、Token 或员工凭据。
 
@@ -45,6 +48,20 @@ claude --plugin-dir ./plugins/mgt
 /plugin install mgt@beaconfireinc
 ```
 
+### 安装 Marketing Data Warehouse 插件
+
+```text
+/plugin install marketing-data-warehouse@beaconfireinc
+```
+
+本地加载：
+
+```bash
+claude --plugin-dir ./plugins/marketing-data-warehouse
+```
+
+插件包含 `interview-question-search` skill，连接 `marketing-data-warehouse` MCP 服务。
+
 ### 完成 OAuth 认证
 
 1. 打开 Claude Code 的 MCP 面板。
@@ -61,7 +78,17 @@ OAuth Token 由 Claude Code 管理，无需手动填写到配置文件中。
 
 ## 本地配置
 
-插件配置位于：
+Marketing Data Warehouse 插件配置位于：
+
+```text
+plugins/marketing-data-warehouse/.mcp.json
+```
+
+```text
+https://marketing-data-warehouse-dev.beaconfireinc.com/mcp
+```
+
+MGT 插件配置位于：
 
 ```text
 plugins/mgt/.mcp.json

@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "marketing-data-warehouse",
+  "displayName": "Beaconfireinc Marketing Data Warehouse MCP",
+  "version": "0.1.0",
+  "description": "Connect Claude Code to Beaconfireinc's Marketing Data Warehouse MCP server.",
+  "author": {
+    "name": "Beaconfire Engineering"
+  },
+  "repository": "git@github.com:beaconfire-projects/agent-plugins.git",
+  "keywords": ["mcp", "beaconfireinc", "marketing", "data-warehouse"]
+}
