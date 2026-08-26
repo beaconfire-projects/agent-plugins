@@ -1,11 +1,13 @@
 # Beaconfireinc Agent Plugins
 
-Beaconfireinc 内部 Claude Code 插件市场，当前提供 `mgt` 插件，用于连接 Beaconfireinc 的 MGT MCP 服务并通过 OAuth 完成认证。
+Beaconfireinc 内部 Claude Code 插件市场，当前提供以下插件：
+
+- `mgt`：连接 Beaconfireinc MGT MCP 服务并通过 OAuth 完成认证。
+- `crm-reminder-dev`：连接 Beaconfireinc CRM Copilot 开发环境，用于 CRM 客户查询、客户更新和提醒管理。
 
 - GitHub：<https://github.com/beaconfire-projects/agent-plugins>
 - Marketplace：`beaconfireinc`
-- 当前插件：`mgt`
-- MCP endpoint：`https://api-mcp-oauth-dev.beaconfireinc.com/mcp`
+- 当前插件：`mgt`、`crm-reminder-dev`
 
 > 本仓库及插件面向内部使用，请勿提交到公开插件市场，也不要在仓库中保存密钥、Token 或员工凭据。
 
@@ -52,6 +54,10 @@ claude --plugin-dir ./plugins/mgt
 5. 返回 Claude Code 后即可使用 MGT MCP 工具。
 
 OAuth Token 由 Claude Code 管理，无需手动填写到配置文件中。
+
+### CRM Reminder Dev 认证
+
+`crm-reminder-dev` 使用 OAuth。安装后在 Claude Code 的 MCP 面板中选择 `crm-reminder-dev`，点击 **Authenticate**，并在浏览器中完成公司 OAuth 授权。OAuth Token 由 Claude Code 管理，绝不能提交到仓库。
 
 ## 本地配置
 

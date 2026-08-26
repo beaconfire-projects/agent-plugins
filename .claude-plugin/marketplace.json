@@ -12,6 +12,13 @@
       "description": "Connect Claude Code to the authenticated Beaconfireinc MGT MCP server.",
       "category": "integration",
       "tags": ["mcp", "oauth", "beaconfireinc", "mgt"]
+    },
+    {
+      "name": "crm-reminder-dev",
+      "source": "./plugins/crm-reminder-dev",
+      "description": "Create CRM reminders and manage customer records through the Beaconfireinc CRM Copilot development MCP service.",
+      "category": "integration",
+      "tags": ["mcp", "crm", "reminders", "calendar", "beaconfireinc", "development"]
     }
   ]
 }

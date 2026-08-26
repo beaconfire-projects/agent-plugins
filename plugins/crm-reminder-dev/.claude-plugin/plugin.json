@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "crm-reminder-dev",
+  "displayName": "Beaconfireinc CRM Reminder (Dev)",
+  "version": "0.1.0",
+  "description": "Connect Claude Code to the Beaconfireinc CRM Copilot development MCP service for CRM reminders and customer management.",
+  "author": {
+    "name": "Beaconfire Engineering"
+  },
+  "repository": "git@github.com:beaconfire-projects/agent-plugins.git",
+  "keywords": ["mcp", "crm", "reminders", "calendar", "beaconfireinc", "development"]
+}
