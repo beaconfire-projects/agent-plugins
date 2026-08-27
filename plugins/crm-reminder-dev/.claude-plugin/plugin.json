@@ -8,5 +8,5 @@
     "name": "Beaconfire Engineering"
   },
   "repository": "git@github.com:beaconfire-projects/agent-plugins.git",
-  "keywords": ["mcp", "crm", "reminders", "calendar", "beaconfireinc", "development"]
+  "keywords": ["mcp", "crm", "reminders", "beaconfireinc", "development"]
 }

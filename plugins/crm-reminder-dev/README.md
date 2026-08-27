@@ -1,6 +1,6 @@
 # Beaconfireinc CRM Reminder Dev Plugin
 
-This private Claude Code plugin connects to the Beaconfireinc CRM Copilot development MCP service. It installs the CRM Reminder skill for customer lookup and updates, reminder scheduling, host-agent notifications, and Google Calendar synchronization.
+This private Claude Code plugin connects to the Beaconfireinc CRM Copilot development MCP service. It installs the CRM Reminder skill for customer lookup and updates, reminder scheduling, and host-agent notifications.
 
 The plugin does not bundle the CRM Copilot service. The service is deployed at:
 
