@@ -82,7 +82,7 @@ OAuth Token 由 Claude Code 管理，无需手动填写到配置文件中。
 `crm-copilot` 使用 OAuth，连接 QA MCP：
 
 ```text
-https://api-crm-mcp-qa.beaconfireinc.com/mcp
+https://api-crm-mcp-dev.beaconfireinc.com/mcp
 ```
 
 安装后在 Claude Code 的 MCP 面板中选择 `crm-copilot`，点击 **Authenticate**，并在浏览器中完成 AuthSome OAuth 授权。OAuth Token 由 Claude Code 管理，绝不能提交到仓库。
