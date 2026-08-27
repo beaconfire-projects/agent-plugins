@@ -14,8 +14,8 @@ Do not create a recurring automation for a one-time meeting reminder. Do not use
 
 ## Availability and recovery
 
-If the host has no native scheduled-notification capability, report the agent notification as unavailable and continue with Google Calendar. Do not claim the overall workflow completed.
+If the host has no native scheduled-notification capability, report the agent notification as unavailable. Do not claim the overall workflow completed.
 
 Before retrying after an interrupted or uncertain create response, inspect existing host automations for the same meeting reminder and notification time when the host supports listing them. Reuse the existing task instead of creating a duplicate. If its existence cannot be determined, explain the uncertainty before retrying an external write.
 
-If scheduling fails, preserve the CRM Reminder and continue with Calendar sync. Report each result independently.
+If scheduling fails, preserve the CRM Reminder. Report each result independently.
