@@ -22,7 +22,7 @@ successful lookup, preview, or write from an HTTP 200 response.
 | Update | `customer_prepare_update` → `customer_update_preview` | confirmation page only at preview |
 | Single-target merge/overwrite | `customer_prepare_merge` → `customer_merge_preview` | confirmation page only at preview |
 | Save from a confirmation page | `customer_confirm_pending_operation` (preferred) or the matching `customer_confirm_*` fallback | none |
-| Detail/list/recommendation/location results | `customer_get`, `customer_query`, `customer_recommend_view`, `customer_location_results` | detail, customers, or recommend |
+| Detail/list/recommendation/location results | `customer_get`, `customer_query`, `customer_recommend`, `customer_location_results` | detail, customers, or recommend |
 | Originals/evidence | `customer_record_communication`, `customer_field_evidence`, `customer_evidence_get` | none |
 
 The confirmation UI currently tries `customer_confirm_pending_operation` first
@@ -136,6 +136,13 @@ All checks below are UI-less. Do not open a page until the relevant precheck has
 4. Confirm only with explicit merge/update language, then call `customer_confirm_merge`.
 5. If the user chooses a new customer, restart the create precheck/prepare/preview flow. Never save from the candidate list.
 
+The single-target merge preview exposes two separate actions: “确认并保存”
+commits the reviewed overwrite only after explicit save intent; “创建为新客户”
+abandons the merge path and must restart `customer_create_precheck` with
+`allowNewCustomer=true`, followed by the normal create prepare/preview flow.
+The create-new action must never call `customer_confirm_merge` or write any
+customer data by itself.
+
 For a single exact or single fuzzy candidate, the candidate list is not a
 separate user-choice page: go directly to the before/after merge preview. For
 multiple candidates, return every candidate's ID and summary and wait for the
@@ -210,7 +217,12 @@ Clicking any list card likewise calls `customer_get`.
 
 ### Recommendations and location search
 
-- Use `customer_recommend` for conditions and `customer_recommend_view` for the card UI.
+- Use `customer_recommend` once to validate the conditions, query the ranked
+  customers, and open the recommendation card UI. Do not call
+  `customer_get` or `customer_recommend_view` before the cards are shown.
+  `customer_recommend_view` is retained only as a compatibility alias for a
+  server that explicitly returns it as `nextAction`; it is not part of the
+  normal V3 sequence.
 - Conditions are ANDed: location, company, job title, level, business, connected, referral, and interest.
 - Default recommendation count is 3; use the user's requested count when supplied.
 - Use `customer_location_search` or `customer_location_results` for a normalized location and include matches from both customer addresses and relation-person addresses.
@@ -249,7 +261,7 @@ preview and never writes customer data.
 | “今天见了张三，他是 Google 的 CTO。” | `crm_message_route` → `customer_existence_check` → create or single/multiple-target merge flow |
 | “查看 Provine 的客户资料。” | `crm_message_route` → `customer_existence_check` → one: `customer_get`; many: candidate selection |
 | “列出纽约 Google 的客户。” | `crm_message_route` → `customer_query` → one: `customer_get`; many: selectable list |
-| “推荐 5 个纽约、已建联的客户。” | `crm_message_route` → `customer_recommend` → `customer_recommend_view` |
+| “推荐 5 个纽约、已建联的客户。” | `crm_message_route` → `customer_recommend` → cards; click a card → `customer_get` |
 | “提醒我明天联系 Provine。” | `crm_message_route` → `reminder_precheck` → `reminder_create` |
 | “创建 Provine 客户，并创建一个提醒。” | `crm_message_route` → `composite_prepare` → `composite_preview` → explicit confirmation → `composite_confirm`/pending-operation |
 | “只总结这段会谈，不要录入 CRM。” | `crm_message_route` → `skipCrm=true`; do not call CRM write/read tools |
