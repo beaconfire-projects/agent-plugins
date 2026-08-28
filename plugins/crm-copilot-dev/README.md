@@ -1,10 +1,10 @@
-# Beaconfireinc CRM Copilot V3 (Dev) Plugin
+# Beaconfireinc CRM Copilot Plugin
 
-This private Claude Code plugin connects to the Beaconfireinc CRM Copilot V3 development MCP service over Streamable HTTP. It does not start a local server and does not contain CRM credentials.
+This private Claude Code plugin connects to the Beaconfireinc CRM Copilot MCP service over Streamable HTTP. It does not start a local server and does not contain CRM credentials.
 
 ## MCP endpoint and authentication
 
-The configured development endpoint is:
+The configured endpoint is:
 
 ```text
 https://api-crm-mcp-dev.beaconfireinc.com/mcp
@@ -31,7 +31,7 @@ Use `/mcp` to confirm the server is connected, then call `server_status` before 
 
 Restart Claude Code or reload plugins after installation.
 
-The bundled `crm-copilot-v3-dev` skill is the authoritative conversation and tool-routing contract for this MCP service.
+The bundled `crm-copilot-dev` skill is the authoritative conversation and tool-routing contract for this MCP service.
 
 Reminder creation has two separate outcomes: the MCP service persists the
 CRM reminder, then Claude's host-native notification capability is invoked for

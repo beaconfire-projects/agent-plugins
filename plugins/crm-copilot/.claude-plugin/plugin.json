@@ -1,9 +1,9 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "crm-copilot",
-  "displayName": "Beaconfireinc CRM Copilot V3",
+  "displayName": "Beaconfireinc CRM Copilot",
   "version": "0.1.13",
-  "description": "Connect Claude Code to the Beaconfireinc CRM Copilot V3 development MCP service with guided customer, relationship, address, reminder, recommendation, and evidence workflows.",
+  "description": "Connect Claude Code to the Beaconfireinc CRM Copilot MCP service with guided customer, relationship, address, reminder, recommendation, and evidence workflows.",
   "author": {
     "name": "Beaconfire Engineering"
   },

@@ -23,16 +23,16 @@
     {
       "name": "crm-copilot",
       "source": "./plugins/crm-copilot",
-      "description": "Use the Beaconfireinc CRM Copilot V3 QA MCP service for customer, relationship, normalization, reminder, recommendation, and evidence workflows.",
+      "description": "Use the Beaconfireinc CRM Copilot MCP service for customer, relationship, normalization, reminder, recommendation, and evidence workflows.",
       "category": "integration",
       "tags": ["mcp", "crm", "customer", "relationships", "geo", "reminders", "recommendations", "evidence", "oauth", "beaconfireinc"]
     },
     {
       "name": "crm-copilot-dev",
       "source": "./plugins/crm-copilot-dev",
-      "description": "Use the Beaconfireinc CRM Copilot V3 development MCP service for customer, relationship, normalization, reminder, recommendation, and evidence workflows.",
+      "description": "Use the Beaconfireinc CRM Copilot MCP service for customer, relationship, normalization, reminder, recommendation, and evidence workflows.",
       "category": "integration",
-      "tags": ["mcp", "crm", "customer", "relationships", "geo", "reminders", "recommendations", "evidence", "oauth", "beaconfireinc", "development"]
+      "tags": ["mcp", "crm", "customer", "relationships", "geo", "reminders", "recommendations", "evidence", "oauth", "beaconfireinc"]
     },
     {
       "name": "marketing-data-warehouse",

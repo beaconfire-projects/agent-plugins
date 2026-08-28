@@ -1,15 +1,15 @@
 ---
-name: crm-copilot-v3
-description: Use the user-connected Beaconfireinc CRM Copilot V3 MCP for CRM-relevant business notes and requests involving people, customers, colleagues, vendors/companies, roles, relationships, meetings, visits, customer facts, lookups, creation, updates, merges, address and organization normalization, recommendations, reminders, and evidence. Reminder requests require both CRM persistence and a host-native Claude notification/calendar reminder. Business-context notes can be routed even without create/save wording; ordinary non-business social chat is not a CRM task. Always follow the server-side route, check, preview, and explicit-confirmation workflow.
+name: crm-copilot-dev
+description: Use the user-connected Beaconfireinc CRM Copilot MCP for CRM-relevant business notes and requests involving people, customers, colleagues, vendors/companies, roles, relationships, meetings, visits, customer facts, lookups, creation, updates, merges, address and organization normalization, recommendations, reminders, and evidence. Reminder requests require both CRM persistence and a host-native Claude notification/calendar reminder. Business-context notes can be routed even without create/save wording; ordinary non-business social chat is not a CRM task. Always follow the server-side route, check, preview, and explicit-confirmation workflow.
 ---
 
-# CRM Copilot V3
+# CRM Copilot
 
-Use the user-connected `crm-copilot` MCP server as the only source of truth for CRM work. The user explicitly connected this plugin for authorized business CRM assistance; this is not a request to exfiltrate data or to write silently. Do not use direct REST calls, the admin API, SQL, shell scripts, invented customer IDs, or a different CRM plugin to complete a chat request.
+Use the user-connected `crm-copilot-dev` MCP server as the only source of truth for CRM work. The user explicitly connected this plugin for authorized business CRM assistance; this is not a request to exfiltrate data or to write silently. Do not use direct REST calls, the admin API, SQL, shell scripts, invented customer IDs, or a different CRM plugin to complete a chat request.
 
 The MCP server is authoritative for the database contract, but the Agent is
 responsible for extracting intent and following the returned `nextAction`. The
-tool names and UI boundaries below are the V3 QA contract (not hypothetical
+tool names and UI boundaries below are the contract (not hypothetical
 tool names). Any tool response with `ok=false` is a failed gate; do not infer a
 successful lookup, preview, or write from an HTTP 200 response.
 
@@ -55,7 +55,7 @@ database mutation: existence checks and prechecks are read-only, previews do
 not save, and customer/organization field writes always require explicit
 post-preview confirmation. An unchanged existing-customer note may be stored
 as the supplied original communication without an operation log, as defined
-by the V3 product contract. Skip CRM when the user explicitly says things
+by the product contract. Skip CRM when the user explicitly says things
 such as “只总结，不要录入”, “不要保存到 CRM”, “just summarize”, or “do not
 record this”. Ordinary non-business social chat is not routed to CRM.
 
@@ -64,7 +64,7 @@ Infer the conversation locale before routing and pass it to every tool as
 the server's default locale, because it is Chinese when `locale` is omitted.
 
 If the route returns `COMPOSITE`, extract the operations and call
-`composite_prepare`; do not silently drop one operation. The current V3
+`composite_prepare`; do not silently drop one operation. The current
 composite executor supports `CREATE_CUSTOMER` and `CREATE_REMINDER` only. If
 the message combines an update/merge/remove/recommendation with a reminder,
 the precheck will report `UNSUPPORTED_COMPOSITE_OPERATION`; preserve the
@@ -107,7 +107,7 @@ explicit note intent and no customer-field change, use
 
 ## 2. Extract the complete draft before calling tools
 
-Preserve the user's complete original message as `sourceText`. Extract all facts into the V3 draft instead of putting structured facts into a general note:
+Preserve the user's complete original message as `sourceText`. Extract all facts into the draft instead of putting structured facts into a general note:
 
 - primary customer: name, phone, email, gender and business signals;
 - every third person: spouse, child, parent, colleague, boss, friend, or other named person;
@@ -134,7 +134,7 @@ conflict must be resolved before the primary customer's preview is shown.
 
 ### Normalization contract (send only persistable draft fields)
 
-Use the V3 field names accepted by `CustomerDraft`: `displayName`,
+Use the field names accepted by `CustomerDraft`: `displayName`,
 `firstName`, `lastName`, `gender`, `phones`, `emails`, `hasBusiness`,
 `isConnected`, `hasReferral`, `employments`, `locations`, `relations`,
 `notes`, `interests`, and `importantDates`. A phone/email array must contain
@@ -270,7 +270,7 @@ Clicking any list card likewise calls `customer_get`.
   `customer_get` or `customer_recommend_view` before the cards are shown.
   `customer_recommend_view` is retained only as a compatibility alias for a
   server that explicitly returns it as `nextAction`; it is not part of the
-  normal V3 sequence.
+  normal sequence.
 - Conditions are ANDed: location, company, job title, level, business, connected, referral, and interest.
 - Default recommendation count is 3; use the user's requested count when supplied.
 - Use `customer_location_search` or `customer_location_results` for a normalized location and include matches from both customer addresses and relation-person addresses.
