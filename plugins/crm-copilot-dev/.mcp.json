@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "crm-copilot-dev": {
+      "type": "http",
+      "url": "https://api-crm-mcp-dev.beaconfireinc.com/mcp"
+    }
+  }
+}

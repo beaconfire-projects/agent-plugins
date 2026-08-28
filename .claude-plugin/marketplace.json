@@ -28,6 +28,13 @@
       "tags": ["mcp", "crm", "customer", "relationships", "geo", "reminders", "recommendations", "evidence", "oauth", "beaconfireinc"]
     },
     {
+      "name": "crm-copilot-dev",
+      "source": "./plugins/crm-copilot-dev",
+      "description": "Use the Beaconfireinc CRM Copilot V3 development MCP service for customer, relationship, normalization, reminder, recommendation, and evidence workflows.",
+      "category": "integration",
+      "tags": ["mcp", "crm", "customer", "relationships", "geo", "reminders", "recommendations", "evidence", "oauth", "beaconfireinc", "development"]
+    },
+    {
       "name": "marketing-data-warehouse",
       "source": "./plugins/marketing-data-warehouse",
       "description": "Connect Claude Code to the Beaconfireinc Marketing Data Warehouse MCP server.",
