@@ -24,6 +24,7 @@ successful lookup, preview, or write from an HTTP 200 response.
 | Save from a confirmation page | `customer_confirm_pending_operation` (preferred) or the matching `customer_confirm_*` fallback | none |
 | Detail/list/recommendation/location results | `customer_get`, `customer_query`, `customer_recommend`, `customer_location_results` | detail, customers, or recommend |
 | Originals/evidence | `customer_record_communication`, `customer_field_evidence`, `customer_evidence_get` | none |
+| Explicit note/interest | `customer_update_precheck` → `customer_add_note` | none |
 
 The confirmation UI currently tries `customer_confirm_pending_operation` first
 and falls back to `customer_confirm_create`, `customer_confirm_update`, or
@@ -84,6 +85,25 @@ for an explicit list/search request (for example “查询纽约 Google 的客�
 Do not reinterpret a route result silently; when an auto-routed request is
 ambiguous, rerun `crm_message_route` with the explicit mode that matches the
 user's intent.
+
+### Notes versus ordinary conversation
+
+Do not turn a whole meeting report, opinion, plan, or factual description into
+`customer_notes`. Those messages belong in the original communication record
+only. Use `notes`/`interests` in an update draft only when the user explicitly
+asks to add, record, remember, or save a note/interest (for example “备注：他
+喜欢钓鱼”, “记下来他不抽烟”, “add a note that he likes fishing”, or “record
+this as an interest”). Pass the original complete message separately as
+`sourceText`.
+
+For an existing customer, call `customer_update_precheck` with the original
+`sourceText`. A notes/interests-only result is `DIRECT_NOTE`; call
+`customer_add_note` with only the extracted note/interest text. This writes the
+note, the original communication, and its audit record immediately and does
+not open a preview. If the same message also changes a customer field,
+continue through the normal before/after update preview. If there is no
+explicit note intent and no customer-field change, use
+`customer_record_communication`; do not call `customer_add_note`.
 
 ## 2. Extract the complete draft before calling tools
 
