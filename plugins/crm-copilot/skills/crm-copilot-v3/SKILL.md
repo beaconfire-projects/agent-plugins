@@ -97,6 +97,14 @@ Preserve the user's complete original message as `sourceText`. Extract all facts
 - explicit notes and interests only;
 - birthdays, anniversaries, holidays, and other important dates.
 
+Treat explicit business language in the original narrative as a business
+signal, even when it is not phrased as a CRM command. For example, “我们跟他
+已经合作很多年了” / “we have worked together for many years” means
+`hasBusiness=YES`; keep `isConnected` and `hasReferral` as `UNKNOWN` unless
+the message explicitly states those facts. Preserve the sentence in
+`sourceText`/notes as evidence, but do not let it remain note-only while the
+classification is calculated.
+
 “My wife”, “my boss”, or “their child” is a relation to extract, not a reason to ignore the person. If a relation person has no name/contact, use the required pending identity form (primary name + relation label) and preserve the relation description for later confirmation.
 
 When checking a relation person against existing records, call
