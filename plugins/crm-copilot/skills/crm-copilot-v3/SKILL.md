@@ -1,6 +1,6 @@
 ---
 name: crm-copilot-v3
-description: Use the Beaconfireinc CRM Copilot V3 MCP for customer introductions, customer lookup, creation, updates, merges, relationships, address and organization normalization, recommendations, reminders, and evidence. Always follow the server-side check, preview, and explicit-confirmation workflow.
+description: Use the Beaconfireinc CRM Copilot V3 MCP for any message that names or describes a person, customer, colleague, spouse, vendor/company, role, relationship, meeting, visit, or customer fact—even casual conversation without create/save wording—as well as customer lookup, creation, updates, merges, address and organization normalization, recommendations, reminders, and evidence. Always follow the server-side route, check, preview, and explicit-confirmation workflow.
 ---
 
 # CRM Copilot V3
@@ -38,6 +38,10 @@ return the persisted `customerId` (for create/update/merge) or a persisted
 Call `crm_message_route` first for:
 
 - a person introduction, meeting/visit report, or customer fact;
+- a casual conversation that contains a person's name plus company/vendor,
+  role, relationship, or business context, even when no action verb is used
+  (for example, “Basheer 说大部分 vendor 是 Accenture、Cognizant；Intuit 的
+  campus 很深”);
 - a request to create, update, merge, remove, restore, or view a customer;
 - a reminder request;
 - a recommendation request;
