@@ -170,11 +170,11 @@ All checks below are UI-less. Do not open a page until the relevant precheck has
 
 ### Existing customer
 
-1. If exactly one customer is found, call `customer_merge_precheck` and `customer_prepare_merge` to show a field-level current value versus proposed value preview. Do not ask “same person or new?” again.
+1. If exactly one customer is found in the default create/merge flow, call `customer_merge_precheck` → `customer_prepare_merge` → `customer_merge_preview`. The merge preview must show current values versus proposed values and offers both “confirm and save” and “create as a new customer”; do not open the update flow for this default merge case.
 2. If several candidates are found, or phone and email hit different customers, follow the check response's `nextTool=customer_query`/`queryHint` and open the customer list UI. Pass `selectionMode="MERGE_TARGET"` so the cards expose merge-target actions. The list must show IDs and enough distinguishing fields (name, level, phone, email, company/title, address and match explanation). Ask the user to select a target, choose a new customer, or decline to merge; do not stop at a plain-text question when the list UI is available.
-3. After a target is selected, use the same merge preview flow. The existing values are read-only; only proposed values may be edited.
-4. Confirm only with explicit merge/update language, then call `customer_confirm_merge`.
-5. If the user chooses a new customer, restart the create precheck/prepare/preview flow. Never save from the candidate list.
+3. After a target is selected, use the merge preview flow. The existing values are read-only; only proposed values may be edited.
+4. Confirm only with explicit merge language, then call `customer_confirm_merge`.
+5. If the user chooses a new customer from the merge preview or candidate list, restart the create precheck/prepare/preview flow with `allowNewCustomer=true`. Never save from the candidate list.
 
 The single-target merge preview exposes two separate actions: “确认并保存”
 commits the reviewed overwrite only after explicit save intent; “创建为新客户”
@@ -183,11 +183,12 @@ abandons the merge path and must restart `customer_create_precheck` with
 The create-new action must never call `customer_confirm_merge` or write any
 customer data by itself.
 
-For a single exact or single fuzzy candidate, the candidate list is not a
-separate user-choice page: go directly to the before/after merge preview. For
-multiple candidates, return every candidate's ID and summary and wait for the
-user to choose a target, choose “create new”, or decline. A phone hit and an
-email hit on different customers is always a conflict; never auto-merge them.
+For a single exact or single fuzzy candidate, go directly to the before/after
+merge preview; the preview itself provides the create-new alternative. For
+multiple candidates, return every candidate's ID and summary and open the
+customer-list UI so the user can choose a target, choose “create new”, or
+decline. A phone hit and an email hit on different customers is always a
+conflict; never auto-merge them.
 
 ### Explicit customer change
 
