@@ -285,10 +285,17 @@ Clicking any list card likewise calls `customer_get`.
 - Persist both directions of a confirmed customer relationship.
 - Write only explicit notes or identified interests to `customer_notes`; use `GENERAL` or `INTEREST`. Do not put employment, meeting facts, age, education, or address facts in notes.
 - Customer level is calculated from `has_business`, `is_connected`, and `has_referral`. All unknown defaults to `D`; business only is `B`, connected only is `C`, and stronger combinations follow the server classification rules. Do not let the user directly edit the level.
-- Reminders have two independent outputs. First use `reminder_precheck` then
-  `reminder_create` to persist the CRM reminder; default `remind_at` is the
-  current time and the reminder owner is the authenticated user when
-  unspecified. After the MCP result returns `status=COMMITTED`, you MUST
+- Reminders have two independent outputs. First extract a concrete future
+  date/time from the user's request and send it as `remindAt` (ISO-8601 with
+  an explicit offset) plus `timezone` (IANA, for example `Asia/Shanghai` or
+  `America/New_York`). For example, with the current date 2026-08-28,
+  “明天下午五点提醒我联系 Provine” becomes
+  `2026-08-29T17:00:00+08:00`. Pass the complete original sentence as
+  `sourceText` too. If the user does not specify a time, or only says “明天”
+  / “下午” without a clock time, stop at `reminder_precheck` and ask for the
+  exact time; never silently use the current time. Then use `reminder_create`
+  to persist the CRM reminder; the reminder owner is the authenticated user
+  when unspecified. After the MCP result returns `status=COMMITTED`, you MUST
   immediately create the corresponding one-time notification with the host
   Claude/native notification, calendar, automation, or scheduled-task
   capability. This is a second required action, not an optional suggestion
