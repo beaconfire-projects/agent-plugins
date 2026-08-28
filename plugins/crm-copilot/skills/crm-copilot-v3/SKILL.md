@@ -143,7 +143,7 @@ All checks below are UI-less. Do not open a page until the relevant precheck has
 ### Existing customer
 
 1. If exactly one customer is found, call `customer_merge_precheck` and `customer_prepare_merge` to show a field-level current value versus proposed value preview. Do not ask “same person or new?” again.
-2. If several candidates are found, or phone and email hit different customers, show the candidate list with IDs and distinguishing fields. Ask the user to select a target, choose a new customer, or decline to merge.
+2. If several candidates are found, or phone and email hit different customers, follow the check response's `nextTool=customer_query`/`queryHint` and open the customer list UI. Pass `selectionMode="MERGE_TARGET"` so the cards expose merge-target actions. The list must show IDs and enough distinguishing fields (name, level, phone, email, company/title, address and match explanation). Ask the user to select a target, choose a new customer, or decline to merge; do not stop at a plain-text question when the list UI is available.
 3. After a target is selected, use the same merge preview flow. The existing values are read-only; only proposed values may be edited.
 4. Confirm only with explicit merge/update language, then call `customer_confirm_merge`.
 5. If the user chooses a new customer, restart the create precheck/prepare/preview flow. Never save from the candidate list.
