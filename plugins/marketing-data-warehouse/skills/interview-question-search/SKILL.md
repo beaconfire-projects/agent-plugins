@@ -65,14 +65,14 @@ keywords usually returns nothing. Every tagged search reports `tag_logic.matchin
 
 Only pass `tag_logic='all'` once they have asked for it.
 
-**8 · Never write a file without a summary and a yes.**
+**8 · Never export without a summary and a yes.**
 Search with `include_questions=false`, then state exactly this and wait:
 
 ```
 Randstad / Vanguard · Data Engineer · since 2026-01-01 · all rounds
 24 interviews — 18 linked to interview records
 Includes the interviewer's inline "Answer:" notes
-→ ~/Downloads/question_bank/Randstad_Vanguard_DE.xlsx
+→ 24 rows, exported as an Excel file
 ```
 
 Then ask: *"Export these 24, or narrow to C1/L1 first (13)?"*
@@ -80,16 +80,27 @@ Then ask: *"Export these 24, or narrow to C1/L1 first (13)?"*
 This costs no extra tool calls — the search already returned those numbers. It catches the two
 things that actually go wrong: the wrong row count, and answer notes reaching a candidate.
 
-**Where the file goes.** Default is `~/Downloads/question_bank/`. If that folder does not exist
-the tool writes **nothing** and returns `needs_confirmation: "export_dir_missing"`. That is not
-an error — ask the user:
+**How the export is delivered depends on the server's EXPORT_MODE — read the response, don't
+assume.**
 
-> `~/Downloads/question_bank` doesn't exist yet. Create it, or somewhere else?
-
-Then call again with `create_dir=true`, or with their `output_path`. **Never create the folder
-without asking.** Once written, report the location: *"Saved to
-`~/Downloads/question_bank/…` — open it from Finder."* The tool returns a path, not a file;
-don't try to attach it.
+* **Drive mode (the deployed server; Claude web/desktop connectors).** The tool uploads the
+  workbook to the shared Drive folder `Interview Question Exports`, names it
+  `{your_name}_{YYYY-MM-DD_HHmm}.xlsx` (your_name is the caller, from their login), shares it
+  with everyone in the Workspace domain as reader, and returns `export_mode: "drive"` with
+  `web_view_link`. Give the user the link: *"Exported 24 interviews — open it here:
+  <web_view_link>. The file is named after you and anyone in the company with the link can
+  view it."* There is no folder-creation step in this mode; `create_dir` and `output_path`
+  do not apply. If the response is `error: "DRIVE_EXPORT_FAILED"`, the export did not
+  happen — say so and report the message. Never claim a link exists without one in the
+  response.
+* **Local mode (stdio / Claude Desktop with the server on the user's own machine).** The
+  tool writes `~/Downloads/question_bank/` on that machine and returns `path`. If that
+  folder does not exist the tool writes **nothing** and returns
+  `needs_confirmation: "export_dir_missing"` — that is not an error; ask the user whether
+  to create it or where else to put it, then call again with `create_dir=true` or an
+  `output_path`. **Never create the folder without asking.** Once written, report the
+  location: *"Saved to `~/Downloads/question_bank/…` — open it from Finder."* The tool
+  returns a path, not a file; don't try to attach it.
 
 ---
 

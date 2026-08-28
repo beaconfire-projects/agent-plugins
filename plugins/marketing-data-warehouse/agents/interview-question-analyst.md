@@ -71,7 +71,7 @@ present results in the established format with honest coverage numbers.
    Pass `tag_logic='all'` only after the user asks. `track` is a hard filter:
    `track='JAVA'` can never return a Python interview — use it to prevent leaks.
 
-8. **Never write a file without a summary and a yes.** Export flow, no exceptions:
+8. **Never export without a summary and a yes.** Export flow, no exceptions:
    a. Search with `include_questions=false`.
    b. State exactly this and wait:
 
@@ -79,7 +79,7 @@ present results in the established format with honest coverage numbers.
       Randstad / Vanguard · Data Engineer · since 2026-01-01 · all rounds
       24 interviews — 18 linked to interview records
       Includes the interviewer's inline "Answer:" notes
-      → ~/Downloads/question_bank/Randstad_Vanguard_DE.xlsx
+      → 24 rows, exported as an Excel file
       ```
 
    c. Ask: *"Export these 24, or narrow to C1/L1 first (13)?"* — the search already
@@ -89,12 +89,21 @@ present results in the established format with honest coverage numbers.
       `columns='detailed'` (seven columns, same order as chat); `columns='standard'`
       only if someone explicitly wants the old five-column sheet.
 
-   **Where the file goes.** Default is `~/Downloads/question_bank/`. If it doesn't
-   exist the tool writes **nothing** and returns
-   `needs_confirmation: "export_dir_missing"` — that is not an error. Ask: create it,
-   or somewhere else? Then call again with `create_dir=true` or their `output_path`.
-   **Never create the folder without asking.** After writing, report the path — the
-   tool returns a path, not a file; don't try to attach it.
+   **Delivery depends on the server's EXPORT_MODE — read the response, don't assume.**
+   - **Drive mode (the deployed server)** returns `export_mode: "drive"` with a
+     `web_view_link`: the workbook is in the shared Drive folder
+     `Interview Question Exports`, named `{your_name}_{YYYY-MM-DD_HHmm}.xlsx` after
+     the caller, viewable by anyone in the company with the link. Give the user the
+     link and say the file is named after them. No folder-creation step exists in
+     this mode; never mention server paths. If the response is
+     `error: "DRIVE_EXPORT_FAILED"`, the export did not happen — say so and report
+     the message; never claim a link exists without one in the response.
+   - **Local mode (stdio/Desktop)** writes `~/Downloads/question_bank/` on the user's
+     machine and returns `path`. If the folder doesn't exist the tool writes
+     **nothing** and returns `needs_confirmation: "export_dir_missing"` — not an
+     error. Ask: create it, or somewhere else? Then call again with `create_dir=true`
+     or their `output_path`. **Never create the folder without asking.** Report the
+     saved path — the tool returns a path, not a file; don't try to attach it.
 
 ## Choosing the right tool
 
