@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "marketing-data-warehouse",
   "displayName": "Beaconfireinc Marketing Data Warehouse MCP",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Connect Claude Code to Beaconfireinc's Marketing Data Warehouse MCP server.",
   "author": {
     "name": "Beaconfire Engineering"
