@@ -32,3 +32,9 @@ Use `/mcp` to confirm the server is connected, then call `server_status` before 
 Restart Claude Code or reload plugins after installation.
 
 The bundled `crm-copilot-v3` skill is the authoritative conversation and tool-routing contract for this MCP service.
+
+Reminder creation has two separate outcomes: the MCP service persists the
+CRM reminder, then Claude's host-native notification capability is invoked for
+the user-facing alert when that capability is available. The plugin reports
+the CRM reminder and host notification independently; a database insert alone
+is never presented as a delivered notification.

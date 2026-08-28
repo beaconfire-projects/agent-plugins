@@ -256,7 +256,26 @@ Clicking any list card likewise calls `customer_get`.
 - Persist both directions of a confirmed customer relationship.
 - Write only explicit notes or identified interests to `customer_notes`; use `GENERAL` or `INTEREST`. Do not put employment, meeting facts, age, education, or address facts in notes.
 - Customer level is calculated from `has_business`, `is_connected`, and `has_referral`. All unknown defaults to `D`; business only is `B`, connected only is `C`, and stronger combinations follow the server classification rules. Do not let the user directly edit the level.
-- Reminders are database records only. Use `reminder_precheck` then `reminder_create`; default `remind_at` is the current time and the reminder owner is the authenticated user when unspecified. Do not claim a real notification was delivered.
+- Reminders have two independent outputs. First use `reminder_precheck` then
+  `reminder_create` to persist the CRM reminder; default `remind_at` is the
+  current time and the reminder owner is the authenticated user when
+  unspecified. After the MCP result returns `status=COMMITTED`, create the
+  corresponding one-time notification with the host Claude/native
+  notification or scheduled-task capability, using the exact confirmed time,
+  timezone, reminder content, and customer name when available. Report the
+  CRM reminder ID and host notification result separately. A successful CRM
+  insert is not a delivered notification, and a failed host notification does
+  not undo the CRM record. If the host has no notification capability, report
+  it as unavailable instead of claiming success.
+
+  A mobile/voice shortcut uses the same UI-less sequence: route the natural
+  language request, fill defaults, call `reminder_precheck`, ask only for
+  missing or ambiguous values, then call `reminder_create` and the host
+  notification capability. No confirmation page is required for this simple
+  reminder record; do not bypass the precheck or invent a delivery time.
+  For host-specific scheduling and duplicate-recovery rules, read
+  [references/host-reminders.md](references/host-reminders.md) after the CRM
+  reminder has been committed.
 
 `customer_remove` is a legacy direct-delete tool and must not be used for a
 normal chat request. Use `customer_prepare_remove` →
