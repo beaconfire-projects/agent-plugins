@@ -37,4 +37,6 @@ Reminder creation has two separate outcomes: the MCP service persists the
 CRM reminder, then Claude's host-native notification capability is invoked for
 the user-facing alert when that capability is available. The plugin reports
 the CRM reminder and host notification independently; a database insert alone
-is never presented as a delivered notification.
+is never presented as a delivered notification. `reminder_create` returns a
+`hostNotification` handoff payload; on mobile, the host notification/calendar
+step is mandatory and must be executed immediately after the CRM insert.

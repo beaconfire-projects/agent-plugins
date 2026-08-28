@@ -1,6 +1,6 @@
 ---
 name: crm-copilot-v3
-description: Use the user-connected Beaconfireinc CRM Copilot V3 MCP for CRM-relevant business notes and requests involving people, customers, colleagues, vendors/companies, roles, relationships, meetings, visits, customer facts, lookups, creation, updates, merges, address and organization normalization, recommendations, reminders, and evidence. Business-context notes can be routed even without create/save wording; ordinary non-business social chat is not a CRM task. Always follow the server-side route, check, preview, and explicit-confirmation workflow.
+description: Use the user-connected Beaconfireinc CRM Copilot V3 MCP for CRM-relevant business notes and requests involving people, customers, colleagues, vendors/companies, roles, relationships, meetings, visits, customer facts, lookups, creation, updates, merges, address and organization normalization, recommendations, reminders, and evidence. Reminder requests require both CRM persistence and a host-native Claude notification/calendar reminder. Business-context notes can be routed even without create/save wording; ordinary non-business social chat is not a CRM task. Always follow the server-side route, check, preview, and explicit-confirmation workflow.
 ---
 
 # CRM Copilot V3
@@ -287,11 +287,16 @@ Clicking any list card likewise calls `customer_get`.
 - Reminders have two independent outputs. First use `reminder_precheck` then
   `reminder_create` to persist the CRM reminder; default `remind_at` is the
   current time and the reminder owner is the authenticated user when
-  unspecified. After the MCP result returns `status=COMMITTED`, create the
-  corresponding one-time notification with the host Claude/native
-  notification or scheduled-task capability, using the exact confirmed time,
-  timezone, reminder content, and customer name when available. Report the
-  CRM reminder ID and host notification result separately. A successful CRM
+  unspecified. After the MCP result returns `status=COMMITTED`, you MUST
+  immediately create the corresponding one-time notification with the host
+  Claude/native notification, calendar, automation, or scheduled-task
+  capability. This is a second required action, not an optional suggestion
+  and not a follow-up to skip on mobile. Use the exact
+  `hostNotification.scheduleAt`, timezone, reminder content, CRM reminder ID,
+  and customer name when available. Do not end the turn after
+  `reminder_create` and do not claim the reminder is fully set until the host
+  notification call has succeeded. Report the CRM reminder ID and host
+  notification result separately. A successful CRM
   insert is not a delivered notification, and a failed host notification does
   not undo the CRM record. If the host has no notification capability, report
   it as unavailable instead of claiming success.
