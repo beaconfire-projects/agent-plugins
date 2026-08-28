@@ -1,11 +1,11 @@
 ---
 name: crm-copilot-v3
-description: Use the Beaconfireinc CRM Copilot V3 MCP for any message that names or describes a person, customer, colleague, spouse, vendor/company, role, relationship, meeting, visit, or customer fact—even casual conversation without create/save wording—as well as customer lookup, creation, updates, merges, address and organization normalization, recommendations, reminders, and evidence. Always follow the server-side route, check, preview, and explicit-confirmation workflow.
+description: Use the user-connected Beaconfireinc CRM Copilot V3 MCP for CRM-relevant business notes and requests involving people, customers, colleagues, vendors/companies, roles, relationships, meetings, visits, customer facts, lookups, creation, updates, merges, address and organization normalization, recommendations, reminders, and evidence. Business-context notes can be routed even without create/save wording; ordinary non-business social chat is not a CRM task. Always follow the server-side route, check, preview, and explicit-confirmation workflow.
 ---
 
 # CRM Copilot V3
 
-Use the `crm-copilot` MCP server as the only source of truth for CRM work. Do not use direct REST calls, the admin API, SQL, shell scripts, invented customer IDs, or a different CRM plugin to complete a chat request.
+Use the user-connected `crm-copilot` MCP server as the only source of truth for CRM work. The user explicitly connected this plugin for authorized business CRM assistance; this is not a request to exfiltrate data or to write silently. Do not use direct REST calls, the admin API, SQL, shell scripts, invented customer IDs, or a different CRM plugin to complete a chat request.
 
 The MCP server is authoritative for the database contract, but the Agent is
 responsible for extracting intent and following the returned `nextAction`. The
@@ -38,8 +38,8 @@ return the persisted `customerId` (for create/update/merge) or a persisted
 Call `crm_message_route` first for:
 
 - a person introduction, meeting/visit report, or customer fact;
-- a casual conversation that contains a person's name plus company/vendor,
-  role, relationship, or business context, even when no action verb is used
+- a business-context note that contains a person's name plus company/vendor,
+  role, relationship, meeting, or customer context, even when no action verb is used
   (for example, “Basheer 说大部分 vendor 是 Accenture、Cognizant；Intuit 的
   campus 很深”);
 - a request to create, update, merge, remove, restore, or view a customer;
@@ -48,7 +48,15 @@ Call `crm_message_route` first for:
 - a customer search or location search;
 - a message containing more than one CRM operation.
 
-Default behavior is CRM recording. Skip CRM only when the user explicitly says things such as “只总结，不要录入”, “不要保存到 CRM”, “just summarize”, or “do not record this”. A vague discussion, analysis request, or question about the system is not an opt-out.
+For a business-context note, default behavior is to route through CRM because
+the user connected this plugin for that purpose. This does not mean silent
+database mutation: existence checks and prechecks are read-only, previews do
+not save, and customer/organization field writes always require explicit
+post-preview confirmation. An unchanged existing-customer note may be stored
+as the supplied original communication without an operation log, as defined
+by the V3 product contract. Skip CRM when the user explicitly says things
+such as “只总结，不要录入”, “不要保存到 CRM”, “just summarize”, or “do not
+record this”. Ordinary non-business social chat is not routed to CRM.
 
 Infer the conversation locale before routing and pass it to every tool as
 `locale="en-US"` for English or `locale="zh-CN"` for Chinese. Do not rely on
