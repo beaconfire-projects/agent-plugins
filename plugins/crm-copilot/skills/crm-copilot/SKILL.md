@@ -155,6 +155,17 @@ For every normalized value preserve the user's original wording in
 `null` for unknown facts and `UNKNOWN` only for the three business signals;
 do not substitute empty strings or invented values.
 
+For every address, always classify the address before calling a precheck. Use
+the canonical location field `type` with one of `RESIDENCE`, `WORK`, or
+`OTHER`; `RESIDENCE` covers Chinese phrases such as “住在”“他家在”“家庭住址”
+and English phrases such as “lives in”“home is in”“based in” when they refer
+to the person's home. `WORK` covers “工作地址”“办公地址” and “works in/at”.
+The service also accepts the compatibility keys `location_type`,
+`locationType`, and `addressType`, but the Agent should prefer `type`. Never
+write a home/residence address as `OTHER` merely because the model omitted the
+type: derive it from the original `sourceText`; if the wording is genuinely
+ambiguous, ask the user to confirm the address type before previewing.
+
 ## 3. Customer create/update/merge routing
 
 All checks below are UI-less. Do not open a page until the relevant precheck has passed.
