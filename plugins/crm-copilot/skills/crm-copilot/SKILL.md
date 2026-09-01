@@ -127,10 +127,12 @@ classification is calculated.
 
 “My wife”, “my boss”, or “their child” is a relation to extract, not a reason to ignore the person. If a relation person has no name/contact, use the required pending identity form (primary name + relation label) and preserve the relation description for later confirmation.
 
-When checking a relation person against existing records, call
-`customer_existence_check` with `includeRelatedPersons=true`; the default
-identity check searches primary customers only. A relation-person match or
-conflict must be resolved before the primary customer's preview is shown.
+`customer_existence_check` is exclusively the primary-customer identity gate.
+Never pass `includeRelatedPersons=true` for the primary person, even when the
+draft contains spouse/child/colleague relations. Relation-person matching is
+performed inside the create/update/merge prechecks with the related-person
+scope; any relation match or conflict must still be resolved before the
+primary customer's preview is shown.
 
 ### Normalization contract (send only persistable draft fields)
 
@@ -172,7 +174,7 @@ All checks below are UI-less. Do not open a page until the relevant precheck has
 
 ### New or introduced customer
 
-1. Call `customer_existence_check` with the normalized draft. Name, phone, or email must provide at least one identity value.
+1. Call `customer_existence_check` with the normalized draft and the complete original `sourceText`. Name, phone, or email must provide at least one identity value. If it returns `RETRY_EXTRACTION`, copy the exact phone/email from `sourceCandidates` and retry without asking the user; never continue with a contact value that differs from the original message.
 2. For `NOT_FOUND`, normalize and validate addresses/organizations, call `customer_create_precheck`, then `customer_prepare_create`. If the precheck itself returns `CONFLICT`, stop the create flow and follow its `targetCustomerId`/candidate-selection route into merge.
 3. Only a result ready for preview may call `customer_create_preview`.
 4. The preview is a draft only. It must not have saved the customer or created an operation log.
@@ -182,7 +184,7 @@ All checks below are UI-less. Do not open a page until the relevant precheck has
 ### Existing customer
 
 1. If exactly one customer is found in the default create/merge flow, call `customer_merge_precheck` → `customer_prepare_merge` → `customer_merge_preview`. The merge preview must show current values versus proposed values and offers both “confirm and save” and “create as a new customer”; do not open the update flow for this default merge case.
-2. If several candidates are found, or phone and email hit different customers, call `customer_query` with the check response's `queryHint`, `selectionMode="MERGE_TARGET"`, and `selectionDraft` unchanged. The list UI buttons then run the merge/create precheck and preview directly; do not send a synthetic instruction back to the chat. The list must show IDs and enough distinguishing fields (name, level, phone, email, company/title, address and match explanation). Ask the user to select a target, choose a new customer, or decline to merge; do not stop at a plain-text question when the list UI is available.
+2. If several primary-customer candidates are found, or phone and email hit different primary customers, call `customer_query` with the check response's `queryHint`, `selectionMode="MERGE_TARGET"`, `selectionDraft`, `candidateIds`, and `sourceText` unchanged. Never add related-person IDs to this list. The list UI buttons then run the merge/create precheck and preview directly; do not send a synthetic instruction back to the chat. The list must show IDs and enough distinguishing fields (name, level, phone, email, company/title, address and match explanation). Ask the user to select a target, choose a new customer, or decline to merge; do not stop at a plain-text question when the list UI is available. Even if the filtered list contains one result, `MERGE_TARGET` must remain on the candidate/merge path and must not auto-open read-only detail.
 3. After a target is selected, use the merge preview flow. The existing values are read-only; only proposed values may be edited.
 4. Confirm only with explicit merge language, then call `customer_confirm_merge`.
 5. If the user chooses a new customer from the merge preview or candidate list, restart the create precheck/prepare/preview flow with `allowNewCustomer=true`. Never save from the candidate list.
