@@ -125,7 +125,7 @@ the message explicitly states those facts. Preserve the sentence in
 `sourceText`/notes as evidence, but do not let it remain note-only while the
 classification is calculated.
 
-“My wife”, “my boss”, or “their child” is a relation to extract, not a reason to ignore the person. If a relation person has no name/contact, use the required pending identity form (primary name + relation label) and preserve the relation description for later confirmation.
+“My wife”, “my boss”, or “their child” is a relation to extract, not a reason to ignore the person. If a relation person has no real name/contact, use the pending identity form (primary name + relation label) and preserve the relation description. Unambiguous kinship words must be normalized automatically (`老婆/妻子/wife` → `FAMILY` + `WIFE`, child/parent/spouse likewise); missing real names alone do not require confirmation. A generated label such as “Sunny 的老婆” is not a real identity search key and must not be matched by name to another customer's generated relation row. Only a real name/contact or an explicit `relatedCustomerId` participates in relation-person matching; one real candidate resolves automatically, while multiple candidates require user selection.
 
 `customer_existence_check` is exclusively the primary-customer identity gate.
 Never pass `includeRelatedPersons=true` for the primary person, even when the
