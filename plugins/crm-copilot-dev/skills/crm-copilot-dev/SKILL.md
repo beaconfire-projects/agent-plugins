@@ -89,7 +89,7 @@ user's intent.
 ### Notes versus ordinary conversation
 
 Do not turn a whole meeting report, opinion, plan, or factual description into
-`customer_notes`. Those messages belong in the original communication record
+`contact_notes`. Those messages belong in the original communication record
 only. Use `notes`/`interests` in an update draft only when the user explicitly
 asks to add, record, remember, or save a note/interest (for example “备注：他
 喜欢钓鱼”, “记下来他不抽烟”, “add a note that he likes fishing”, or “record
@@ -139,10 +139,11 @@ primary customer's preview is shown.
 Use the field names accepted by `CustomerDraft`: `displayName`,
 `firstName`, `lastName`, `gender`, `phones`, `emails`, `hasBusiness`,
 `isConnected`, `hasReferral`, `employments`, `locations`, `relations`,
-`notes`, `interests`, and `importantDates`. A phone/email array must contain
-at most one value at final save. Keep the readable `phone`/`email` and let the
-server derive `phone_normalized`/`email_normalized`; likewise never ask the
-user to edit `display_name_normalized`.
+`notes`, `interests`, and `importantDates`. Preserve all supplied phone/email
+values; multiple values are supported. Let the service normalize them. Keep
+returned IDs as opaque strings, including numeric-looking CRM IDs. Preserve
+existing fact IDs when editing; omission alone is not a deletion request.
+Do not require users to provide database normalization fields.
 
 Use only `YES`, `NO`, or `UNKNOWN` for the three business signals. Missing
 knowledge is `UNKNOWN`, not `NO`; the server derives A/B/C/D. For dates use
@@ -222,20 +223,17 @@ If the message describes or discusses an existing customer but does not change a
 ### Addresses
 
 1. Normalize the user's location to the schema of `geo_locations` and call `geo_resolve` with the raw location string. Do not invent a `geoLocationId` or a new geo row.
-2. If the city-level location is found, a city-only address may be saved. If a street cannot be normalized, keep the complete confirmed street text in `address_line`.
+2. A city-only address is allowed. The precheck enriches new or edited addresses through Google before preview; do not invent coordinates or bypass an enrichment error. Keep detailed street text in `addressLine` and preserve the returned Google snapshot/proof unchanged. Editing address text or components requires another precheck.
 3. If `geo_resolve` returns `ok=false` with `ADDRESS_NOT_FOUND`, or a non-exact result, return the bilingual correction request and wait for a concrete address. Do not preview or save an unresolved location. The current service may return this as an error envelope rather than a normal `matchStatus` object; both forms mean “blocked”.
-4. Use `location_type=WORK` and `location_type=RESIDENCE` correctly. A customer has one current work address; a repeated address is deduplicated and a new work address replaces the old one.
+4. Use `type=WORK`, `type=RESIDENCE`, or `type=OTHER`. The service maps residence to CRM HOME. All customer addresses are displayed; there is no primary-address requirement or employment linkage. Repeated addresses are deduplicated. Do not replace an existing address solely because a new one has the same type; identify the selected address when editing or deleting.
 5. Show the normalized display as one readable line, for example `US · New York · New York City`, while preserving the user's raw wording for evidence.
 
 ### Organizations
 
-1. Produce a complete organization candidate matching the `organizations` table, including canonical name, normalized name, type, domain, country, state/province, city and address when known. Send these fields at the top level of the `organization` argument (`name`, `normalized_name`, `registered_name`, `organization_type`, `parent_organization_id`, `domain`, `country_code`, `state_or_province`, `district_or_county`, `city`, `address_line`, `geo_location_id`); do not wrap them only in a `normalized_candidate` object.
+1. Standardize the company name and supply a top-level organization object using the MCP contract: `name`, `normalized_name`/`normalizedName`, `domain`, `aliases`, `description`, `industry`, `phone`, and `email`. Enrich these only when supported by evidence; optional company details must not block an otherwise valid customer.
 2. Call `organization_existence_check` before the customer preview.
-3. If found, reference the existing organization. If not found, keep the normalized organization in the draft; the server creates it only during the final confirmed customer write.
-4. Never send generic values such as `COMPANY` when the schema expects `HEADQUARTERS`, `SUBSIDIARY`, `BRANCH`, `OFFICE`, or `OTHER`.
-5. Do not create or expect an `organization_relations` record. Organization
-   hierarchy, when explicitly stated and confirmed, is represented only by
-   `organization_type` and `parent_organization_id` on `organizations`.
+3. If found, reference the returned company ID. If not found, retain the standardized company and aliases in the draft; the service writes CRM `companies`/`company_aliases` only at confirmed customer save.
+4. Use `domain`, not `website`. Do not require removed organization-only fields such as `registered_name`, `organization_type`, `parent_organization_id`, or company geographic fields. Customer address normalization is separate from company enrichment.
 
 ## 5. Precheck, preview, and confirmation invariants
 
@@ -294,9 +292,9 @@ Clicking any list card likewise calls `customer_get`.
 
 ## 7. Relationships, notes, level, and reminders
 
-- Use the shared `customers` table for the primary customer and relation people, distinguished by `customer_kind`.
+- Use the shared `contacts` table for the primary customer and relation people, distinguished by `customer_kind`.
 - Persist both directions of a confirmed customer relationship.
-- Write only explicit notes or identified interests to `customer_notes`; use `GENERAL` or `INTEREST`. Do not put employment, meeting facts, age, education, or address facts in notes.
+- Write only explicit notes or identified interests to `contact_notes`; use `GENERAL` or `INTEREST`. Do not put employment, meeting facts, age, education, or address facts in notes.
 - Customer level is calculated from `has_business`, `is_connected`, and `has_referral`. All unknown defaults to `D`; business only is `B`, connected only is `C`, and stronger combinations follow the server classification rules. Do not let the user directly edit the level.
 - Reminders have two independent outputs. First extract a concrete future
   date/time from the user's request and send it as `remindAt` (ISO-8601 with
@@ -342,7 +340,7 @@ preview and never writes customer data.
 
 - Preserve the complete original user text and its line breaks.
 - Field evidence comes from the latest matching `operation_log_items` row, then the related task's `task_evidence_items` ordered newest first. A missing before/after value is displayed as `-`, not “not recorded”.
-- Original records come from `customer_communications` and show only original text plus time.
+- Original records come from `contact_communications` and show only original text plus time.
 - Use English UI labels and messages when the user's input is English; use Chinese for Chinese input. Never mix Chinese button labels into an English flow.
 - Do not expose OAuth tokens, secrets, Authorization headers, internal database credentials, or fabricated operation IDs.
 
