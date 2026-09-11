@@ -40,6 +40,13 @@
       "description": "Connect Claude Code to the Beaconfireinc Marketing Data Warehouse MCP server.",
       "category": "integration",
       "tags": ["mcp", "beaconfireinc", "marketing", "data-warehouse"]
+    },
+    {
+      "name": "marketing-data-warehouse-dev",
+      "source": "./plugins/marketing-data-warehouse-dev",
+      "description": "Connect Claude Code to the Beaconfireinc Marketing Data Warehouse MCP server.",
+      "category": "integration",
+      "tags": ["mcp", "beaconfireinc", "marketing", "data-warehouse"]
     }
   ]
 }
