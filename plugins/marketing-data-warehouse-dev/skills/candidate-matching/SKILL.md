@@ -29,6 +29,12 @@ Each candidate carries `reasons[].references[]` pointing at a resume version, an
 document or a training record, plus a `recommended_resume` and `risks`. Present the reasons
 and risks, not just the names; a shortlist without evidence is unusable for an AM.
 
+**Always show name + id together.**
+Every candidate in the shortlist must be presented as `name (id)` — e.g.
+*`Ilana Zhu (PER-0123)`* — never the name alone. Names collide and nicknames drift; the id
+is how the AM finds the trainee in the CRM and how follow-up calls (`ingest_resumes` with
+`person_id`) refer to them.
+
 **Always relay the location disclaimer.**
 Location is NOT considered this phase. The result carries `location_disclaimer` — repeat it
 every time, e.g. *"Location wasn't considered — double-check where each trainee can work
