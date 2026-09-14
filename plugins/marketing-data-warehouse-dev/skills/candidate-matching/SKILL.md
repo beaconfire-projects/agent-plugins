@@ -1,13 +1,12 @@
 ---
 name: candidate-matching
-description: Recommend trainees for a job description via the `interview-warehouse` MCP connector. Use for any "who fits this JD?" request — shortlisting candidates for a role, matching trainees to a position, or refreshing the resume index after new resumes are uploaded. This is a separate job from interview question search — a recruiter asking who fits wants a shortlist with evidence, not documents.
+description: Recommend trainees for a job description. Use for any "who fits this JD?" request — shortlisting candidates for a role, matching trainees to a position, or refreshing the resume index after new resumes are uploaded. A recruiter asking who fits wants a shortlist with evidence, not documents.
 ---
 
 # Candidate matching
 
-`match_candidates` recommends 0–5 trainees for a role. It is a separate job from question
-search — a recruiter asking *"who fits this JD?"* wants a shortlist with evidence, not
-documents. For interview questions themselves, use the `interview-question-search` skill.
+`match_candidates` recommends 0–5 trainees for a role. A recruiter asking
+*"who fits this JD?"* wants a shortlist with evidence, not documents.
 
 **Feed it whatever the AM has — the most specific source wins.**
 `jd_text` (a pasted job description) beats `position_id` even when both are given; conflicts
