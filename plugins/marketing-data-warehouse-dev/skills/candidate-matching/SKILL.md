@@ -10,7 +10,9 @@ description: Recommend trainees for a job description. Use for any "who fits thi
 
 **Feed it whatever the AM has — the most specific source wins.**
 `jd_text` (a pasted job description) beats `position_id` even when both are given; conflicts
-are flagged in `warnings`. `position_id` alone reads the stored JD: an unknown id returns
+are flagged in `warnings`. `position_id` follows the format `POS-XXXX` (e.g. `POS-0440`) —
+always normalize to that shape before calling; an id that doesn't match it will not resolve.
+`position_id` alone reads the stored JD: an unknown id returns
 `status=not_found`, an incomplete stored JD returns `status=needs_jd` with `missing_fields`
 — ask the AM for the missing pieces and call again with `jd_text`. With only `chat_context`
 or only `interview_questions`, the tool derives what it can and returns `needs_jd` rather
@@ -52,6 +54,6 @@ one trainee. Never run it speculatively before a match.
 | Request | Call |
 |---|---|
 | "Who fits this JD?" | `match_candidates` with `jd_text` — present reasons, risks and the location disclaimer |
-| "Anyone for position 1234?" | `match_candidates` with `position_id` — if `needs_jd`, ask the AM for the missing fields |
+| "Anyone for position POS-0440?" | `match_candidates` with `position_id` — if `needs_jd`, ask the AM for the missing fields |
 | "We uploaded new resumes" | `ingest_resumes` (admin) — then re-run the match |
 | "Refresh resumes for one trainee" | `ingest_resumes` with `person_id` |
