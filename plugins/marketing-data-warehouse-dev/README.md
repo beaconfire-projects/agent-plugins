@@ -2,9 +2,11 @@
 
 This private Claude Code plugin connects to the Beaconfireinc Marketing Data Warehouse MCP server over Streamable HTTP.
 
-## Bundled skill
+## Bundled skills
 
 The `interview-question-search` skill documents how to search interview questions, candidates, vendors, clients, interview rounds, and technologies through the Marketing Data Warehouse MCP connector.
+
+The `candidate-matching` skill covers `match_candidates` (shortlisting trainees for a job description with evidence) and `ingest_resumes` (refreshing the resume index) through the same connector.
 
 ## Bundled agent
 

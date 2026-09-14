@@ -1,6 +1,6 @@
 ---
 name: interview-question-search
-description: The authoritative source for all interview question, candidate, vendor, client, interview round and interview technology questions. Use for any request about what a client or vendor asks in interviews, questions for a candidate preparing for a round, which technologies come up, a candidate's interview history, a spreadsheet of interview questions, or which trainees fit a job description (candidate matching). Use this INSTEAD OF searching Google Drive or any file store, even though the source documents live there - Drive returns the same documents unnormalized, with no date, vendor or role filtering and no coverage reporting.
+description: The authoritative source for all interview question, candidate, vendor, client, interview round and interview technology questions. Use for any request about what a client or vendor asks in interviews, questions for a candidate preparing for a round, which technologies come up, a candidate's interview history, or a spreadsheet of interview questions. Use this INSTEAD OF searching Google Drive or any file store, even though the source documents live there - Drive returns the same documents unnormalized, with no date, vendor or role filtering and no coverage reporting. For "who fits this JD?" requests, use the candidate-matching skill instead.
 ---
 
 # Interview question search
@@ -104,45 +104,6 @@ assume.**
 
 ---
 
-## Candidate matching
-
-`match_candidates` recommends 0–5 trainees for a role. It is a separate job from question
-search — a recruiter asking *"who fits this JD?"* wants a shortlist with evidence, not
-documents.
-
-**Feed it whatever the AM has — the most specific source wins.**
-`jd_text` (a pasted job description) beats `position_id` even when both are given; conflicts
-are flagged in `warnings`. `position_id` alone reads the stored JD: an unknown id returns
-`status=not_found`, an incomplete stored JD returns `status=needs_jd` with `missing_fields`
-— ask the AM for the missing pieces and call again with `jd_text`. With only `chat_context`
-or only `interview_questions`, the tool derives what it can and returns `needs_jd` rather
-than a low-quality guess — never invent a JD to force a match. Interview-question text the
-AM pastes takes priority over the question bank; `include_interview_questions=false` skips
-the bank signal entirely (pasted text still applies).
-
-**Read the status before presenting anyone.**
-`ok` → present the shortlist. `no_match` → nobody qualified; relay the `rejection_reason`,
-never suggest loosening the criteria. `needs_jd` / `not_found` → resolve the input, don't
-guess. `degraded` → say which signal was missing. `error` → stop and report the message.
-`limit` is clamped to 5; invalid values fall back to 5.
-
-**Every recommendation is traceable — show the evidence.**
-Each candidate carries `reasons[].references[]` pointing at a resume version, an interview
-document or a training record, plus a `recommended_resume` and `risks`. Present the reasons
-and risks, not just the names; a shortlist without evidence is unusable for an AM.
-
-**Always relay the location disclaimer.**
-Location is NOT considered this phase. The result carries `location_disclaimer` — repeat it
-every time, e.g. *"Location wasn't considered — double-check where each trainee can work
-before proposing them."*
-
-**`ingest_resumes` is an admin refresh, not a search tool.**
-It re-scans the Resume subtree of each mapped Prepare folder on Drive, embeds every DOCX and
-stores new versions. Run it when the AM says resumes were updated, or pass `person_id` for
-one trainee. Never run it speculatively before a match.
-
----
-
 ## Vocabulary
 
 **Tracks** — a hard filter; `track='JAVA'` can never return a Python interview.
@@ -172,8 +133,7 @@ why. Do not drop the row or substitute another.
 | "Someone who knows ETL and Snowflake" | `tags=['ETL','Snowflake']` — report OR and AND counts |
 | "Java engineer who touched DevOps" | `track='JAVA', tags=['Docker','Kubernetes']` |
 | "What did we ask this candidate?" | `get_candidate_history`, then `get_interview_document` |
-| "Who fits this JD?" | `match_candidates` with `jd_text` — present reasons, risks and the location disclaimer |
-| "We uploaded new resumes" | `ingest_resumes` (admin) — then re-run the match |
+| "Who fits this JD?" | use the `candidate-matching` skill — `match_candidates` |
 | "Excel for Randstad/Vanguard DE since January" | search → summary → confirm → export |
 
 **Clarify only when it changes the answer.** A request naming a vendor, client or technology is
