@@ -88,22 +88,24 @@ user's intent.
 
 ### Notes versus ordinary conversation
 
-Do not turn a whole meeting report, opinion, plan, or factual description into
-`contact_notes`. Those messages belong in the original communication record
-only. Use `notes`/`interests` in an update draft only when the user explicitly
-asks to add, record, remember, or save a note/interest (for example “备注：他
-喜欢钓鱼”, “记下来他不抽烟”, “add a note that he likes fishing”, or “record
-this as an interest”). Pass the original complete message separately as
-`sourceText`.
+Do not turn a whole meeting report into GENERAL notes. Preserve the complete
+message separately as `sourceText`. General notes still require explicit note
+intent, but stated hobbies/preferences are structured INTEREST facts: extract
+them automatically without asking the user to say "record/save this interest".
+For example, “他喜欢钓鱼 唱歌 他的电话是7778888999” produces
+`interests: ["钓鱼", "唱歌"]`; the phone is not part of an interest label.
+Do not infer hobbies from “we discussed fishing”, negation, uncertain statements,
+or another person's preferences. Put each person's hobbies on that person's
+primary draft or nested relation, and deduplicate individual tags.
 
-For an existing customer, call `customer_update_precheck` with the original
-`sourceText`. A notes/interests-only result is `DIRECT_NOTE`; call
-`customer_add_note` with only the extracted note/interest text. This writes the
-note, the original communication, and its audit record immediately and does
-not open a preview. If the same message also changes a customer field,
-continue through the normal before/after update preview. If there is no
-explicit note intent and no customer-field change, use
-`customer_record_communication`; do not call `customer_add_note`.
+Include interests in create/merge drafts and update `addInterests`, show them
+in the preview, and persist them with the confirmed customer change. Never say
+that identified hobbies are retained only in the original text. Preserve the
+existing precheck → preview → explicit save flow for customer-field changes.
+For an existing customer with only interest additions or explicitly requested
+notes, follow `customer_update_precheck` → `DIRECT_NOTE` → `customer_add_note`;
+this appends tags, original communication and audit evidence without a preview.
+If there are no structured changes, use `customer_record_communication`.
 
 ## 2. Extract the complete draft before calling tools
 
@@ -114,7 +116,7 @@ Preserve the user's complete original message as `sourceText`. Extract all facts
 - each person's phone/email, organization, job title, address, age and important dates;
 - work and residence addresses separately;
 - organizations and job titles;
-- explicit notes and interests only;
+- explicitly requested general notes and automatically identified interests;
 - birthdays, anniversaries, holidays, and other important dates.
 
 Treat explicit business language in the original narrative as a business
