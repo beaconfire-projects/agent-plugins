@@ -7,7 +7,7 @@ This private Claude Code plugin connects to the Beaconfireinc CRM Copilot MCP se
 The configured endpoint is:
 
 ```text
-https://api-crm-mcp.beaconfireinc.com/mcp
+https://crm-copilot.beaconfireinc.com/mcp
 ```
 
 After installing the plugin, open Claude Code's MCP panel, select `crm-copilot`, and choose **Authenticate**. Complete the company AuthSome OAuth flow in the browser. Claude Code manages the OAuth tokens; never place client secrets, access tokens, or Authorization headers in this repository.
