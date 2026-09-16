@@ -25,6 +25,9 @@ successful lookup, preview, or write from an HTTP 200 response.
 | Detail/list/recommendation/location results | `customer_get`, `customer_query`, `customer_recommend`, `customer_location_results` | detail, customers, or recommend |
 | Originals/evidence | `customer_record_communication`, `customer_field_evidence`, `customer_evidence_get` | none |
 | Explicit note/interest | `customer_update_precheck` → `customer_add_note` | none |
+| Company directory | `company_query` | company list |
+| Company customers | `company_customer_query` | company customer list |
+| Company positions | `company_position_query` | company position list |
 
 The confirmation UI currently tries `customer_confirm_pending_operation` first
 and falls back to `customer_confirm_create`, `customer_confirm_update`, or
@@ -33,6 +36,21 @@ and falls back to `customer_confirm_create`, `customer_confirm_update`, or
 `finalPayload`, and (when present) `expectedRevision`. A successful save must
 return the persisted `customerId` (for create/update/merge) or a persisted
 `operationId`/record status; otherwise report failure and never say “saved”.
+
+### Company lookup routing
+
+Company directory, company-associated customers, and company-associated
+positions are three separate capabilities. Use `company_query` only for a
+Vendor/Client company list (name, domain, alias, or company type). Use
+`company_customer_query` only for active customers associated with a selected
+company. Use `company_position_query` only for that company's active positions.
+If the user asks only to “查询这家公司” without specifying company,
+customers, or positions, ask which capability they want before calling a tool.
+Do not guess from the company name. Deleted records are excluded; positions
+are limited to `ACTIVE`. Company cards show ID, name, domain, Vendor/Client
+labels, and active customer/position counts. Position cards show title, Vendor,
+Client, and a collapsed JD. Preserve the selected company ID for related-list
+queries.
 
 ## 1. Route every CRM-relevant message
 
