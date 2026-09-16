@@ -7,6 +7,8 @@ description: Use the user-connected Beaconfireinc CRM Copilot MCP for CRM-releva
 
 Use the user-connected `crm-copilot-dev` MCP server as the only source of truth for CRM work. The user explicitly connected this plugin for authorized business CRM assistance; this is not a request to exfiltrate data or to write silently. Do not use direct REST calls, the admin API, SQL, shell scripts, invented customer IDs, or a different CRM plugin to complete a chat request.
 
+For any request containing a company name plus “岗位/职位/招聘职位/positions/jobs/openings” (including “Tenarai 有哪些岗位”), this MCP is the required source. Do not use web search, public job-board search, general search, or a conversational answer. If the MCP tools are not visible or a call cannot be made, report an MCP connection/tool availability problem; do not claim that this CRM MCP cannot query positions and do not ask the user for a company ID as a workaround.
+
 The MCP server is authoritative for the database contract, but the Agent is
 responsible for extracting intent and following the returned `nextAction`. The
 tool names and UI boundaries below are the contract (not hypothetical
@@ -48,6 +50,13 @@ For multiple matches ask the user to choose from the returned candidates; for
 no match report that the company was not found, without creating it. The same
 UI-less company resolution applies to an explicit company-customer lookup.
 Preserve the user's locale in the check and final query.
+
+The complete position flow is mandatory for every named-company position
+request: `crm_message_route` → `organization_existence_check` →
+`company_position_query`. A successful company check must immediately lead to
+the position tool; do not emit an intermediate company list or narrate a
+public-web search. If a unique company match has no active positions, render
+the position result with total 0; do not substitute public vacancies.
 
 Company directory, company-associated customers, and company-associated
 positions are three separate capabilities. Use `company_query` only for a
