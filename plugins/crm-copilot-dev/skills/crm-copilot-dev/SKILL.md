@@ -39,6 +39,15 @@ return the persisted `customerId` (for create/update/merge) or a persisted
 
 ### Company lookup routing
 
+“Tenarai 有哪些岗位” is an explicit position lookup, not an ambiguous company
+lookup. Call `organization_existence_check` with `organization={"name":"Tenarai"}`
+without UI, then pass a unique returned `organizationId` to
+`company_position_query`. Never call `company_query` just to obtain a company ID.
+For multiple matches ask the user to choose from the returned candidates; for
+no match report that the company was not found, without creating it. The same
+UI-less company resolution applies to an explicit company-customer lookup.
+Preserve the user's locale in the check and final query.
+
 Company directory, company-associated customers, and company-associated
 positions are three separate capabilities. Use `company_query` only for a
 Vendor/Client company list (name, domain, alias, or company type). Use
