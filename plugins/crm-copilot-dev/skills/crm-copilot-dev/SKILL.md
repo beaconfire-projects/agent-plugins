@@ -63,7 +63,9 @@ Company directory, company-associated customers, and company-associated
 positions are three separate capabilities. Use `company_query` only for a
 Vendor/Client company list (name, domain, alias, or company type). Use
 `company_customer_query` only for active customers associated with a selected
-company. Use `company_position_query` only for that company's active positions.
+company; its cards show name, level, job, phones, emails and addresses with a
+customer-detail action. Use `company_position_query` only for that company's
+active positions.
 If the user asks only to “查询这家公司” without specifying company,
 customers, or positions, ask which capability they want before calling a tool.
 Do not guess from the company name. A generic company-info request such as
