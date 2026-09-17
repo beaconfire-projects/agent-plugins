@@ -1,6 +1,6 @@
 ---
 name: crm-copilot
-description: Use the user-connected Beaconfireinc CRM Copilot MCP for CRM-relevant business notes and requests involving people, customers, colleagues, vendors/companies, roles, relationships, meetings, visits, customer facts, lookups, position searches, creation, updates, merges, address and organization normalization, recommendations, reminders, and evidence. Reminder requests require both CRM persistence and a host-native Claude notification/calendar reminder. Business-context notes can be routed even without create/save wording; ordinary non-business social chat is not a CRM task. Always follow the server-side route, check, preview, and explicit-confirmation workflow.
+description: Use the user-connected Beaconfireinc CRM Copilot MCP for CRM-relevant business notes and requests involving people, customers, colleagues, vendors/companies, roles, relationships, meetings, visits, customer facts, lookups, position searches, client-relationship searches, creation, updates, merges, address and organization normalization, recommendations, reminders, and evidence. Reminder requests require both CRM persistence and a host-native Claude notification/calendar reminder. Business-context notes can be routed even without create/save wording; ordinary non-business social chat is not a CRM task. Always follow the server-side route, check, preview, and explicit-confirmation workflow.
 ---
 
 # CRM Copilot
@@ -24,6 +24,7 @@ successful lookup, preview, or write from an HTTP 200 response.
 | Save from a confirmation page | `customer_confirm_pending_operation` (preferred) or the matching `customer_confirm_*` fallback | none |
 | Detail/list/recommendation/location results | `customer_get`, `customer_query`, `customer_recommend`, `customer_location_results` | detail, customers, or recommend |
 | Position list/detail | `position_query`, `position_get` | position-search |
+| Relationship list/detail | `relationship_query`, `relationship_get` | relationship-search |
 | Originals/evidence | `customer_record_communication`, `customer_field_evidence`, `customer_evidence_get` | none |
 | Explicit note/interest | `customer_update_precheck` → `customer_add_note` | none |
 
@@ -49,6 +50,7 @@ Call `crm_message_route` first for:
 - a recommendation request;
 - a customer search or location search;
 - a position or job-opening search;
+- a client-relationship or engagement search;
 - a message containing more than one CRM operation.
 
 For a business-context note, default behavior is to route through CRM because
@@ -294,6 +296,23 @@ remain a selectable list. Clicking any list card calls `position_get`.
 Position tools are read-only; position create/update stays in the CRM
 application.
 
+### Relationship query
+
+Use `relationship_query` for user-initiated client-relationship searches.
+These are the CRM's client engagement records, not person-to-person
+relations. It applies content fuzzy matching (a `%q%` contains match, not a
+prefix match) across the client company name, the linked vendor company
+names, the billing-vendor company name, and the account manager names.
+`exRelationshipId` is an exact match on the external sheet-sync ID and
+ignores `query`. A message with a 客户关系/合作关系/relationship keyword
+plus an explicit search intent routes here; bare “关系/relation” wording
+about a person's contacts stays on the customer flow.
+`relationship_query` has a `relationship-search` UI resource; one result
+follows `resolvedRelationshipId`/`nextAction` with `relationship_get`, and
+multiple results remain a selectable list. Clicking any list card calls
+`relationship_get`. Relationship tools are read-only; relationship
+create/update stays in the CRM application.
+
 ### Recommendations and location search
 
 - Use `customer_recommend` once to validate the conditions, query the ranked
@@ -372,6 +391,7 @@ preview and never writes customer data.
 | “查看 Provine 的客户资料。” | `crm_message_route` → `customer_existence_check` → one: `customer_get`; many: candidate selection |
 | “列出纽约 Google 的客户。” | `crm_message_route` → `customer_query` → one: `customer_get`; many: selectable list |
 | “查一下 Intuit 在招的职位。” | `crm_message_route` → `position_query` → one: `position_get`; many: selectable list |
+| “查一下 Intuit 的客户关系。” | `crm_message_route` → `relationship_query` → one: `relationship_get`; many: selectable list |
 | “推荐 5 个纽约、已建联的客户。” | `crm_message_route` → `customer_recommend` → cards; click a card → `customer_get` |
 | “提醒我明天联系 Provine。” | `crm_message_route` → `reminder_precheck` → `reminder_create` |
 | “创建 Provine 客户，并创建一个提醒。” | `crm_message_route` → `composite_prepare` → `composite_preview` → explicit confirmation → `composite_confirm`/pending-operation |
