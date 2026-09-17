@@ -73,7 +73,11 @@ defaults to name order and supports `sortBy=POSITIONS|CUSTOMERS|CREATED` (for
 example ranking vendors by active position count). Position cards show title,
 Vendor, Client, Billing Vendor, Account Manager, createdAt, and a collapsed
 JD, newest first. All paginated lists return `total`/`hasMore` and the list
-pages show a working Load more button; pass `offset` for the next page.
+pages show a working Load more button; pass `offset` for the next page. Keep
+the default page size instead of raising `limit` to fetch everything at
+once. When `hasMore` is true, tell the user more results are one click away
+on the Load more button; when it is false, the page already shows every
+result, so do not imply anything is missing.
 Preserve the selected company ID for related-list queries.
 
 ## 1. Route every CRM-relevant message
