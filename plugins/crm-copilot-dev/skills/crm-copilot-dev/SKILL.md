@@ -68,9 +68,13 @@ If the user asks only to “查询这家公司” without specifying company,
 customers, or positions, ask which capability they want before calling a tool.
 Do not guess from the company name. Deleted records are excluded; positions
 are limited to `ACTIVE`. Company cards show ID, name, domain, Vendor/Client
-labels, and active customer/position counts. Position cards show title, Vendor,
-Client, and a collapsed JD. Preserve the selected company ID for related-list
-queries.
+labels, notes, createdAt, and active customer/position counts; `company_query`
+defaults to name order and supports `sortBy=POSITIONS|CUSTOMERS|CREATED` (for
+example ranking vendors by active position count). Position cards show title,
+Vendor, Client, Billing Vendor, Account Manager, createdAt, and a collapsed
+JD, newest first. All paginated lists return `total`/`hasMore` and the list
+pages show a working Load more button; pass `offset` for the next page.
+Preserve the selected company ID for related-list queries.
 
 ## 1. Route every CRM-relevant message
 
