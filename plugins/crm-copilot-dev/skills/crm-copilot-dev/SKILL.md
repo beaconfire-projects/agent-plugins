@@ -171,6 +171,17 @@ If there are no structured changes, use `customer_record_communication`.
 
 Preserve the user's complete original message as `sourceText`. Extract all facts into the draft instead of putting structured facts into a general note:
 
+`sourceText` is required for every customer mutation. Pass the same complete,
+verbatim user message to `customer_prepare_create`, `customer_prepare_update`,
+`customer_prepare_merge`, `customer_add_note`, `customer_prepare_remove`,
+`customer_restore`, and `composite_prepare`; never replace it with a summary,
+an extracted note, or the later confirmation reply. For a `DIRECT_NOTE` result,
+forward the `sourceText` returned by `customer_update_precheck` unchanged to
+`customer_add_note`. Confirmation tools recover the original text from their
+task, so do not substitute the user's “save/confirm” message. If the original
+message is unavailable, stop instead of calling a customer write tool with an
+empty or invented `sourceText`.
+
 - primary customer: name, phone, email, gender and business signals;
 - every third person: spouse, child, parent, colleague, boss, friend, or other named person;
 - each person's phone/email, organization, job title, address, age and important dates;
