@@ -405,9 +405,12 @@ create/update stays in the CRM application.
   immediately create the corresponding one-time notification with the host
   Claude/native notification, calendar, automation, or scheduled-task
   capability. This is a second required action, not an optional suggestion
-  and not a follow-up to skip on mobile. Use the exact
-  `hostNotification.scheduleAt`, timezone, reminder content, CRM reminder ID,
-  and customer name when available. Do not end the turn after
+  and not a follow-up to skip on mobile. **Default to a Google Calendar event
+  blocked for exactly 15 minutes when a Google Calendar tool is available in
+  the session** — see [references/host-reminders.md](references/host-reminders.md)
+  for the exact fields and the fallback when Calendar isn't available. Use
+  the exact `hostNotification.scheduleAt`, timezone, reminder content, CRM
+  reminder ID, and customer name when available. Do not end the turn after
   `reminder_create` and do not claim the reminder is fully set until the host
   notification call has succeeded. Report the CRM reminder ID and host
   notification result separately. A successful CRM

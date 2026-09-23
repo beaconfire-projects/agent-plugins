@@ -7,6 +7,8 @@ description: Use the user-connected Beaconfireinc CRM Copilot MCP for CRM-releva
 
 Use the user-connected `crm-copilot` MCP server as the only source of truth for CRM work. The user explicitly connected this plugin for authorized business CRM assistance; this is not a request to exfiltrate data or to write silently. Do not use direct REST calls, the admin API, SQL, shell scripts, invented customer IDs, or a different CRM plugin to complete a chat request.
 
+For any request containing a company name plus “岗位/职位/招聘职位/positions/jobs/openings” (including “Tenarai 有哪些岗位”), this MCP is the required source. Do not use web search, public job-board search, general search, or a conversational answer. If the MCP tools are not visible or a call cannot be made, report an MCP connection/tool availability problem; do not claim that this CRM MCP cannot query positions and do not ask the user for a company ID as a workaround.
+
 The MCP server is authoritative for the database contract, but the Agent is
 responsible for extracting intent and following the returned `nextAction`. The
 tool names and UI boundaries below are the contract (not hypothetical
@@ -27,6 +29,9 @@ successful lookup, preview, or write from an HTTP 200 response.
 | Relationship list/detail | `relationship_query`, `relationship_get` | relationship-search |
 | Originals/evidence | `customer_record_communication`, `customer_field_evidence`, `customer_evidence_get` | none |
 | Explicit note/interest | `customer_update_precheck` → `customer_add_note` | none |
+| Company directory | `company_query` | company list |
+| Company customers | `company_customer_query` | company customer list |
+| Company positions | `company_position_query` | company position list |
 
 The confirmation UI currently tries `customer_confirm_pending_operation` first
 and falls back to `customer_confirm_create`, `customer_confirm_update`, or
@@ -35,6 +40,57 @@ and falls back to `customer_confirm_create`, `customer_confirm_update`, or
 `finalPayload`, and (when present) `expectedRevision`. A successful save must
 return the persisted `customerId` (for create/update/merge) or a persisted
 `operationId`/record status; otherwise report failure and never say “saved”.
+
+### Company lookup routing
+
+“Tenarai 有哪些岗位” is an explicit position lookup, not an ambiguous company
+lookup. Call `organization_existence_check` with `organization={"name":"Tenarai"}`
+without UI, then pass a unique returned `organizationId` to
+`company_position_query`. Never call `company_query` just to obtain a company ID.
+For multiple matches ask the user to choose from the returned candidates; for
+no match report that the company was not found, without creating it. The same
+UI-less company resolution applies to an explicit company-customer lookup.
+Preserve the user's locale in the check and final query.
+
+The complete position flow is mandatory for every named-company position
+request: `crm_message_route` → `organization_existence_check` →
+`company_position_query`. A successful company check must immediately lead to
+the position tool; do not emit an intermediate company list or narrate a
+public-web search. If a unique company match has no active positions, render
+the position result with total 0; do not substitute public vacancies.
+
+Company directory, company-associated customers, and company-associated
+positions are three separate capabilities. Use `company_query` only for a
+Vendor/Client company list (name, domain, alias, or company type). Use
+`company_customer_query` only for active customers associated with a selected
+company; its cards show name, level, job, phones, emails and addresses with a
+customer-detail action. Use `company_position_query` only for that company's
+active positions.
+If the user asks only to “查询这家公司” without specifying company,
+customers, or positions, ask which capability they want before calling a tool.
+Do not guess from the company name. A generic company-info request such as
+“查看 ChanceRiver 信息” or “tell me about ChanceRiver” is not ambiguous in
+the same way: resolve the company with `organization_existence_check`
+(no UI), then call `company_query` with the matched company name so the
+company card renders (ID, domain, Vendor/Client labels, notes, createdAt,
+and customer/position counts), and only then offer to drill into its
+customers or positions. Do not call `company_customer_query` or
+`company_position_query` unprompted for a generic info request. When a
+company-scoped list returns total 0, state plainly that the company has no
+matching records; do not present it as an error or keep retrying.
+Deleted records are excluded; positions
+are limited to `ACTIVE`. Company cards show ID, name, domain, Vendor/Client
+labels, notes, createdAt, and active customer/position counts; `company_query`
+defaults to name order and supports `sortBy=POSITIONS|CUSTOMERS|CREATED` (for
+example ranking vendors by active position count). Position cards show title,
+Vendor, Client, Billing Vendor, Account Manager, createdAt, and a collapsed
+JD, newest first. All paginated lists return `total`/`hasMore` and the list
+pages show a working Load more button; pass `offset` for the next page. Keep
+the default page size instead of raising `limit` to fetch everything at
+once. When `hasMore` is true, tell the user more results are one click away
+on the Load more button; when it is false, the page already shows every
+result, so do not imply anything is missing.
+Preserve the selected company ID for related-list queries.
 
 ## 1. Route every CRM-relevant message
 
