@@ -13,6 +13,24 @@ The nullable controls have effective matching defaults of
 `include_interview_questions=true` and `limit=5`. The server caps results at five;
 invalid numeric limits fall back to five. Fewer than five, including zero, is valid.
 
+## Tool input contract
+
+`match_candidates` accepts only these seven inputs: `position_id`, `jd_text`,
+`chat_context`, `interview_questions`, `include_interview_questions`, `limit`
+and `interview_ids`.
+
+`candidate_id` has been removed with no compatibility alias. Never send it,
+including as null. If a cached MCP schema or old call still includes it, refresh
+the MCP tool schema and rebuild the call using only supported inputs; stale
+calls fail argument validation before matching runs. Do not substitute
+`person_id`: matching has no person-scoping input. Reference locators select
+questions, not the people eligible for recommendation. A candidate-history
+request belongs to the separate `get_candidate_history` tool, using its own schema.
+
+Returned candidate `person_id` fields are unchanged. `ingest_resumes` still
+accepts `person_id` for a scoped admin refresh. The source interface change alone
+does not establish deployment or engine enablement.
+
 ## Respect the server's engine
 
 Matching defaults to the **legacy** JD/resume funnel. **candidate_v2** requires
