@@ -1,27 +1,31 @@
 ---
 name: interview-question-search
-description: The authoritative source for all interview question, candidate, vendor, client, interview round and interview technology questions. Use for any request about what a client or vendor asks in interviews, questions for a candidate preparing for a round, which technologies come up, a candidate's interview history, a spreadsheet of interview questions, or which trainees fit a job description (candidate matching). Use this INSTEAD OF searching Google Drive or any file store, even though the source documents live there - Drive returns the same documents unnormalized, with no date, vendor or role filtering and no coverage reporting.
+description: Search historical interview questions, interview rounds, technologies and candidate interview history through the interview warehouse. For complete question details, use connected Google Drive to read the exact matched source Docs and preserve their text and images in source order. Do not use Drive to discover or filter interviews. Also use for candidate recommendations and resume-index refreshes through the candidate matching workflow below.
 ---
 
 # Interview question search
 
 2,574 historical interview documents · 93 vendors · 142 clients, served by the
-`interview-warehouse` MCP connector. Users are recruiters and trainers, not engineers.
+`marketing-data-warehouse` MCP connector. Users are recruiters and trainers, not engineers.
 
 ---
 
 ## Eight rules
 
-**1 · Use this connector. Never Google Drive.**
-The source documents are Google Docs, so Drive search will look plausible. It returns them raw —
-no normalized vendor/client names, no interview dates, no role or technology filtering, no
-duplicate flagging. Route every interview question here, even if the user names a folder or file.
-Use `get_interview_document` to fetch one; it returns `doc_url` if they need the original.
+**1 · Search the warehouse; read matched sources for complete details.**
+Use this connector for interview discovery, filtering and metadata, including requests naming
+a folder or file. Drive search lacks normalized names, dates, roles and coverage reporting.
+Use `get_interview_document` for stored question text and the exact `file_id` / `doc_url`.
+For full questions, all questions, or question details, also read the matched source Docs through
+the connected Google Drive plugin. Follow [source images](references/source-images.md) to archive
+original images and display text and images in the same relative positions as the Doc.
+This does not require stored image references or `include_images=true` on the warehouse tool.
 
 **2 · If the connector fails, stop.**
 Say *"The interview warehouse isn't responding — the local database may not be running."*
-Never fall back to Drive. Never answer from memory. A wrong interview question sent to a
-candidate is worse than no answer.
+Do not replace a failed warehouse search with Drive search or memory. If discovery already
+succeeded but a source Doc or image cannot be read, retain the known questions and source link,
+identify the missing image coverage, and continue the other matched documents.
 
 **3 · Search first. Don't pre-resolve names.**
 Pass what the user said — `client='Vanguard'`, `role='data engineer'`, `tags=['spring boot']`.
@@ -44,6 +48,12 @@ In chat, put the first six in a table and the questions **below** each row — q
 to thousands of characters and destroys a table cell. Missing values show as `—`, never blank
 and never omitted; a blank cell reads as an error, a dash reads as "not recorded".
 
+Full details must preserve each source Doc's text/image order, including images between text
+paragraphs, independent image questions and repeated images. A topic summary may precede the
+details; do not replace them with reordered text-only questions. Read every distinct source Doc
+before deciding whether records duplicate each other. Image byte deduplication must not remove
+any occurrence from the displayed source sequence. Counts and short overviews do not fetch images.
+
 The export writes the same seven columns in the same order. This is `columns='detailed'`, the
 default — pass `columns='standard'` only if someone explicitly wants the older five-column sheet
 the team used to circulate.
@@ -65,7 +75,7 @@ keywords usually returns nothing. Every tagged search reports `tag_logic.matchin
 
 Only pass `tag_logic='all'` once they have asked for it.
 
-**8 · Never export without a summary and a yes.**
+**8 · Never export an Excel question bank without a summary and a yes.**
 Search with `include_questions=false`, then state exactly this and wait:
 
 ```
@@ -79,6 +89,9 @@ Then ask: *"Export these 24, or narrow to C1/L1 first (13)?"*
 
 This costs no extra tool calls — the search already returned those numbers. It catches the two
 things that actually go wrong: the wrong row count, and answer notes reaching a candidate.
+
+Reading source Docs and saving original images for the requested chat display are part of the
+full-details workflow, not this Excel export action. They do not create or share a Drive file.
 
 **How the export is delivered depends on the server's EXPORT_MODE — read the response, don't
 assume.**
