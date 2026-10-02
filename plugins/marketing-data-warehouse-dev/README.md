@@ -8,6 +8,10 @@ The `interview-question-search` skill searches interview questions, candidates, 
 
 The `candidate-matching` skill covers `match_candidates` (shortlisting trainees for a job description with evidence) and `ingest_resumes` (refreshing the resume index) through the same connector.
 
+The `interview-introduction-review` skill reviews a trainee's practice recording before a client interview. It requests a broadly usable `.m4a` recording (or another decodable audio file), produces evidence-based coaching on the self-introduction and project story, and includes a near-verbatim transcript when transcription is available. It does not require the warehouse MCP server; audio transcription depends on a capability available in the host environment.
+
+Example request: "Use interview-introduction-review to review this attached practice recording for a data engineer interview. Here is the JD; please give me a trainee-facing report and transcript."
+
 ## Bundled agent
 
 The `interview-question-analyst` agent is scoped to warehouse tools. Delegate discovery, histories, frequency analysis and confirmed Excel exports to it. For full details it returns source IDs/text to the caller, which uses Google Drive for source images and reports image coverage separately.
