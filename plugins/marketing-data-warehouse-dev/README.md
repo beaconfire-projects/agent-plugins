@@ -8,9 +8,11 @@ The `interview-question-search` skill searches interview questions, candidates, 
 
 The `candidate-matching` skill covers `match_candidates` (shortlisting trainees for a job description with evidence) and `ingest_resumes` (refreshing the resume index) through the same connector.
 
-The `interview-introduction-review` skill reviews a trainee's practice recording before a client interview. It requests a broadly usable `.m4a` recording (or another decodable audio file), produces evidence-based coaching on the self-introduction and project story, and includes a near-verbatim transcript when transcription is available. It does not require the warehouse MCP server; audio transcription depends on a capability available in the host environment.
+The `interview-introduction-review` skill reviews a trainee's practice audio recording before a client interview. It asks only for audio (`.m4a` is convenient; other decodable audio formats work), evaluates the self-introduction's hook and the project story, and includes a near-verbatim transcript when transcription is available. It does not require the warehouse MCP server; audio transcription depends on a capability available in the host environment.
 
-Example request: "Use interview-introduction-review to review this attached practice recording for a data engineer interview. Here is the JD; please give me a trainee-facing report and transcript."
+Example request: "Use interview-introduction-review to review this attached practice recording and give me a trainee-facing report and transcript."
+
+To invoke the slash command, make `marketing-data-warehouse-dev@beaconfireinc` version 0.6.0 available in the same Claude Code environment. A repository commit alone does not install the plugin into an existing conversation. Then attach an audio recording and invoke `/marketing-data-warehouse-dev:interview-introduction-review`.
 
 ## Bundled agent
 
