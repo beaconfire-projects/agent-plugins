@@ -1,6 +1,6 @@
 ---
 name: candidate-matching
-description: Recommend candidates for a job description or reference interview questions, or refresh the resume index after uploads. Use for "who fits this JD?", shortlisting people for a position, or finding candidates with related interview-question experience. A recruiter asking who fits wants a shortlist with evidence, not documents.
+description: Recommend candidates for a job description or reference interview questions, or refresh the resume index after uploads. Use for "who fits this JD?", shortlisting people for a position, or finding candidates with related interview-question experience. A recruiter asking who fits wants a compact ranked table first: rank, candidate, overall score and risks. Keep commentary minimal; detailed evidence is on request.
 ---
 
 # Candidate matching
@@ -14,6 +14,41 @@ The nullable controls have effective matching defaults of
 conversion; invalid or less-than-one limits fall back to five, and larger values
 are capped at five. The final cap is `min(effective limit, MATCH_FINAL_TOP_N, 5)`;
 server configuration may lower it. Fewer than five, including zero, is valid.
+
+## Default reply: ranked table first, minimal commentary
+
+When candidates are returned, start immediately with **one complete ranked table**
+using exactly these four columns (translate headers for a non-Chinese reply):
+
+```text
+| 排名 | 候选人 | 综合分 | 风险 |
+|---|---|---|---|
+| <rank> | <name> (<person_id>) | <overall> | <brief risks or —> |
+```
+
+- Include every returned candidate in server rank order, one row per person.
+  Always show **name (person_id)**, preserving TEMP IDs. Use the returned `overall`
+  for 综合分, not the 0–1 `fusion_score`; never invent or adjust scores. If absent,
+  show `—`. Do not add a reasons, resume or source column.
+- In 风险, use short readable labels such as **低匹配备选** for
+  `recommendation_tier=fallback` / `low_match` and **年限未知** for `yoe_unknown`.
+  Preserve other material risks briefly. Use `—` when no risks are reported;
+  this is not a guarantee that the candidate is risk-free.
+- No introduction, methodology or analysis before the table. Do not split off the
+  top candidate for a long review or append per-person paragraphs. This applies
+  to initial matches and follow-up/re-run results alike.
+- After the table, use at most **one or two short sentences** for material warnings,
+  incomplete coverage/withheld people or a shortfall, and `location_disclaimer`.
+  Combine notices; do not repeat per-person caveats or add an unsolicited next-step
+  checklist, resume audit, or offer to refresh/match again.
+- By default, omit score explanations, raw tier/state names, source-by-source
+  coverage, pool statistics, formulas, lengthy quotes and resume file/version
+  details. Expand evidence, resume details, ranking rationale or diagnostics
+  **only when the user explicitly asks**. The interpretation rules below are for
+  reasoning correctly, not a checklist of fields to print in every answer.
+- Brevity must not hide fallback status, material risks, operational failure or
+  incomplete coverage. With no candidates, give the status/reason or required
+  clarification briefly instead of fabricating table rows.
 
 ## Tool input contract
 
@@ -85,12 +120,12 @@ enabling the retired engine switch or silently discard reference inputs.
 
 | Status | Action |
 |---|---|
-| `ok` | Present the returned shortlist, distinguishing standard matches from low-match alternatives. Relay any shortfall reasons even when status is `ok`. |
+| `ok` | Show the four-column ranked table first; label low-match alternatives in the risk column. Briefly note a shortfall after the table if reported. |
 | `no_match` | Relay `rejection_reason` and any `insufficient_causes`; do not relax qualifications or invent filler. |
 | `needs_jd` | Ask for the reported missing JD fields and retry with real `jd_text`. |
 | `needs_reference` | Ask for a usable JD or question/interview references. |
 | `not_found` | Resolve the unknown position or interview ID; this is not a valid empty match. |
-| `degraded` | Present only returned candidates, if any, and explicitly report incomplete coverage, warnings and withheld evidence/people. An empty degraded result does not prove nobody qualifies. |
+| `degraded` | Show returned candidates in the table first, if any; add a short coverage warning with the withheld count when relevant. Summarize material warnings, not raw diagnostics. An empty degraded result does not prove nobody qualifies. |
 | `error` | Stop and report the safe error code/message; do not turn an operational failure into `no_match`. |
 
 For `INVALID_INPUT`, correct the parameters. `IDENTITY_AMBIGUOUS` needs identity
@@ -99,16 +134,19 @@ require recovery or a user-agreed narrower scope, not silent truncation or an
 algorithm fallback. Requests allow at most 64 deduplicated reference questions
 and have a bounded text budget; never trim supplied references without agreement.
 
-## Present evidence, not just names
+## Ground the shortlist in evidence
 
 **Always show name + id together.** Use the returned `name (person_id)`, e.g.
 `Ilana Zhu (PER-0123)`, for every shortlisted person. Preserve returned TEMP IDs;
 do not invent a formal ID. Use this person ID as `person_id` for an explicitly
 requested resume refresh.
 
-For each recommendation, preserve server rank and summarize `reasons`, their
-`references`, `risks`, and `recommended_resume` when present. References must come
-from the tool, never invented quotes or links. V2 evidence comes from related
+Preserve server rank and use returned `reasons`, `references`, `risks` and
+`recommended_resume` to ground the answer, not as mandatory output sections.
+Default to the four-column table above, with returned overall scores and brief
+material risk labels, not per-person explanations. Provide evidence or resume information only
+on explicit request. References must come from the tool, never invented quotes
+or links. V2 evidence comes from related
 interview questions, consultant `additional_tech_stacks`, and current resumes.
 Interview-question exposure is **not mastery**; interview outcomes/pass-fail are
 not ranking features, and skills must not be inferred from `batch_track`.
@@ -139,7 +177,7 @@ Every returned person must still be eligible, have no executed source marked
 | `recommendation_tier` | Presentation |
 |---|---|
 | `standard` | At least one source score >=0.5 and fusion score >=0.5 after revalidation. Present as a standard match, not a guarantee of ability. |
-| `fallback` | Other safe, evidence-backed positive matches, returned only when standard matches do not fill the requested cap. Explicitly label **low-match alternative**, disclose `low_match` and other risks, and retain the actual scores and evidence. |
+| `fallback` | Other safe, evidence-backed positive matches, returned only when standard matches do not fill the requested cap. Use the brief label **低匹配备选** (low-match alternative) and other material risk labels. Show the actual overall score in the table; expand evidence only if requested. Never inflate scores. |
 
 Fallback has no separate fixed minimum score; it is not permission to recommend
 zero-score, uncited or unavailable evidence. Standard candidates come first;
@@ -149,7 +187,9 @@ ascending. Preserve returned rank. Low-match alternatives alone do not cause
 hide a shortfall.
 
 Use `round_stats`, per-candidate `source_scores` / `coverage`, `withheld_count`
-and `reference_resolution` to explain execution and coverage. `round_stats`
+and `reference_resolution` internally to interpret coverage, and explain them
+only when asked for diagnostics. Still give a brief coverage warning for degraded
+results in the default reply. `round_stats`
 counts initial source states, not final recommendations. `withheld_count` counts
 operational/evidence withholding, not everyone omitted by eligibility, pool
 budgets or ranking. Returned `source_scores` cannot reconstruct omitted people's
@@ -181,9 +221,9 @@ resume; fused evidence can span multiple files. Do not invent a best-fit resume
 or treat an unscored resume link as scored evidence.
 Drive links require the recipient's permissions; a returned URL does not grant access.
 
-**Always relay `location_disclaimer`.** Location is NOT considered. Repeat the
-returned disclaimer every time, e.g. "Location wasn't considered
-— double-check where each candidate can work before proposing them."
+**Always relay `location_disclaimer` once, briefly after the table.** Location is
+NOT considered. Use the returned disclaimer (e.g. "本期匹配未考虑 Location 维度")
+without appending a generic verification checklist.
 
 ## Resume refresh is admin work
 
@@ -204,7 +244,7 @@ ingestion and still honor any freshness/coverage warnings.
 
 | Request | Call |
 |---|---|
-| "Who fits this JD?" | `match_candidates(jd_text=...)`; present reasons, risks and the location disclaimer. |
+| "Who fits this JD?" | `match_candidates(jd_text=...)`; show the rank / name + ID / overall score / risks table first, then at most two short sentences for location/coverage notices. |
 | "Anyone for position POS-0440?" | `match_candidates(position_id="POS-0440")`; follow returned status and engine. |
 | "Who has related experience with these questions?" | `match_candidates(interview_questions=...)`; only the question-experience source executes without a JD. |
 | "Use these interview records as references" | `match_candidates(interview_ids=[...])` with real IDs; add `jd_text` if supplied. |
