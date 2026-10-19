@@ -10,8 +10,10 @@ or reference interview questions. `ingest_resumes` is a separate admin refresh.
 Read the response status before presenting results.
 
 The nullable controls have effective matching defaults of
-`include_interview_questions=true` and `limit=5`. The server caps results at five;
-invalid numeric limits fall back to five. Fewer than five, including zero, is valid.
+`include_interview_questions=true` and `limit=5`. The server attempts integer
+conversion; invalid or less-than-one limits fall back to five, and larger values
+are capped at five. The final cap is `min(effective limit, MATCH_FINAL_TOP_N, 5)`;
+server configuration may lower it. Fewer than five, including zero, is valid.
 
 ## Tool input contract
 
@@ -28,20 +30,24 @@ questions, not the people eligible for recommendation. A candidate-history
 request belongs to the separate `get_candidate_history` tool, using its own schema.
 
 Returned candidate `person_id` fields are unchanged. `ingest_resumes` still
-accepts `person_id` for a scoped admin refresh. The source interface change alone
-does not establish deployment or engine enablement.
+accepts `person_id` for a scoped admin refresh. Local source changes alone
+do not establish deployment.
 
-## Respect the server's engine
+## Current engine and deployment boundary
 
-Matching defaults to the **legacy** JD/resume funnel. **candidate_v2** requires
-operator enablement; the skill must not assume it is deployed or enabled.
-`interview_ids` under legacy returns `FEATURE_DISABLED`, even for an empty list.
-V2 matching responses identify `engine=candidate_v2`; `schema_version=candidate-v2`
-alone does not prove v2 ranking ran (routing errors also use it).
-Never change server configuration or silently substitute legacy ranking after a
-v2 failure.
+The current implementation uses **candidate_v2 only**, with ranking policy
+`candidate-fusion-v3`. Responses identify `engine=candidate_v2`,
+`schema_version=candidate-v2` and `policy_version=candidate-fusion-v3`; these
+metadata fields alone do not mean matching succeeded. Always read `status`.
+The legacy funnel and engine switch are retired; `MATCH_ENGINE` is ignored.
+Never change server configuration or switch ranking policy after a failure.
 
-### Inputs for candidate_v2
+Do not assume dev/prod has deployed this code. If the live schema or response
+still exposes an older contract (such as `FEATURE_DISABLED` for interview IDs),
+report the deployment/schema mismatch for operator resolution. Do not advise
+enabling the retired engine switch or silently discard reference inputs.
+
+## Matching inputs
 
 - **JD:** Nonblank `jd_text` takes precedence over the supplied position's current
   stored JD; conflicts appear in `warnings`. Use `position_id` in `POS-XXXX` form
@@ -49,8 +55,9 @@ v2 failure.
   supplied position/interview locator is validated even when inline text wins.
   Unknown locators return `not_found`.
 - **Incomplete JD:** A supplied or stored nonblank JD needs at least 100 normalized
-  characters and parsed required skills or responsibilities. Otherwise expect
-  `needs_jd`; ask for `missing_fields`. Questions cannot rescue an incomplete JD,
+  characters, usable technical source text, and parsed required skills or
+  responsibilities. Otherwise expect `needs_jd`; ask for `missing_fields`.
+  Questions cannot rescue an incomplete JD,
   and the agent must not invent or pad a JD to force a match.
 - **Explicit references:** `interview_questions` is pasted question text;
   `interview_ids` is a list of known interview IDs. When both are supplied, the
@@ -58,9 +65,12 @@ v2 failure.
   select reference questions, **not** the people eligible for recommendation.
   Supplying either parameter suppresses automatic similar-position discovery,
   even if its value is an empty string/list. Omit unused parameters.
-- **Automatic references:** With a JD and no explicit references, the server
-  discovers similar current-JD positions and includes any supplied position when
-  resolving questions. A position without a JD can use its own questions only.
+- **Automatic references:** With a JD, no explicit references and automatic
+  discovery enabled, the server discovers up to ten similar current-JD positions
+  at normalized similarity
+  >=0.70 and includes any supplied position when resolving questions. This is
+  not the candidate recommendation threshold. A position without a JD can use
+  its own questions only when automatic references are enabled.
 - **Questions only:** Without a JD, usable question text or interview references
   run only the question-experience round; skill/resume rounds are `not_executed`.
   Empty valid references with a usable JD still permit skill/resume matching.
@@ -71,22 +81,11 @@ v2 failure.
   for related candidate histories. `chat_context` is compatibility-only: it
   creates neither a JD nor reference questions.
 
-### Legacy compatibility
-
-Use `jd_text` or `position_id` for legacy matching. Inline JD wins; unknown positions
-return `not_found`, and missing/incomplete JD returns `needs_jd` with `missing_fields`.
-Chat-only or question-only input still goes through legacy JD assembly/completeness
-checks, not the v2 questions-only flow. If it returns `needs_jd`, ask for missing
-information rather than inventing a JD. Pasted `interview_questions` take priority
-over the bank; `include_interview_questions=false` skips the bank but retains pasted text.
-Do not promise v2 reference fusion, evidence states or ranking semantics for legacy
-responses.
-
 ## Read status before presenting anyone
 
 | Status | Action |
 |---|---|
-| `ok` | Present the returned shortlist. |
+| `ok` | Present the returned shortlist, distinguishing standard matches from low-match alternatives. Relay any shortfall reasons even when status is `ok`. |
 | `no_match` | Relay `rejection_reason` and any `insufficient_causes`; do not relax qualifications or invent filler. |
 | `needs_jd` | Ask for the reported missing JD fields and retry with real `jd_text`. |
 | `needs_reference` | Ask for a usable JD or question/interview references. |
@@ -95,10 +94,10 @@ responses.
 | `error` | Stop and report the safe error code/message; do not turn an operational failure into `no_match`. |
 
 For `INVALID_INPUT`, correct the parameters. `IDENTITY_AMBIGUOUS` needs identity
-clarification, not a guessed alias. `FEATURE_DISABLED` needs operator enablement
-before interview-ID matching can work; ask for a supported JD-based request instead
-of silently discarding the references. Availability or reference-budget errors
-require recovery or a user-agreed narrower scope, not silent truncation or fallback.
+clarification, not a guessed alias. Availability or reference-budget errors
+require recovery or a user-agreed narrower scope, not silent truncation or an
+algorithm fallback. Requests allow at most 64 deduplicated reference questions
+and have a bounded text budget; never trim supplied references without agreement.
 
 ## Present evidence, not just names
 
@@ -114,28 +113,72 @@ interview questions, consultant `additional_tech_stacks`, and current resumes.
 Interview-question exposure is **not mastery**; interview outcomes/pass-fail are
 not ranking features, and skills must not be inferred from `batch_track`.
 
-V2 fuses question/skill/resume relevance with weights **5:3:2**, normalized over
-present scored sources. Scores (`fusion_score` / `overall`) are relevance, not
-probabilities of success or confidence. Strong lower-weight evidence can outrank
-weaker higher-weight evidence; do not re-rank by source priority or an LLM opinion.
-Eligibility is current `IN MARKETING` / `IN PREPARATION` consultants; JD-based YOE
-uses a ±2-year tolerance, and unknown YOE passes but remains a disclosed risk.
-No JD means no invented YOE filter. A resume is not required.
+Eligibility requires a valid current consultant profile with status
+**`IN MARKETING` only** (trimmed and case-normalized). `IN PREPARATION`,
+`In Prepareing`, other and unknown statuses are excluded. JD-based YOE uses a
+±2-year tolerance, and unknown YOE passes but remains a disclosed risk.
+No JD means no invented YOE filter. A resume is not required. Status and evidence
+come from the synchronized warehouse, not a live Sheets/Drive read on each match.
 
-Use v2 `round_stats`, per-candidate `source_scores` / `coverage`, `withheld_count`
-and `reference_resolution` to explain execution and coverage. In v2 responses, the
-compatibility `funnel_stats` L2/L3/L4 zeros are retired counters, not evidence that
-v2 found nobody.
+### Ranking and low-match alternatives
+
+Question/skill/resume relevance uses weights **3:4:3**, normalized over
+`present_scored` sources. `overall = 100 × fusion_score`; both describe relevance,
+not probabilities of success or confidence. Real zero scores stay in the fusion
+denominator; missing or unexecuted sources do not. Strong lower-weight evidence
+can outrank weaker higher-weight evidence. Do not re-rank by source priority or
+an LLM opinion.
+
+Each source contributes at most its **50 positive-scoring distinct people**.
+The deduplicated union (at most 150 people) is frozen, then fully revalidated and
+rescored. The 0.5 standard threshold does not exclude low-positive people from
+this initial pool. Lost candidates are not replaced from outside the fixed pool.
+Every returned person must still be eligible, have no executed source marked
+`unavailable`, have positive fusion, and have a valid positive evidence reference.
+
+| `recommendation_tier` | Presentation |
+|---|---|
+| `standard` | At least one source score >=0.5 and fusion score >=0.5 after revalidation. Present as a standard match, not a guarantee of ability. |
+| `fallback` | Other safe, evidence-backed positive matches, returned only when standard matches do not fill the requested cap. Explicitly label **low-match alternative**, disclose `low_match` and other risks, and retain the actual scores and evidence. |
+
+Fallback has no separate fixed minimum score; it is not permission to recommend
+zero-score, uncited or unavailable evidence. Standard candidates come first;
+within each tier the server sorts by unrounded fusion descending, then person ID
+ascending. Preserve returned rank. Low-match alternatives alone do not cause
+`degraded`, and neither fallback nor extra invented candidates should be used to
+hide a shortfall.
+
+Use `round_stats`, per-candidate `source_scores` / `coverage`, `withheld_count`
+and `reference_resolution` to explain execution and coverage. `round_stats`
+counts initial source states, not final recommendations. `withheld_count` counts
+operational/evidence withholding, not everyone omitted by eligibility, pool
+budgets or ranking. Returned `source_scores` cannot reconstruct omitted people's
+scores. Compatibility `funnel_stats` L2/L3/L4 zeros are retired counters, not
+evidence that matching found nobody.
 
 | Evidence state | Meaning |
 |---|---|
 | `present_scored` | Usable scored evidence, including a genuine zero-relevance mismatch. |
 | `absent` | No usable content; excluded from fusion, not a penalty. |
 | `not_executed` | The request did not activate this round. |
-| `unavailable` | Evidence could not safely be used (e.g. stale, pending or failed); affected candidates are withheld, not treated as merely missing evidence. |
+| `unavailable` | Evidence could not safely be used (e.g. outdated vectors, pending processing or failed verification); affected candidates are withheld, not treated as merely missing evidence. |
 
-`recommended_resume` can be null, especially for question-only matches. Do not
-invent a best-fit resume or treat an unscored resume link as scored evidence.
+### Resume freshness and recommended files
+
+Matching accepts current DOCX or Google Docs resume evidence only when the source
+Drive modification time is known and within the last **365 days** (inclusive),
+ownership is valid, verification matches the current content hash, and compatible
+vectors are ready. Creation/ingestion dates do not substitute for modification
+time. Expired, unknown-time or unsupported files are policy exclusions and can
+leave resume evidence `absent`; they do not alone disqualify a person with other
+healthy evidence. Recent supported files that are pending, failed, unverified or
+misattributed make coverage `unavailable`. One unsafe required resume can withhold
+the person even if another resume is healthy; do not cherry-pick around the failure.
+
+`recommended_resume` can be null, especially for question-only matches. When
+present, it is selected from scored resume references, not an LLM-picked "best"
+resume; fused evidence can span multiple files. Do not invent a best-fit resume
+or treat an unscored resume link as scored evidence.
 Drive links require the recipient's permissions; a returned URL does not grant access.
 
 **Always relay `location_disclaimer`.** Location is NOT considered. Repeat the
@@ -145,15 +188,17 @@ returned disclaimer every time, e.g. "Location wasn't considered
 ## Resume refresh is admin work
 
 `ingest_resumes` re-scans the Resume subtree of each mapped Prepare folder on Google
-Drive, summarizes/embeds DOCX resumes and stores new versions. Run it only when the
-AM requests a refresh after uploads/updates; pass `person_id` to scope it to one
-person. Never run it speculatively before a match or as a search tool.
+Drive, processes eligible recent DOCX/Google Docs resumes and stores verified
+versions after freshness and ownership checks. It does not make old files fresh
+merely by ingesting them. Run it only when the AM requests a refresh after
+uploads/updates; pass `person_id` to scope it to one person. Never run it speculatively before a match or as a search tool.
 
-Report the returned status, per-action `counts` and `source_revision`; an error
-means the refresh did not complete successfully. This tool is not the separate v2 evidence-vector
-refresh and does not guarantee fresh v2 coverage. Do not trigger backfills or engine
-activation to repair a degraded result. If a match was requested, re-run it after
-a successful ingestion and still honor any freshness/coverage warnings.
+Report the returned status, per-action `counts` and `source_revision`; `failed`
+or `error` means the refresh did not complete successfully. This tool is not the
+separate v2 evidence-vector refresh and does not guarantee fresh v2 coverage.
+Do not trigger backfills, paid vector refreshes or configuration changes to
+repair a degraded result. If a match was requested, re-run it after a successful
+ingestion and still honor any freshness/coverage warnings.
 
 ## Examples
 
@@ -161,9 +206,9 @@ a successful ingestion and still honor any freshness/coverage warnings.
 |---|---|
 | "Who fits this JD?" | `match_candidates(jd_text=...)`; present reasons, risks and the location disclaimer. |
 | "Anyone for position POS-0440?" | `match_candidates(position_id="POS-0440")`; follow returned status and engine. |
-| "Who has related experience with these questions?" | `match_candidates(interview_questions=...)`; questions-only matching requires v2. |
-| "Use these interview records as references" | `match_candidates(interview_ids=[...])` with real IDs; add `jd_text` if supplied; requires v2. |
-| "Use this JD and both sets of references" | `match_candidates(jd_text=..., interview_questions=..., interview_ids=[...])`; v2 unions the explicit references. |
+| "Who has related experience with these questions?" | `match_candidates(interview_questions=...)`; only the question-experience source executes without a JD. |
+| "Use these interview records as references" | `match_candidates(interview_ids=[...])` with real IDs; add `jd_text` if supplied. |
+| "Use this JD and both sets of references" | `match_candidates(jd_text=..., interview_questions=..., interview_ids=[...])`; the server unions the explicit references. |
 | "Match only this JD, without automatic question discovery" | `match_candidates(jd_text=..., include_interview_questions=false)`; omit unused reference parameters. |
 | "We uploaded new resumes; refresh the index" | `ingest_resumes()`; re-run matching only if requested. |
 | "Refresh resumes for PER-0123" | `ingest_resumes(person_id="PER-0123")`. |
