@@ -14,6 +14,8 @@ Example request: "Use interview-introduction-review to review this attached prac
 
 To invoke the slash command, make `marketing-data-warehouse-dev@beaconfireinc` version 0.6.1 available in the same Claude Code environment. A repository commit alone does not install the plugin into an existing conversation. Then attach an audio recording and invoke `/marketing-data-warehouse-dev:interview-introduction-review`.
 
+The `self-introduction-review` skill scores a candidate's interview self-introduction (audio or text) against the company's 10-part structure for Trainers and AMs: covered/missing parts, a part-by-part and overall /100 score with a band, evidence, and prioritized fixes. It is gated by sign-in: its first step calls the read-only `list_dimensions` tool, and it stops with an authentication prompt if the connector is not authorized. This is a soft gate (skill text is not secret); real access control is the MCP OAuth. Weights, bands and hard checks in `references/rubric.md` are a proposed convention pending official company values.
+
 ## Bundled agent
 
 The `interview-question-analyst` agent is scoped to warehouse tools. Delegate discovery, histories, frequency analysis and confirmed Excel exports to it. For full details it returns source IDs/text to the caller, which uses Google Drive for source images and reports image coverage separately.
