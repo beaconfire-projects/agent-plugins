@@ -1,8 +1,7 @@
 {
-  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "mgt",
   "displayName": "Beaconfireinc MGT MCP",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Connect Claude Code to Beaconfireinc's authenticated MGT MCP server through OAuth.",
   "author": {
     "name": "Beaconfire Engineering"
