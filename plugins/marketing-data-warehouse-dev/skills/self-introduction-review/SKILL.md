@@ -11,20 +11,12 @@ Audience: Trainers and AMs only (not for candidates to self-check). Input: one c
 
 ## Step 0 — Sign-in gate (always first)
 
-Before reading the rubric or evaluating anything, call
-`mcp__plugin_marketing-data-warehouse-dev_marketing-data-warehouse-dev__list_dimensions` once (it is read-only), from this plugin's `marketing-data-warehouse-dev` connector.
-In Claude Code the server is `plugin:marketing-data-warehouse-dev:marketing-data-warehouse-dev`. The short name
-`list_dimensions` below refers only to this exact tool.
+Before reading the rubric or evaluating anything, call the read-only `list_dimensions` tool once (for example with `field: "round"`) from a connector of the **development** warehouse: a connector whose name is exactly `marketing-data-warehouse-dev`. That is either this plugin's own connector (`plugin:marketing-data-warehouse-dev:marketing-data-warehouse-dev`; in Claude Code the tool is `mcp__plugin_marketing-data-warehouse-dev_marketing-data-warehouse-dev__list_dimensions`) or a plain connector of the same exact name, as in the web app or Cowork, where tool identifiers may be opaque IDs and only the connector name tells them apart.
 
-Never substitute a same-named tool from another plugin, a bare/unscoped server
-or the other environment. If this tool is unavailable, stop rather than bypass
-the sign-in gate or change MCP configuration. The `allowed-tools` header
-pre-approves this call, not access to another connector; it does not make other
-tools unavailable. Use no other warehouse tools to enrich or verify the review;
-its evidence remains the supplied recording or text.
+Environment separation: never use the production connector named exactly `marketing-data-warehouse` (without `-dev`), or any connector with another name, even if it exposes a tool named `list_dimensions`. When more than one connector qualifies, prefer this plugin's own. If you cannot tell which connector a tool belongs to, treat it as not matching. Do not stop merely because the connector is not plugin-scoped. Do not bypass the gate or change MCP configuration. The `allowed-tools` header only pre-approves the Claude Code tool name above; it does not make other tools unavailable. Use no other warehouse tools to enrich or verify the review; its evidence remains the supplied recording or text.
 
 - Success: continue.
-- Tool unavailable, authentication error, or any failure: stop. Tell the user this skill is for signed-in Beaconfire staff, ask them to authenticate the `plugin:marketing-data-warehouse-dev:marketing-data-warehouse-dev` connector (via `/mcp` in Claude Code, or the connector settings in the app), then retry. Do not score, summarize the rubric, or offer a partial review.
+- No qualifying connector, authentication error, or any failure: stop. Tell the user this skill is for signed-in Beaconfire staff, ask them to authenticate the `marketing-data-warehouse-dev` connector (via `/mcp` in Claude Code, or the connector settings in the app; in the web app the plugin must also be enabled), then retry. Do not score, summarize the rubric, or offer a partial review.
 
 Never show the user the tool's output; the call only verifies sign-in.
 
