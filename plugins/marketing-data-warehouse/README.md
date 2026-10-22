@@ -8,7 +8,9 @@ The `interview-question-search` skill searches interview questions, candidates, 
 
 The `candidate-matching` skill covers `match_candidates` (shortlisting candidates for a job description or reference interview questions with evidence) and `ingest_resumes` (an explicitly requested admin refresh of the resume index) through the same connector.
 
-The `self-introduction-review` skill scores a candidate's interview self-introduction (audio or text) against the company's 10-part structure for Trainers and AMs: covered/missing parts, a part-by-part and overall /100 score with a band, evidence, and prioritized fixes. It is gated by sign-in: its first step calls the read-only `list_dimensions` tool, and it stops with an authentication prompt if the connector is not authorized. This is a soft gate (skill text is not secret); real access control is the MCP OAuth. Weights, bands and hard checks in `references/rubric.md` are a proposed convention pending official company values.
+The `self-introduction-review` skill scores a candidate's interview self-introduction (audio or text) against the company's 10-part structure for Trainers and AMs: covered/missing parts, a part-by-part and overall /100 score with a band, evidence, and prioritized fixes. It is gated by sign-in: its first step calls the read-only `list_dimensions` tool, and it stops with an authentication prompt if the connector is not authorized. This is a soft gate (skill text is not secret); real access control is the MCP OAuth. Weights, bands and hard checks in `references/rubric.md` are a proposed convention pending official company values. The report ends with final improvement advice (priority fixes, interview hook, spoken expression, re-recording checklist). For audio it uses a locally installed transcriber (such as `mlx_whisper`) and asks before installing one; where none is available it tells the user how to get a transcript.
+
+Example request: "Use self-introduction-review to score this candidate's self-introduction recording." Slash command: `/marketing-data-warehouse:self-introduction-review`.
 
 ## Bundled agent
 

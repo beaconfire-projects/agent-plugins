@@ -5,7 +5,7 @@ description: Score and coach a candidate's interview self-introduction (spoken a
 
 # Self-introduction review (10-part standard)
 
-Audience: Trainers and AMs. Input: one candidate's self-introduction as an audio recording or as text. Output: an objective, evidence-based scorecard and improvement plan. Do not rewrite the candidate's story from scratch; judge what was actually said.
+Audience: Trainers and AMs only (not for candidates to self-check). Input: one candidate's self-introduction as an audio recording or as text. Output: an objective, evidence-based scorecard and improvement plan. Do not rewrite the candidate's story from scratch; judge what was actually said.
 
 ## Step 0 — Sign-in gate (always first)
 
@@ -39,6 +39,13 @@ Read `references/rubric.md` and follow it exactly: the 10 parts, per-part criter
 - Never invent facts, metrics, tools, ownership, or dates, and never penalize the candidate for experience they may have but did not say; say "not stated". Do not infer from accent or name.
 - Be objective. Do not inflate scores to be encouraging; do not use a bare "good/bad" without evidence.
 
+Coaching checks for the improvement advice (they feed the advice and the overall-quality row; they never add or remove parts):
+
+- **Hook:** is there a concrete reason for the interviewer to ask the next question (a challenge, decision, tradeoff or outcome from the candidate's own work), specific, credible and early enough? Name the follow-up question it would invite. If weak or absent, suggest one or two natural spoken lines built only from facts the candidate stated; where a crucial fact is missing, say what to confirm first. No clickbait, exaggeration, or a teaser that hides the basic project summary.
+- **Business first:** the setting and problem come before frameworks and platforms. For each named technology, check whether the candidate says what problem it solved or why it was used; a bare stack list explains nothing. Only recommend keywords the candidate's own account supports; never insert attractive terms the candidate did not say. Distinguish scale or reach (events per day, users) from a demonstrated outcome.
+- **Ownership wording:** "I" for the candidate's real decisions and results, "we" for real team work. Flag repeated "we" only where it hides the candidate's contribution; never turn a team achievement into a solo one. Wording like "familiar with" vs "built/owned" signals different levels: suggest stronger verbs only when the account supports that level.
+- **Spoken expression:** note comprehension problems (long lead-ins, chronology before the point, filler repetition, unexplained jargon, vague pronouns, abrupt transitions). Judge pace, pauses and natural flow only if the original audio or reliable acoustic observations are actually available; a transcript alone cannot show fluency, so mark delivery "not assessed". Ground feedback in specific moments, not accent or an assumption about non-native speech; code-switching is not an error by itself.
+
 ## Step 3 — Report
 
 Write in the requester's language (default Chinese); keep quotes and sample wording in the language the candidate used. Use this order, concise and table-first:
@@ -47,8 +54,12 @@ Write in the requester's language (default Chinese); keep quotes and sample word
 2. **Part checklist table:** `# | Part | Status | Score | Evidence / what is missing`, all 10 parts plus the overall-quality row.
 3. **Covered vs missing:** two short lists.
 4. **Strengths:** at most 3, each with evidence.
-5. **Priority fixes:** 3–5 items ordered by score gain, each with what was heard, why it loses points, and a one-to-two-sentence spoken fix built only from facts the candidate stated (mark unknown facts `[confirm]`).
-6. **Hard-check flags:** any that triggered (see rubric).
+5. **Hard-check flags:** any that triggered (see rubric).
+6. **Final improvement advice:** the closing section for the Trainer/AM to act on and pass to the candidate.
+   - *Priority fixes:* 3–5 items ordered by score gain, each with what was heard (quote or timestamp), why it loses points, and a one-to-two-sentence spoken fix built only from facts the candidate stated (mark unknown facts `[confirm]`).
+   - *Hook:* whether one exists, the follow-up question it invites, and a suggested line.
+   - *Spoken expression:* wording and ownership issues; delivery marked "not assessed" when only a transcript was available.
+   - *Re-recording checklist:* 3–5 short items the candidate can check before the next take.
 7. **Scope notes:** input type, duration if known, what was not assessed.
 8. Offer the full transcript or a corrected-structure outline on request; include the transcript only if asked or for audio input when short.
 
