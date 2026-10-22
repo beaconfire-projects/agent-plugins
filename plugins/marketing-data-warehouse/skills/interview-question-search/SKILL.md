@@ -23,9 +23,12 @@ allowed-tools:
 
 ## MCP routing — this environment only
 
-Use only the `marketing-data-warehouse` warehouse server bundled by the `marketing-data-warehouse` plugin.
-In Claude Code it is registered as `plugin:marketing-data-warehouse:marketing-data-warehouse`.
-Short tool names elsewhere in this skill are aliases for these exact tools:
+Use only a connector of this environment: one whose name is exactly `marketing-data-warehouse`. That is either this plugin's own
+connector (`plugin:marketing-data-warehouse:marketing-data-warehouse`) or a plain connector of the same exact name, as in the web app or Cowork, where
+tool identifiers may be opaque IDs and only the connector name tells them apart. When more than one qualifies,
+prefer this plugin's own. If you cannot tell which connector a tool belongs to, treat it as not matching.
+In Claude Code, short tool names elsewhere in this skill are aliases for these exact tools; in other
+environments use the same-named tool of the qualifying connector:
 
 | Short name | Required tool |
 |---|---|
@@ -40,11 +43,11 @@ Short tool names elsewhere in this skill are aliases for these exact tools:
 | `export_interview_questions` | `mcp__plugin_marketing-data-warehouse_marketing-data-warehouse__export_interview_questions` |
 | `get_data_quality_summary` | `mcp__plugin_marketing-data-warehouse_marketing-data-warehouse__get_data_quality_summary` |
 
-Before calling, confirm the required tool is registered under this server.
+Before calling, confirm the required tool is registered on a qualifying connector.
 If missing, disconnected, unauthorized or failed, stop the warehouse operation
 and report the connection/tool problem; ask to enable, authenticate or reload
-this plugin as appropriate. Never substitute a same-named tool from another
-plugin, a bare/unscoped server, or the other environment. Do not retry against
+this plugin as appropriate. Never use a connector whose name contains `-dev` (such as `marketing-data-warehouse-dev`), or any connector with another name,
+even if it exposes a same-named tool. Do not retry against
 another warehouse, merge its results, or change MCP configuration to bypass this
 rule. A request for another environment must use that environment's skill instead.
 The `allowed-tools` header pre-approves only the listed tool calls; it does not
