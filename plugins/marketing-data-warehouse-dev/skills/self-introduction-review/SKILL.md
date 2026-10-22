@@ -20,7 +20,10 @@ Never show the user the tool's output; the call only verifies sign-in.
 
 - Accept audio (any format the environment can decode) or pasted/attached text. If neither is provided, ask only for the candidate's self-introduction.
 - Do not ask for a JD, resume, or target role. Ask nothing else unless the input is unusable.
-- Audio: transcribe with an available transcription capability, near-verbatim, with timestamps when offered; mark `[unclear]`; never fill gaps from an expected script. If the audio cannot be decoded or transcribed, say so and ask for a compatible file or pasted text.
+- Audio: transcribe with an available transcription capability, near-verbatim, with timestamps when offered; mark `[unclear]`; never fill gaps from an expected script. If the audio cannot be decoded or transcribed (for example this environment has no transcription tool, as in a web chat), stop and reply in the requester's language with this guidance instead of a bare error:
+  1. This environment cannot transcribe the audio, so it cannot be scored directly.
+  2. Get a transcript elsewhere: a meeting tool's own transcript (Zoom, Otter, Feishu Minutes), or locally `mlx_whisper <file> --model mlx-community/whisper-large-v3-turbo --output-format txt` (needs ffmpeg).
+  3. Paste or attach the transcript with timestamps, and keep interviewer and candidate lines distinguishable. A transcript still gets a full structural score; only pace and delivery are "not assessed".
 - If several speakers appear, evaluate only the candidate's prepared introduction. Prompted answers to interviewer follow-ups do not count toward coverage.
 - Text input: delivery, pace and length-in-minutes are "not assessed" unless the user supplies the duration (about 130 spoken words per minute is a rough guide).
 
