@@ -1,6 +1,6 @@
 ---
 name: interview-question-search-dev
-description: Search historical interview questions, interview rounds, technologies and candidate interview history through the interview warehouse. For complete question details, use connected Google Drive to read the exact matched source Docs and preserve their text and images in source order. Do not use Drive to discover or filter interviews. For candidate recommendations, use the candidate-matching-dev skill from this plugin instead.
+description: Search historical interview questions, interview rounds, technologies and candidate interview history through the interview warehouse. For complete question details, use connected Google Drive to read the exact matched source Docs and preserve their text and images in source order. Do not use Drive to discover or filter interviews. Also use for candidate recommendations and resume-index refreshes through the candidate matching workflow below.
 allowed-tools:
   - mcp__plugin_marketing-data-warehouse-dev_marketing-data-warehouse-dev__list_dimensions
   - mcp__plugin_marketing-data-warehouse-dev_marketing-data-warehouse-dev__resolve_terms
@@ -168,6 +168,31 @@ assume.**
 
 ---
 
+## Candidate matching
+
+Candidate recommendation and resume refresh use the dedicated
+[candidate-matching-dev skill](../candidate-matching-dev/SKILL.md), which owns their input,
+status, evidence and presentation rules. Follow that skill rather than treating
+matching as question search.
+
+For initial and follow-up/re-run matching results, start with one complete table:
+**排名 | 候选人 | 综合分 | 推荐理由 | 原始简历 | 风险**.
+Use server rank, **name (person_id)** (including TEMP IDs), returned `overall`,
+1–2 short evidence-grounded matching points, and brief risk labels (including
+low-match alternatives). Do not describe question exposure as mastery; show
+`证据不足` if the returned evidence cannot support a matching point. Link only an
+actual original resume URL returned for that candidate; otherwise show `未提供`.
+Follow the matching skill's `recommended_resume` and explicit resume provenance
+rules: do not select a "best" file from references, imply an unscored link was
+scored, guess URL fields/URLs, or add history/search/Drive/ingestion calls to fill
+these columns. Follow with at most two short sentences for material warnings,
+shortfalls and coverage/location notices. Expand score explanations, supporting
+evidence and resume analysis only when explicitly requested. Preserve the
+matching skill's status handling; do not invent rows when no candidates return.
+`ingest_resumes` remains an explicitly requested admin refresh, never a search step.
+
+---
+
 ## Vocabulary
 
 **Tracks** — a hard filter; `track='JAVA'` can never return a Python interview.
@@ -197,7 +222,8 @@ why. Do not drop the row or substitute another.
 | "Someone who knows ETL and Snowflake" | `tags=['ETL','Snowflake']` — report OR and AND counts |
 | "Java engineer who touched DevOps" | `track='JAVA', tags=['Docker','Kubernetes']` |
 | "What did we ask this candidate?" | `get_candidate_history`, then `get_interview_document` |
-| "Who fits this JD?" | use this plugin's `candidate-matching-dev` skill — `match_candidates` |
+| "Who fits this JD?" | Follow `candidate-matching-dev`: rank / name + ID / overall score / brief rationale / original resume link (or 未提供) / risks table first, then a brief location/coverage notice |
+| "We uploaded new resumes" | Follow `candidate-matching-dev` for an explicitly requested `ingest_resumes` admin refresh; re-run matching only if requested |
 | "Excel for Randstad/Vanguard DE since January" | search → summary → confirm → export |
 
 **Clarify only when it changes the answer.** A request naming a vendor, client or technology is
