@@ -55,13 +55,13 @@ claude --plugin-dir ./plugins/mgt
 /plugin install marketing-data-warehouse@beaconfireinc
 ```
 
-验证中的面试自我介绍录音评估 Skill 位于开发版插件。要在当前 Claude Code 环境使用其命令，需先安装或更新开发版插件（仅提交到仓库不会自动安装到已有会话）：
+面试自我介绍评分 Skill（`self-introduction-review`，供 Trainer / AM 使用，需登录）同时在开发版和正式版插件中。要在当前 Claude Code 环境使用其命令，需先安装或更新插件（仅提交到仓库不会自动安装到已有会话）：
 
 ```text
 /plugin install marketing-data-warehouse-dev@beaconfireinc
 ```
 
-然后上传录音，调用 `/marketing-data-warehouse-dev:interview-introduction-review`。
+然后上传录音或文字稿，调用 `/marketing-data-warehouse-dev:self-introduction-review`（正式版为 `/marketing-data-warehouse:self-introduction-review`）。
 
 本地加载：
 
