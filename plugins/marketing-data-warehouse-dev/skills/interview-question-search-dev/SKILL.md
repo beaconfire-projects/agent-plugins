@@ -1,14 +1,65 @@
 ---
-name: interview-question-search
-description: Search historical interview questions, interview rounds, technologies and candidate interview history through the interview warehouse. For complete question details, use connected Google Drive to read the exact matched source Docs and preserve their text and images in source order. Do not use Drive to discover or filter interviews. For candidate recommendations, use the candidate-matching skill instead.
+name: interview-question-search-dev
+description: Search historical interview questions, interview rounds, technologies and candidate interview history through the interview warehouse. For complete question details, use connected Google Drive to read the exact matched source Docs and preserve their text and images in source order. Do not use Drive to discover or filter interviews. For candidate recommendations, use the candidate-matching-dev skill from this plugin instead.
+allowed-tools:
+  - mcp__plugin_marketing-data-warehouse-dev_marketing-data-warehouse-dev__list_dimensions
+  - mcp__plugin_marketing-data-warehouse-dev_marketing-data-warehouse-dev__resolve_terms
+  - mcp__plugin_marketing-data-warehouse-dev_marketing-data-warehouse-dev__search_interview_questions
+  - mcp__plugin_marketing-data-warehouse-dev_marketing-data-warehouse-dev__list_skills
+  - mcp__plugin_marketing-data-warehouse-dev_marketing-data-warehouse-dev__resolve_skills
+  - mcp__plugin_marketing-data-warehouse-dev_marketing-data-warehouse-dev__get_interview_document
+  - mcp__plugin_marketing-data-warehouse-dev_marketing-data-warehouse-dev__get_candidate_history
+  - mcp__plugin_marketing-data-warehouse-dev_marketing-data-warehouse-dev__get_question_frequency
+  - mcp__plugin_marketing-data-warehouse-dev_marketing-data-warehouse-dev__export_interview_questions
+  - mcp__plugin_marketing-data-warehouse-dev_marketing-data-warehouse-dev__get_data_quality_summary
 ---
 
 # Interview question search
 
 2,574 historical interview documents · 93 vendors · 142 clients, served by the
-`marketing-data-warehouse` MCP connector. Users are recruiters and trainers, not engineers.
+`marketing-data-warehouse-dev` MCP connector. Users are recruiters and trainers, not engineers.
 
 ---
+
+## MCP routing — this environment only
+
+Use only the `marketing-data-warehouse-dev` warehouse server bundled by the `marketing-data-warehouse-dev` plugin.
+In Claude Code it is registered as `plugin:marketing-data-warehouse-dev:marketing-data-warehouse-dev`.
+Short tool names elsewhere in this skill are aliases for these exact tools:
+
+| Short name | Required tool |
+|---|---|
+| `list_dimensions` | `mcp__plugin_marketing-data-warehouse-dev_marketing-data-warehouse-dev__list_dimensions` |
+| `resolve_terms` | `mcp__plugin_marketing-data-warehouse-dev_marketing-data-warehouse-dev__resolve_terms` |
+| `search_interview_questions` | `mcp__plugin_marketing-data-warehouse-dev_marketing-data-warehouse-dev__search_interview_questions` |
+| `list_skills` | `mcp__plugin_marketing-data-warehouse-dev_marketing-data-warehouse-dev__list_skills` |
+| `resolve_skills` | `mcp__plugin_marketing-data-warehouse-dev_marketing-data-warehouse-dev__resolve_skills` |
+| `get_interview_document` | `mcp__plugin_marketing-data-warehouse-dev_marketing-data-warehouse-dev__get_interview_document` |
+| `get_candidate_history` | `mcp__plugin_marketing-data-warehouse-dev_marketing-data-warehouse-dev__get_candidate_history` |
+| `get_question_frequency` | `mcp__plugin_marketing-data-warehouse-dev_marketing-data-warehouse-dev__get_question_frequency` |
+| `export_interview_questions` | `mcp__plugin_marketing-data-warehouse-dev_marketing-data-warehouse-dev__export_interview_questions` |
+| `get_data_quality_summary` | `mcp__plugin_marketing-data-warehouse-dev_marketing-data-warehouse-dev__get_data_quality_summary` |
+
+Before calling, confirm the required tool is registered under this server.
+If missing, disconnected, unauthorized or failed, stop the warehouse operation
+and report the connection/tool problem; ask to enable, authenticate or reload
+this plugin as appropriate. Never substitute a same-named tool from another
+plugin, a bare/unscoped server, or the other environment. Do not retry against
+another warehouse, merge its results, or change MCP configuration to bypass this
+rule. A request for another environment must use that environment's skill instead.
+The `allowed-tools` header pre-approves only the listed tool calls; it does not
+make other tools unavailable. Follow the routing rules above, and still require
+the user request/confirmation specified below before any refresh or export.
+
+For candidate recommendations or resume refresh, use this plugin's
+[candidate-matching-dev skill](../candidate-matching-dev/SKILL.md), never the
+other environment's matching skill. If delegating discovery, use this plugin's
+`marketing-data-warehouse-dev:interview-question-analyst` agent and preserve the environment boundary.
+The authorized Google Drive connection remains allowed only for reading the exact
+source files returned by this warehouse, as described in
+[the source-image workflow](references/source-images.md). It is not a warehouse
+search, candidate-matching or cross-environment fallback.
+
 
 ## Eight rules
 
@@ -22,7 +73,7 @@ original images and display text and images in the same relative positions as th
 This does not require stored image references or `include_images=true` on the warehouse tool.
 
 **2 · If the connector fails, stop.**
-Say *"The interview warehouse isn't responding — the local database may not be running."*
+Say *"The interview warehouse is unavailable — check this environment's connector connection and authentication."*
 Do not replace a failed warehouse search with Drive search or memory. If discovery already
 succeeded but a source Doc or image cannot be read, retain the known questions and source link,
 identify the missing image coverage, and continue the other matched documents.
@@ -146,7 +197,7 @@ why. Do not drop the row or substitute another.
 | "Someone who knows ETL and Snowflake" | `tags=['ETL','Snowflake']` — report OR and AND counts |
 | "Java engineer who touched DevOps" | `track='JAVA', tags=['Docker','Kubernetes']` |
 | "What did we ask this candidate?" | `get_candidate_history`, then `get_interview_document` |
-| "Who fits this JD?" | use the `candidate-matching` skill — `match_candidates` |
+| "Who fits this JD?" | use this plugin's `candidate-matching-dev` skill — `match_candidates` |
 | "Excel for Randstad/Vanguard DE since January" | search → summary → confirm → export |
 
 **Clarify only when it changes the answer.** A request naming a vendor, client or technology is

@@ -42,7 +42,25 @@ The plugin is configured with the production MCP endpoint:
 https://marketing-data-warehouse.beaconfireinc.com/mcp
 ```
 
-Open the MCP panel and authenticate `marketing-data-warehouse` if authentication is required.
+Open the MCP panel and authenticate `plugin:marketing-data-warehouse:marketing-data-warehouse` if authentication is required.
+
+## MCP environment routing
+
+Warehouse skills bind to this plugin's `marketing-data-warehouse` server from `.mcp.json`.
+Claude Code registers it as `plugin:marketing-data-warehouse:marketing-data-warehouse` and exposes tools as
+`mcp__plugin_marketing-data-warehouse_marketing-data-warehouse__<tool>`. Use `/mcp` to verify the server and
+available tools after installing or reloading the plugin. A missing tool,
+authorization failure or outage must not trigger fallback to the other environment
+or a separately configured server with the same tool names.
+
+The analyst agent's `tools` allowlist uses only these environment-specific tool
+names. Each warehouse skill also declares its environment-specific tools in the
+`allowed-tools` YAML header. This pre-approves those calls; it does not disable
+other tools or remove the skill's user-confirmation requirements for refreshes
+and exports. Skill routing text is not a client-wide security boundary. For hard
+environment isolation, use separate client sessions/configurations or client
+permission policies that exclude the other warehouse. The connected Google Drive workflow remains limited
+to reading exact matched source documents, not warehouse discovery or fallback.
 
 ## Configuration and secrets
 

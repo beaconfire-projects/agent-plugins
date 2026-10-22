@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "marketing-data-warehouse": {
+    "marketing-data-warehouse-dev": {
       "type": "http",
       "url": "https://marketing-data-warehouse-dev.beaconfireinc.com/mcp"
     }

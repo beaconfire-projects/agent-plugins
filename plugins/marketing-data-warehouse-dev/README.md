@@ -4,15 +4,15 @@ This private Claude Code plugin connects to the Beaconfireinc Marketing Data War
 
 ## Bundled skills
 
-The `interview-question-search` skill searches interview questions, candidates, vendors, clients, rounds and technologies through the Marketing Data Warehouse MCP connector. Full question details also read the exact matched source Docs through the user's connected Google Drive plugin and preserve original text/image order in chat. This does not require warehouse image-reference backfill.
+The `interview-question-search-dev` skill searches interview questions, candidates, vendors, clients, rounds and technologies through the Marketing Data Warehouse MCP connector. Full question details also read the exact matched source Docs through the user's connected Google Drive plugin and preserve original text/image order in chat. This does not require warehouse image-reference backfill.
 
-The `candidate-matching` skill covers `match_candidates` (shortlisting trainees for a job description with evidence) and `ingest_resumes` (refreshing the resume index) through the same connector.
+The `candidate-matching-dev` skill covers `match_candidates` (shortlisting trainees for a job description with evidence) and `ingest_resumes` (refreshing the resume index) through the same connector.
 
-The `interview-introduction-review` skill reviews a trainee's practice audio recording before a client interview. It asks only for audio (`.m4a` is convenient; other decodable audio formats work), evaluates the self-introduction's hook, business-first project story, and ownership language, and includes a near-verbatim transcript when transcription is available. Spoken fluency and naturalness require actual audio access, not just a transcript. It does not require the warehouse MCP server; audio processing depends on capabilities available in the host environment.
+The `interview-introduction-review-dev` skill reviews a trainee's practice audio recording before a client interview. It asks only for audio (`.m4a` is convenient; other decodable audio formats work), evaluates the self-introduction's hook, business-first project story, and ownership language, and includes a near-verbatim transcript when transcription is available. Spoken fluency and naturalness require actual audio access, not just a transcript. It does not require the warehouse MCP server; audio processing depends on capabilities available in the host environment.
 
-Example request: "Use interview-introduction-review to review this attached practice recording and give me a trainee-facing report and transcript."
+Example request: "Use interview-introduction-review-dev to review this attached practice recording and give me a trainee-facing report and transcript."
 
-To invoke the slash command, make `marketing-data-warehouse-dev@beaconfireinc` version 0.6.1 available in the same Claude Code environment. A repository commit alone does not install the plugin into an existing conversation. Then attach an audio recording and invoke `/marketing-data-warehouse-dev:interview-introduction-review`.
+To invoke the slash command, make `marketing-data-warehouse-dev@beaconfireinc` version 0.6.4 or later available in the same Claude Code environment. A repository commit alone does not install the plugin into an existing conversation. Then attach an audio recording and invoke `/marketing-data-warehouse-dev:interview-introduction-review-dev`.
 
 ## Bundled agent
 
@@ -20,14 +20,14 @@ The `interview-question-analyst` agent is scoped to warehouse tools. Delegate di
 
 ## Original images in full question details
 
-Follow `skills/interview-question-search/references/source-images.md`. Python 3's standard-library helper archives original image bytes to `~/Documents/interview-question-archives/<run-id>/`, emits source-ordered Markdown with absolute image paths, and records coverage without storing temporary Google image URLs. Saving is local; no Drive files are created or shared. Files remain viewable on the same computer while the archive exists.
+Follow `skills/interview-question-search-dev/references/source-images.md`. Python 3's standard-library helper archives original image bytes to `~/Documents/interview-question-archives/<run-id>/`, emits source-ordered Markdown with absolute image paths, and records coverage without storing temporary Google image URLs. Saving is local; no Drive files are created or shared. Files remain viewable on the same computer while the archive exists.
 
 The Google Drive plugin must be available and authorized for the matched documents. Missing access, unsupported objects and download limits leave explicit placeholders; text-only results must not be labelled complete. The output preserves reading order and table cell boundaries, not Google Docs pagination or floating-image coordinates. Visual inspection in the final Codex conversation is required to verify display.
 
 Run offline tests from this plugin directory:
 
 ```sh
-python3 -B -m unittest discover -s skills/interview-question-search/tests -v
+python3 -B -m unittest discover -s skills/interview-question-search-dev/tests -v
 ```
 
 ## Export delivery
@@ -48,7 +48,28 @@ The plugin is configured with the development MCP endpoint:
 https://marketing-data-warehouse-dev.beaconfireinc.com/mcp
 ```
 
-Open the MCP panel and authenticate `marketing-data-warehouse` if authentication is required.
+Open the MCP panel and authenticate `plugin:marketing-data-warehouse-dev:marketing-data-warehouse-dev` if authentication is required.
+
+## MCP environment routing
+
+Warehouse skills bind to this plugin's `marketing-data-warehouse-dev` server from `.mcp.json`.
+Claude Code registers it as `plugin:marketing-data-warehouse-dev:marketing-data-warehouse-dev` and exposes tools as
+`mcp__plugin_marketing-data-warehouse-dev_marketing-data-warehouse-dev__<tool>`. Use `/mcp` to verify the server and
+available tools after installing or reloading the plugin. A missing tool,
+authorization failure or outage must not trigger fallback to the other environment
+or a separately configured server with the same tool names.
+
+The analyst agent's `tools` allowlist uses only these environment-specific tool
+names. Each warehouse skill also declares its environment-specific tools in the
+`allowed-tools` YAML header. This pre-approves those calls; it does not disable
+other tools or remove the skill's user-confirmation requirements for refreshes
+and exports. Skill routing text is not a client-wide security boundary. For hard
+environment isolation, use separate client sessions/configurations or client
+permission policies that exclude the other warehouse. The connected Google Drive workflow remains limited
+to reading exact matched source documents, not warehouse discovery or fallback.
+
+The audio-only `interview-introduction-review-dev` skill does not call either
+warehouse connector.
 
 ## Configuration and secrets
 

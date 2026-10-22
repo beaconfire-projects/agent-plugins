@@ -1,11 +1,19 @@
 ---
-name: interview-introduction-review
+name: interview-introduction-review-dev
 description: Review an audio recording of a trainee's pre-interview self-introduction and project story, transcribe it, and coach the trainee on clarity, personal contribution, and an authentic hook that invites follow-up questions. Use when an AM, AA, trainer, or trainee asks to evaluate a practice recording before a client interview.
 ---
 
 # Interview introduction review
 
 Review what the trainee actually says in a practice recording. Produce a report the trainee can use to revise and record again. The audio recording is the only required input. This skill does not require the warehouse MCP server.
+
+## Tool boundary
+
+Use the host's available audio/transcription capabilities for the supplied recording.
+Do not call any warehouse MCP tools, in development or production, to enrich or
+verify this review. Do not retrieve candidate histories, resumes or interview
+questions as substitutes for audio. Missing audio capability is not a reason to
+switch connectors; report the limitation and request compatible audio support.
 
 ## Input and transcription
 

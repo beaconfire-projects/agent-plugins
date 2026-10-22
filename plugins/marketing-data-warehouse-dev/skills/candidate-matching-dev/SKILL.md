@@ -1,6 +1,10 @@
 ---
-name: candidate-matching
-description: Recommend candidates for a job description or reference interview questions, or refresh the resume index after uploads. Use for "who fits this JD?", shortlisting people for a position, or finding candidates with related interview-question experience. A recruiter asking who fits wants a compact ranked table first: rank, candidate, overall score and risks. Keep commentary minimal; detailed evidence is on request.
+name: candidate-matching-dev
+description: "Recommend candidates for a job description or reference interview questions, or refresh the resume index after uploads. Use for \"who fits this JD?\", shortlisting people for a position, or finding candidates with related interview-question experience. A recruiter asking who fits wants a compact ranked table first: rank, candidate, overall score and risks. Keep commentary minimal; detailed evidence is on request."
+allowed-tools:
+  - mcp__plugin_marketing-data-warehouse-dev_marketing-data-warehouse-dev__match_candidates
+  - mcp__plugin_marketing-data-warehouse-dev_marketing-data-warehouse-dev__ingest_resumes
+  - mcp__plugin_marketing-data-warehouse-dev_marketing-data-warehouse-dev__get_candidate_history
 ---
 
 # Candidate matching
@@ -14,6 +18,29 @@ The nullable controls have effective matching defaults of
 conversion; invalid or less-than-one limits fall back to five, and larger values
 are capped at five. The final cap is `min(effective limit, MATCH_FINAL_TOP_N, 5)`;
 server configuration may lower it. Fewer than five, including zero, is valid.
+
+## MCP routing — this environment only
+
+Use only the `marketing-data-warehouse-dev` warehouse server bundled by the `marketing-data-warehouse-dev` plugin.
+In Claude Code it is registered as `plugin:marketing-data-warehouse-dev:marketing-data-warehouse-dev`.
+Short tool names elsewhere in this skill are aliases for these exact tools:
+
+| Short name | Required tool |
+|---|---|
+| `match_candidates` | `mcp__plugin_marketing-data-warehouse-dev_marketing-data-warehouse-dev__match_candidates` |
+| `ingest_resumes` | `mcp__plugin_marketing-data-warehouse-dev_marketing-data-warehouse-dev__ingest_resumes` |
+| `get_candidate_history` | `mcp__plugin_marketing-data-warehouse-dev_marketing-data-warehouse-dev__get_candidate_history` |
+
+Before calling, confirm the required tool is registered under this server.
+If missing, disconnected, unauthorized or failed, stop the warehouse operation
+and report the connection/tool problem; ask to enable, authenticate or reload
+this plugin as appropriate. Never substitute a same-named tool from another
+plugin, a bare/unscoped server, or the other environment. Do not retry against
+another warehouse, merge its results, or change MCP configuration to bypass this
+rule. A request for another environment must use that environment's skill instead.
+The `allowed-tools` header pre-approves only the listed tool calls; it does not
+make other tools unavailable. Follow the routing rules above, and still require
+the user request/confirmation specified below before any refresh or export.
 
 ## Default reply: ranked table first, minimal commentary
 
@@ -103,7 +130,7 @@ enabling the retired engine switch or silently discard reference inputs.
 - **Automatic references:** With a JD, no explicit references and automatic
   discovery enabled, the server discovers up to ten similar current-JD positions
   at normalized similarity
-  >=0.70 and includes any supplied position when resolving questions. This is
+  >=0.50 and includes any supplied position when resolving questions. This is
   not the candidate recommendation threshold. A position without a JD can use
   its own questions only when automatic references are enabled.
 - **Questions only:** Without a JD, usable question text or interview references
