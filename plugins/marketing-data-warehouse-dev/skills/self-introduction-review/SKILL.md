@@ -40,6 +40,7 @@ Read `references/rubric.md` and follow it exactly: the 10 parts, per-part criter
 - Parts 1–5 are about the project; parts 6–10 are about the candidate. Penalize mixing them, going backwards in the narrative, and technology lists that replace business explanation.
 - Team results must be credited to the team (part 5); the candidate's own result belongs in part 8. Flag any team result presented as personal.
 - Challenges (part 9) should be 2–3 one-line hooks that invite questions, not full solutions.
+- **Required AI element:** the introduction must say how the candidate uses AI in their own work (AI-based SDLC, copilot-assisted development, using AI to bootstrap development and testing, or ChatGPT/Claude/Gemini/Copilot doing a named task). Score it per the rubric. Building an AI product is not the same as using AI in one's work. If missing or weak, deduct and make it a priority fix: say it is required and give a spoken line using only stated facts, with `[confirm]` for the tool and task.
 - Never invent facts, metrics, tools, ownership, or dates, and never penalize the candidate for experience they may have but did not say; say "not stated". Do not infer from accent or name.
 - Be objective. Do not inflate scores to be encouraging; do not use a bare "good/bad" without evidence.
 
@@ -55,7 +56,7 @@ Coaching checks for the improvement advice (they feed the advice and the overall
 Write in the requester's language (default Chinese); keep quotes and sample wording in the language the candidate used. Use this order, concise and table-first:
 
 1. **Verdict line:** total score /100, band, one-sentence reason.
-2. **Part checklist table:** `# | Part | Status | Score | Evidence / what is missing`, all 10 parts plus the overall-quality row.
+2. **Part checklist table:** `# | Part | Status | Score | Evidence / what is missing`, all 10 parts plus the required-AI row and the overall-quality row.
 3. **Covered vs missing:** two short lists.
 4. **Strengths:** at most 3, each with evidence.
 5. **Hard-check flags:** any that triggered (see rubric).
