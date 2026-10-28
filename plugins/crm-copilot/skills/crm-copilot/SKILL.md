@@ -169,6 +169,17 @@ If there are no structured changes, use `customer_record_communication`.
 
 ## 2. Extract the complete draft before calling tools
 
+Every primary customer has a required `customerType` of `ICC` or `BANK`.
+Extract it whenever the user states it. For a new customer, if it cannot be
+determined from the user's message, ask the user to choose ICC or BANK before
+calling `customer_create_precheck`; never default a new customer to ICC.
+Related-person drafts do not require this business customer type. For updates
+and merges, preserve the stored type when the user did not change it.
+
+For customer searches, pass an explicit `customerType` filter when requested.
+This applies to `customer_query`, `company_customer_query`, recommendation
+conditions, and location-search conditions. Omitted type means both types.
+
 Preserve the user's complete original message as `sourceText`. Extract all facts into the draft instead of putting structured facts into a general note:
 
 `sourceText` is required for every customer mutation. Pass the same complete,
@@ -209,7 +220,7 @@ primary customer's preview is shown.
 
 ### Normalization contract (send only persistable draft fields)
 
-Use the field names accepted by `CustomerDraft`: `displayName`,
+Use the field names accepted by `CustomerDraft`: `displayName`, `customerType`,
 `firstName`, `lastName`, `gender`, `phones`, `emails`, `hasBusiness`,
 `isConnected`, `hasReferral`, `employments`, `locations`, `relations`,
 `notes`, `interests`, and `importantDates`. Preserve all supplied phone/email
@@ -383,7 +394,10 @@ create/update stays in the CRM application.
 ### Recommendations and location search
 
 - Use `customer_recommend` once to validate the conditions, query the ranked
-  customers, and open the recommendation card UI. Do not call
+  contacts, and open the recommendation card UI. Recommendation candidates
+  may be primary customers or `RELATED_PERSON` contacts. The primary-customer
+  restriction used by existence/create/merge checks does not apply here; do
+  not omit someone merely because they are a related person. Do not call
   `customer_get` or `customer_recommend_view` before the cards are shown.
   `customer_recommend_view` is retained only as a compatibility alias for a
   server that explicitly returns it as `nextAction`; it is not part of the
@@ -394,7 +408,9 @@ create/update stays in the CRM application.
 - `customer_location_search` is the UI-less gate. Only after an exact match
   call `customer_location_results`; an unknown location is a correction prompt,
   not an empty result page.
-- Cards should show name, level, phone, address, work organization/job title, and a concise explanation of what matched. Clicking a card goes to `customer_get` detail.
+- Cards should show name, relation-person status when applicable, level, phone,
+  address, work organization/job title, and a concise explanation of what
+  matched. Clicking a card goes to `customer_get` detail.
 
 ## 7. Relationships, notes, level, and reminders
 
