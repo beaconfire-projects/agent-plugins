@@ -169,6 +169,17 @@ If there are no structured changes, use `customer_record_communication`.
 
 ## 2. Extract the complete draft before calling tools
 
+Every primary customer has a required `customerType` of `ICC` or `BANK`.
+Extract it whenever the user states it. For a new customer, if it cannot be
+determined from the user's message, ask the user to choose ICC or BANK before
+calling `customer_create_precheck`; never default a new customer to ICC.
+Related-person drafts do not require this business customer type. For updates
+and merges, preserve the stored type when the user did not change it.
+
+For customer searches, pass an explicit `customerType` filter when requested.
+This applies to `customer_query`, `company_customer_query`, recommendation
+conditions, and location-search conditions. Omitted type means both types.
+
 Preserve the user's complete original message as `sourceText`. Extract all facts into the draft instead of putting structured facts into a general note:
 
 `sourceText` is required for every customer mutation. Pass the same complete,
@@ -209,7 +220,7 @@ primary customer's preview is shown.
 
 ### Normalization contract (send only persistable draft fields)
 
-Use the field names accepted by `CustomerDraft`: `displayName`,
+Use the field names accepted by `CustomerDraft`: `displayName`, `customerType`,
 `firstName`, `lastName`, `gender`, `phones`, `emails`, `hasBusiness`,
 `isConnected`, `hasReferral`, `employments`, `locations`, `relations`,
 `notes`, `interests`, and `importantDates`. Preserve all supplied phone/email
