@@ -394,7 +394,10 @@ create/update stays in the CRM application.
 ### Recommendations and location search
 
 - Use `customer_recommend` once to validate the conditions, query the ranked
-  customers, and open the recommendation card UI. Do not call
+  contacts, and open the recommendation card UI. Recommendation candidates
+  may be primary customers or `RELATED_PERSON` contacts. The primary-customer
+  restriction used by existence/create/merge checks does not apply here; do
+  not omit someone merely because they are a related person. Do not call
   `customer_get` or `customer_recommend_view` before the cards are shown.
   `customer_recommend_view` is retained only as a compatibility alias for a
   server that explicitly returns it as `nextAction`; it is not part of the
@@ -405,7 +408,9 @@ create/update stays in the CRM application.
 - `customer_location_search` is the UI-less gate. Only after an exact match
   call `customer_location_results`; an unknown location is a correction prompt,
   not an empty result page.
-- Cards should show name, level, phone, address, work organization/job title, and a concise explanation of what matched. Clicking a card goes to `customer_get` detail.
+- Cards should show name, relation-person status when applicable, level, phone,
+  address, work organization/job title, and a concise explanation of what
+  matched. Clicking a card goes to `customer_get` detail.
 
 ## 7. Relationships, notes, level, and reminders
 
