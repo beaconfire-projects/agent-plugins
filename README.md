@@ -6,10 +6,11 @@ Beaconfireinc 内部 Claude Code 插件市场，当前提供以下插件：
 - `crm-reminder-dev`：连接 Beaconfireinc CRM Copilot 开发环境，用于 CRM 客户查询、客户更新和提醒管理。
 - `crm-copilot`：连接 Beaconfireinc CRM Copilot V3 QA MCP 服务，按 V3 流程处理客户、关系、地址、组织、提醒、推荐和证据。
 - `marketing-data-warehouse`：连接 Beaconfireinc Marketing Data Warehouse MCP 服务。
+- `marketing-system-dev`：连接 Beaconfireinc Marketing System MCP 服务，用 `staffing` Skill 修改面试时间/结果、创建 Onboarding、修改入职时间和学员信息。
 
 - GitHub：<https://github.com/beaconfire-projects/agent-plugins>
 - Marketplace：`beaconfireinc`
-- 当前插件：`mgt`、`crm-reminder-dev`、`crm-copilot`、`marketing-data-warehouse`
+- 当前插件：`mgt`、`crm-reminder-dev`、`crm-copilot`、`marketing-data-warehouse`、`marketing-system-dev`
 - MGT MCP endpoint：`https://api-mcp-oauth-dev.beaconfireinc.com/mcp`
 - Marketing Data Warehouse MCP endpoint：`https://marketing-data-warehouse-dev.beaconfireinc.com/mcp`
 
