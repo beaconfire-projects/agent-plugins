@@ -1,13 +1,13 @@
 ---
 name: self-introduction-review
-description: Score and coach a candidate's interview self-introduction (spoken audio or text) against Beaconfire's 10-part structure. Reports which parts are covered or missing, a part-by-part score, an overall score and band, objective evidence, and concrete fixes. Use when a Trainer or AM wants to check whether a candidate's self-introduction meets company standard. Requires a signed-in Beaconfire account.
+description: Score and coach a candidate's interview self-introduction (spoken audio or text) against Beaconfire's 2.5–3 minute, 10-part guideline. Reports which parts are covered or missing, a part-by-part score, timing tier, an overall score and band, objective evidence, and concrete fixes. Use when a Trainer or AM wants to check whether an existing self-introduction meets company standard. To draft a new one use self-introduction-generate. Requires a signed-in Beaconfire account.
 allowed-tools:
   - mcp__plugin_marketing-data-warehouse_marketing-data-warehouse__list_dimensions
 ---
 
-# Self-introduction review (10-part standard)
+# Self-introduction review (2.5–3 minute, 10-part guideline)
 
-Audience: Trainers and AMs only (not for candidates to self-check). Input: one candidate's self-introduction as an audio recording or as text. Output: an objective, evidence-based scorecard and improvement plan. Do not rewrite the candidate's story from scratch; judge what was actually said.
+Audience: Trainers and AMs only (not for candidates to self-check). Input: one candidate's self-introduction as an audio recording or as text, in English. Output: an objective, evidence-based scorecard and improvement plan. Do not rewrite the candidate's story from scratch; judge what was actually said. The standard is `references/guideline.md` (headline first, then expand, hooks, close; 2.5–3 minutes).
 
 ## Step 0 — Sign-in gate (always first)
 
@@ -30,16 +30,18 @@ Never show the user the tool's output; the call only verifies sign-in.
   2. Get a transcript elsewhere, and always name these options: a meeting tool's own transcript (Zoom, Otter, Feishu Minutes), or on the user's own Mac the command `mlx_whisper <file> --model mlx-community/whisper-large-v3-turbo --output-format txt` (needs ffmpeg). Give the CLI command, not a Python script, and do not name a specific Python version.
   3. Paste or attach the transcript with timestamps, and keep interviewer and candidate lines distinguishable. A transcript still gets a full structural score; only pace and delivery are "not assessed".
 - If several speakers appear, evaluate only the candidate's prepared introduction. Prompted answers to interviewer follow-ups do not count toward coverage.
-- Text input: delivery, pace and length-in-minutes are "not assessed" unless the user supplies the duration (about 130 spoken words per minute is a rough guide).
+- Text input: delivery and pace are "not assessed". Length is still scored: use the duration if the user supplies it, otherwise estimate it as words ÷ 130 and say it is an estimate.
 
 ## Step 2 — Evaluate
 
-Read `references/rubric.md` and follow it exactly: the 10 parts, per-part criteria, score levels, weights, bands, and hard checks. Key principles:
+Read `references/guideline.md` and `references/rubric.md` and follow them exactly: the 10 parts, per-part criteria, score levels, weights, timing tiers, bands, and hard checks. Key principles:
 
 - Judge each part as **Covered / Partial / Missing** with evidence: a short quote (with timestamp when available) or an explicit "not found".
-- Parts 1–5 are about the project; parts 6–10 are about the candidate. Penalize mixing them, going backwards in the narrative, and technology lists that replace business explanation.
-- Team results must be credited to the team (part 5); the candidate's own result belongs in part 8. Flag any team result presented as personal.
+- **Headline first:** parts 1–3 (who, latest company and project, core responsibility and what was delivered) must appear in the opening, within roughly the first 40 seconds. Parts 4–8 expand it; penalize going backwards in the narrative and technology lists that replace business explanation.
+- Team results must be credited to the team (part 5); the candidate's own result belongs in part 7. Flag any team result presented as personal.
+- Metrics are optional. Do not penalize a candidate for having no number; flag numbers that are unexplained or unattributed as "needs verification".
 - Challenges (part 9) should be 2–3 one-line hooks that invite questions, not full solutions.
+- Score timing with the rubric's tiers (2:30–3:00 on target; 2:00–4:00 acceptable; 1:30–4:30 off target; outside that is a hard check).
 - **Required AI element:** the introduction must say how the candidate uses AI in their own work (AI-based SDLC, copilot-assisted development, using AI to bootstrap development and testing, or ChatGPT/Claude/Gemini/Copilot doing a named task). Score it per the rubric. Building an AI product is not the same as using AI in one's work. If missing or weak, deduct and make it a priority fix: say it is required and give a spoken line using only stated facts, with `[confirm]` for the tool and task.
 - Never invent facts, metrics, tools, ownership, or dates, and never penalize the candidate for experience they may have but did not say; say "not stated". Do not infer from accent or name.
 - Be objective. Do not inflate scores to be encouraging; do not use a bare "good/bad" without evidence.
@@ -56,7 +58,7 @@ Coaching checks for the improvement advice (they feed the advice and the overall
 Write in the requester's language (default Chinese); keep quotes and sample wording in the language the candidate used. Use this order, concise and table-first:
 
 1. **Verdict line:** total score /100, band, one-sentence reason.
-2. **Part checklist table:** `# | Part | Status | Score | Evidence / what is missing`, all 10 parts plus the required-AI row and the overall-quality row.
+2. **Part checklist table:** `# | Part | Status | Score | Evidence / what is missing`, all 10 parts (AI is part 8) plus the timing-and-concision row (with measured or estimated length and tier) and the overall-quality row.
 3. **Covered vs missing:** two short lists.
 4. **Strengths:** at most 3, each with evidence.
 5. **Hard-check flags:** any that triggered (see rubric).
@@ -66,6 +68,6 @@ Write in the requester's language (default Chinese); keep quotes and sample word
    - *Spoken expression:* wording and ownership issues; delivery marked "not assessed" when only a transcript was available.
    - *Re-recording checklist:* 3–5 short items the candidate can check before the next take.
 7. **Scope notes:** input type, duration if known, what was not assessed.
-8. Offer the full transcript or a corrected-structure outline on request; include the transcript only if asked or for audio input when short.
+8. Offer the full transcript or a corrected-structure outline on request; include the transcript only if asked or for audio input when short. If the requester wants a rewritten script, point to `self-introduction-generate` rather than rewriting here.
 
 Do not send the report to the candidate or anyone else automatically; the requester decides delivery.

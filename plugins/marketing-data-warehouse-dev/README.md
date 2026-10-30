@@ -8,10 +8,6 @@ The `interview-question-search-dev` skill searches interview questions, candidat
 
 The `candidate-matching-dev` skill covers `match_candidates` (shortlisting trainees for a job description with evidence) and `ingest_resumes` (refreshing the resume index) through the same connector.
 
-The `self-introduction-review` skill scores a candidate's interview self-introduction (audio or text) against the company's 10-part structure for Trainers and AMs: covered/missing parts, a part-by-part and overall /100 score with a band, evidence, and prioritized fixes. It is gated by sign-in: its first step calls the read-only `list_dimensions` tool, and it stops with an authentication prompt if the connector is not authorized. This is a soft gate (skill text is not secret); real access control is the MCP OAuth. Weights, bands and hard checks in `references/rubric.md` are a proposed convention pending official company values. It also treats AI-assisted work (AI-based SDLC, copilot-assisted development, ChatGPT/Claude/Gemini used for named tasks) as a required element worth 10 points; missing it deducts points, caps the band at "Needs improvement" and adds a required fix. The report ends with final improvement advice (priority fixes, interview hook, spoken expression, re-recording checklist). For audio it uses a locally installed transcriber (such as `mlx_whisper`) and asks before installing one; where none is available it tells the user how to get a transcript. It replaces the former `interview-introduction-review` skill, whose coaching checks are folded in.
-
-Example request: "Use self-introduction-review to score this candidate's self-introduction recording." Slash command: `/marketing-data-warehouse-dev:self-introduction-review`.
-
 ## Bundled agent
 
 The `interview-question-analyst` agent is scoped to warehouse tools. Delegate discovery, histories, frequency analysis and confirmed Excel exports to it. For full details it returns source IDs/text to the caller, which uses Google Drive for source images and reports image coverage separately.
@@ -66,10 +62,6 @@ environment isolation, use separate client sessions/configurations or client
 permission policies that exclude the other warehouse. The connected Google Drive workflow remains limited
 to reading exact matched source documents, not warehouse discovery or fallback.
 
-The `self-introduction-review` skill uses only this environment's read-only
-`list_dimensions` tool for its sign-in gate; it does not retrieve warehouse
-content to enrich the review. It replaces the retired `interview-introduction-review-dev`
-command; use `/marketing-data-warehouse-dev:self-introduction-review` instead.
 
 ## Configuration and secrets
 

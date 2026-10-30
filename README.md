@@ -56,13 +56,13 @@ claude --plugin-dir ./plugins/mgt
 /plugin install marketing-data-warehouse@beaconfireinc
 ```
 
-面试自我介绍评分 Skill（`self-introduction-review`，供 Trainer / AM 使用，需登录）同时在开发版和正式版插件中。要在当前 Claude Code 环境使用其命令，需先安装或更新插件（仅提交到仓库不会自动安装到已有会话）：
+面试自我介绍 Skill 仅在正式版插件中，供 Trainer / AM 使用（需登录）：`self-introduction-generate` 根据学员经历生成 2.5–3 分钟的英文自我介绍稿，`self-introduction-review` 对已有的稿子或录音按同一标准打分。标准见 `docs/self-introduction/guideline.en.md`（中文对照 `guideline.zh.md`）。要在当前 Claude Code 环境使用，需先安装或更新插件（仅提交到仓库不会自动安装到已有会话）：
 
 ```text
-/plugin install marketing-data-warehouse-dev@beaconfireinc
+/plugin install marketing-data-warehouse@beaconfireinc
 ```
 
-然后上传录音或文字稿，调用 `/marketing-data-warehouse-dev:self-introduction-review`（正式版为 `/marketing-data-warehouse:self-introduction-review`）。
+然后调用 `/marketing-data-warehouse:self-introduction-generate`（生成）或 `/marketing-data-warehouse:self-introduction-review`（打分，可上传录音或文字稿）。
 
 本地加载：
 
