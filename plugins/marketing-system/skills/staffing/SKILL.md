@@ -1,6 +1,6 @@
 ---
 name: staffing
-description: Use the user-connected Beaconfireinc Marketing System MCP (`staffing_*` tools) to change staffing data for a candidate (学员) by name, Candidate ID (CAN-xxxxx), Interview ID (INT-xxxx) or Onboarding ID (ONB-xxxx). Covers four requests - (1) change an interview's time or result (改面试时间/面试结果), (2) create an onboarding record when a candidate got an offer (创建 onboarding), (3) set or change the onboarding start date (改入职时间), (4) update candidate information such as name, email, location, work authorization, level, years of experience or rate (修改学员信息). Always resolve to exactly one record, show the before and after values, and wait for explicit confirmation before any write.
+description: Use the user-connected Beaconfireinc Marketing System MCP (`staffing_*` tools) to change staffing data for a candidate (学员) by name, Candidate ID (CAN-xxxxx), Interview ID (INT-xxxx) or Onboarding ID (ONB-xxxx). Covers five requests - (1) change an interview's time or result, including Need to Reschedule (改面试时间/面试结果), (2) create an onboarding record when a candidate got an offer (创建 onboarding), (3) set or change the onboarding start date (改入职时间), (4) update candidate information such as name, email, location, work authorization, level, years of experience or rate (修改学员信息), (5) create interview slots in bulk, put a candidate on a slot, release or cancel slots (创建/占用/释放面试 Slot). Always resolve to exactly one record, show the before and after values, and wait for explicit confirmation before any write.
 ---
 
 # Staffing changes
@@ -15,6 +15,7 @@ Use only the `staffing_*` tools of the connected `marketing-system` MCP server. 
 | Record that a candidate got an offer | `references/onboarding-create.md` |
 | Set, change or clear the start date | `references/onboarding-start-date.md` |
 | Change candidate information | `references/candidate.md` |
+| Create interview slots, put a candidate on a slot, release or cancel slots, or reschedule after Need to Reschedule | `references/slots.md` |
 
 One message may contain several requests; handle them one at a time, each with its own confirmation.
 
@@ -31,5 +32,5 @@ One message may contain several requests; handle them one at a time, each with i
 5. **Report the result honestly.** After the write, restate what was saved from the tool's response (IDs, new values, resulting status). If the tool returns an error, show the message and do not claim success or retry silently.
 6. **Time and dates.** Interview times are business time (US Eastern, labelled `EST`) unless the user names another zone. Dates are `YYYY-MM-DD`; resolve relative dates ("next Monday") against today and show the exact date for confirmation.
 7. **Sensitive data.** The onboarding profile (SSN last 4, date of birth, address, phone, gender) is only read or written when the user explicitly asks for it, and its values are not repeated in the reply or in later summaries.
-8. **Derived fields.** Offer Status, Start Date and Current Status are computed from the onboarding record and the interviews. Never try to set them on the candidate or an interview; use the onboarding workflows.
+8. **Derived fields.** Offer Status, Start Date and Current Status are computed from the onboarding record, the interviews and held slots (`L1 Slot Held` / `L2 Slot Held` while a candidate holds a slot with no interview yet). Never try to set them on the candidate or an interview; use the onboarding workflows.
 9. **History.** Every write is recorded with who, when and what changed. When the user asks "who changed this" or "what changed", use `staffing_get_history`.
