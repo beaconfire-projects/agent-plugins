@@ -21,8 +21,8 @@ The user pastes a day, a round and, for each recruiter, a list of times. Bracket
 
 1. Extract the **date**, the **round** (L1 or L2) and each **recruiter name with its times**. If the date, round or a recruiter is missing, ask. Never guess them.
 2. Write times as `10:00 AM`. Allowed times are 15-minute steps from 6:00 AM to 10:00 PM. If AM or PM is missing and cannot be told from context, ask. The time zone is `EST` unless the user names `CST`, `MST` or `PST`. Resolve relative dates against today and show the exact date.
-3. Call `staffing_create_slots` with `dry_run: true` and show: how many slots would be created per recruiter, and which are skipped (already exist, or the recruiter already has an interview then).
-4. After a clear yes, call it again without `dry_run`.
+3. Show what you read as a table (date, round, time zone, and each recruiter with its times) and wait for a clear yes. A misread date, AM/PM or a missing recruiter is the main risk, and the user can spot it here.
+4. After a clear yes, call `staffing_create_slots` once and report `created` and `skipped` (already exist, or the recruiter already has an interview then). There is no preview mode; if something was wrong, `staffing_cancel_slots` voids the slots.
 5. A recruiter name that is not in the recruiter list rejects the whole batch. Show the names from `staffing_list_options` and ask; never create a recruiter. Recruiters are managed on the Recruiters page of the web app, so tell the user to add the missing one there.
 6. The call can be repeated safely; after a failure just run it again.
 
