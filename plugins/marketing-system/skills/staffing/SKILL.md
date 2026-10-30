@@ -5,7 +5,7 @@ description: Use the user-connected Beaconfireinc Marketing System MCP (`staffin
 
 # Staffing changes
 
-Use only the `staffing_*` tools of the connected `marketing-system-dev` MCP server. Do not call the REST API, SQL, scripts or another plugin, and never invent IDs, versions or option values. If the tools are not visible, report a connection problem instead of guessing.
+Use only the `staffing_*` tools of the connected `marketing-system` MCP server. Do not call the REST API, SQL, scripts or another plugin, and never invent IDs, versions or option values. If the tools are not visible, report a connection problem instead of guessing.
 
 ## Pick the workflow
 

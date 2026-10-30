@@ -1,12 +1,12 @@
-# marketing-system-dev
+# marketing-system
 
-连接 Beaconfireinc Marketing System 的 MCP 服务（`https://api-marketing-mcp.beaconfireinc.com/mcp`），并提供 `staffing` Skill，用来对 Staffing（Meta Data Center 招聘流程）的数据做受控修改。发布版插件命名为 `marketing-system`（只替换 `.mcp.json` 的地址），遵循本仓库 `xxx-dev` / `xxx` 的约定。
+连接 Beaconfireinc Marketing System 的 MCP 服务（`https://api-marketing-mcp.beaconfireinc.com/mcp`），并提供 `staffing` Skill，用来对 Staffing（Meta Data Center 招聘流程）的数据做受控修改。目前只有生产环境（没有 dev 环境），所以只提供正式版插件 `marketing-system`。
 
 ## 安装
 
 ```text
 /plugin marketplace add https://github.com/beaconfire-projects/agent-plugins
-/plugin install marketing-system-dev@beaconfireinc
+/plugin install marketing-system@beaconfireinc
 ```
 
 首次使用时按提示完成 Authsome 登录。账号必须已被分配系统登记的角色，否则所有工具返回 403（`No role assigned` / `Role not allowed`）；分配角色后需要重新登录才生效。

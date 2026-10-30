@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "marketing-system-dev": {
+    "marketing-system": {
       "type": "http",
       "url": "https://api-marketing-mcp.beaconfireinc.com/mcp"
     }

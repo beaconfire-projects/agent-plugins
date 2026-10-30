@@ -1,7 +1,7 @@
 {
-  "name": "marketing-system-dev",
-  "displayName": "Beaconfireinc Marketing System (dev)",
-  "version": "0.1.0",
+  "name": "marketing-system",
+  "displayName": "Beaconfireinc Marketing System",
+  "version": "0.1.1",
   "description": "Connect Claude Code to the Beaconfireinc Marketing System MCP server with guided staffing workflows: change interview time or result, create onboarding, change start date, and update candidate information.",
   "author": {
     "name": "Beaconfire Engineering"
