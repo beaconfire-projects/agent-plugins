@@ -2,6 +2,15 @@
 
 Tools: `staffing_search_candidates`, `staffing_get_candidate`, `staffing_list_interviews`, `staffing_list_options`, `staffing_update_interview`, `staffing_create_interview`. For slots (a recruiter's free times) use `references/slots.md`.
 
+## Looking up interviews (read only)
+
+To answer "who is interviewing today", "tomorrow's L1s" or "this week's L2 results", call `staffing_list_interviews` with the filters instead of reading candidates one by one:
+
+- `round`: `L1` or `L2`.
+- `date_from` and `date_to`: the interview date as written on the interview. For "today" use today's date in **US Eastern time** for both. With `date_from` the list comes back in time order (a schedule, oldest first); without it the newest come first.
+- `result` (for example `Scheduled`, `Need to Reschedule`) and `recruiter` (a name from `staffing_list_options`) narrow it further.
+- Show a compact table (interview ID, candidate, round, date and time with zone, recruiter, result) and say how many there are. Do not change anything from a lookup.
+
 ## Steps
 
 1. **Find the interview.**
