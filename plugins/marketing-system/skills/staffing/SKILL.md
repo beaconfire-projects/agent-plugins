@@ -1,9 +1,9 @@
 ---
 name: staffing
-description: Use the user-connected Beaconfireinc Marketing System MCP (`staffing_*` tools) to change staffing data for a candidate (学员) by name, Candidate ID (CAN-xxxxx), Interview ID (INT-xxxx) or Onboarding ID (ONB-xxxx). Covers seven requests - (1) change an interview's time, result or score, including Need to Reschedule (改面试时间/面试结果/面试评分), (2) create an onboarding record when a candidate got an offer (创建 onboarding), (3) set or change the onboarding start date (改入职时间), (4) update candidate information such as name, email, location, work authorization, level, years of experience or rate (修改学员信息), (5) create interview slots in bulk, put one or several candidates on slots in one go, release or cancel slots (批量创建/批量占用/释放面试 Slot), (6) permanently delete a candidate, interview or onboarding record that was created from wrong data (删除候选人/面试/Onboarding), (7) process the mailbox or read the client chat group right now, after a preview (立即处理邮件/读取客户群消息). Always resolve to exactly one record, show the before and after values, and wait for explicit confirmation before any write.
+description: Use the user-connected Beaconfireinc Marketing System MCP (`staffing_*` tools) to look up or change staffing data for a candidate (学员) by name, Candidate ID (CAN-xxxxx), Interview ID (INT-xxxx) or Onboarding ID (ONB-xxxx). Covers eight requests - (0) look up a candidate's interviews, how many there are and their results and scores, or one interview by its ID (查询面试/面试结果/某人有几个面试), read only, (1) change an interview's time, result or score, including Need to Reschedule (改面试时间/面试结果/面试评分), (2) create an onboarding record when a candidate got an offer (创建 onboarding), (3) set or change the onboarding start date (改入职时间), (4) update candidate information such as name, email, location, work authorization, level, years of experience or rate (修改学员信息), (5) create interview slots in bulk, put one or several candidates on slots in one go, release or cancel slots (批量创建/批量占用/释放面试 Slot), (6) permanently delete a candidate, interview or onboarding record that was created from wrong data (删除候选人/面试/Onboarding), (7) process the mailbox or read the client chat group right now, after a preview (立即处理邮件/读取客户群消息). Always resolve to exactly one record; for a write, show the before and after values and wait for explicit confirmation.
 ---
 
-# Staffing changes
+# Staffing lookups and changes
 
 Use only the `staffing_*` tools of the connected `marketing-system` MCP server. Do not call the REST API, SQL, scripts or another plugin, and never invent IDs, versions or option values. If the tools are not visible, report a connection problem instead of guessing.
 
@@ -11,6 +11,7 @@ Use only the `staffing_*` tools of the connected `marketing-system` MCP server. 
 
 | The user wants | Read this reference |
 | --- | --- |
+| Look up interviews: one candidate's interviews and results, one interview by ID, or a schedule by round and date (read only) | `references/interview.md` (Looking up interviews) |
 | Change an interview's date, time, time zone, result, score, link, recruiter, interviewer or notes | `references/interview.md` |
 | Record that a candidate got an offer | `references/onboarding-create.md` |
 | Set, change or clear the start date | `references/onboarding-start-date.md` |
@@ -26,7 +27,7 @@ One message may contain several requests; handle them one at a time, each with i
 1. **Resolve to exactly one record first.**
    - A Candidate ID (`CAN-…`) goes straight to `staffing_get_candidate`.
    - A name goes to `staffing_search_candidates` (words in any order, case and single letters ignored). If more than one candidate matches, or the match is not clearly the person, list the candidates (ID, name, email, current status) and ask which one. Never pick for the user.
-   - An Interview ID (`INT-…`) has no direct lookup: find it with `staffing_list_interviews` (add `candidate_code` when known, otherwise `limit=500` and match the code). If it is not found, ask for the candidate's name or ID.
+   - An Interview ID (`INT-…`) goes to `staffing_get_interview`. If it is not found, ask for the candidate's name or ID. If the server does not offer `staffing_get_interview` yet, find the code with `staffing_list_interviews` (`limit=500`).
    - An Onboarding ID (`ONB-…`) goes to `staffing_get_onboarding`.
 2. **Read before writing.** Every update needs the current `version` from the record you just read. If a write is rejected as stale, read again, tell the user what changed, and ask again before retrying.
 3. **Validate choices.** Call `staffing_list_options` once and only use its values for results, rounds, interview times, time zones, recruiters, states, work authorizations and levels. Interview times are fixed dropdown values (for example `5:15 PM`); if the user gives a time that is not in the list, show the nearest allowed values and ask.

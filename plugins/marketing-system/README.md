@@ -13,10 +13,11 @@
 
 ## `staffing` Skill
 
-按姓名、Candidate ID（`CAN-xxxxx`）、Interview 编号（`INT-xxxx`）或 Onboarding 编号（`ONB-xxxx`）处理七类请求：
+按姓名、Candidate ID（`CAN-xxxxx`）、Interview 编号（`INT-xxxx`）或 Onboarding 编号（`ONB-xxxx`）处理八类请求：
 
 | 请求 | 说明 | 参考文件 |
 | --- | --- | --- |
+| 查询面试 | 只读：某人有几个面试、每场的轮次、时间、结果和评分（重名先问是哪一个；已取消、Need to Reschedule 的保留为历史并标出当前有效的一场）；按 Interview 编号直接读一场；按轮次和日期查日程 | `references/interview.md` |
 | 修改面试时间或结果 | 改日期、时间、时区、结果（含 Need to Reschedule）、评分、会议链接、Recruiter、面试官（客户方评估人，聊天反馈里的 Evaluator）、备注；已取消或标了 Need to Reschedule 的面试重约会新建一条面试 | `references/interview.md` |
 | 创建 Onboarding | 记录学员拿到 offer，必须有 offer 日期；已有记录时改为修改 | `references/onboarding-create.md` |
 | 修改入职时间 | 设置、修改或清除 start date，状态在 Offered 与 Onboarding Scheduled 之间切换 | `references/onboarding-start-date.md` |
@@ -29,7 +30,7 @@
 
 ## 依赖的 MCP 工具
 
-`staffing_search_candidates`、`staffing_get_candidate`、`staffing_list_interviews`、`staffing_update_interview`、`staffing_create_interview`、`staffing_list_onboardings`、`staffing_get_onboarding`、`staffing_create_onboarding`、`staffing_update_onboarding`、`staffing_update_candidate`、`staffing_list_options`、`staffing_get_history`、`staffing_list_slots`、`staffing_create_slots`、`staffing_hold_slot`、`staffing_release_slot`、`staffing_cancel_slots`、`staffing_delete_candidate`、`staffing_delete_interview`、`staffing_delete_onboarding`、`staffing_hold_slots`、`staffing_preview_mail_ingest`、`staffing_run_mail_ingest`、`staffing_get_mail_ingest_status`、`staffing_preview_chat_ingest`、`staffing_run_chat_ingest`、`staffing_get_chat_ingest_status`。
+`staffing_search_candidates`、`staffing_get_candidate`、`staffing_get_interview`、`staffing_list_interviews`、`staffing_update_interview`、`staffing_create_interview`、`staffing_list_onboardings`、`staffing_get_onboarding`、`staffing_create_onboarding`、`staffing_update_onboarding`、`staffing_update_candidate`、`staffing_list_options`、`staffing_get_history`、`staffing_list_slots`、`staffing_create_slots`、`staffing_hold_slot`、`staffing_release_slot`、`staffing_cancel_slots`、`staffing_delete_candidate`、`staffing_delete_interview`、`staffing_delete_onboarding`、`staffing_hold_slots`、`staffing_preview_mail_ingest`、`staffing_run_mail_ingest`、`staffing_get_mail_ingest_status`、`staffing_preview_chat_ingest`、`staffing_run_chat_ingest`、`staffing_get_chat_ingest_status`。
 
 ## 说明
 

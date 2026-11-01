@@ -1,8 +1,23 @@
 # Change an interview's time, result or score
 
-Tools: `staffing_search_candidates`, `staffing_get_candidate`, `staffing_list_interviews`, `staffing_list_options`, `staffing_update_interview`, `staffing_create_interview`. For slots (a recruiter's free times) use `references/slots.md`; to delete an interview created from wrong data use `references/delete.md`.
+Tools: `staffing_search_candidates`, `staffing_get_candidate`, `staffing_get_interview`, `staffing_list_interviews`, `staffing_list_options`, `staffing_update_interview`, `staffing_create_interview`. For slots (a recruiter's free times) use `references/slots.md`; to delete an interview created from wrong data use `references/delete.md`.
 
 ## Looking up interviews (read only)
+
+### One candidate's interviews ("how many interviews does A have, and how did they go")
+
+1. Resolve the candidate as in the SKILL rules: a Candidate ID goes to `staffing_get_candidate`; a name goes to `staffing_search_candidates` first, and if several candidates match, list them (ID, name, email, current status) and ask which one. Never merge the interviews of two people with the same name.
+2. `staffing_get_candidate` returns all of the candidate's interviews. Reply with:
+   - one line: the candidate (ID, name), the current status, and the count, for example "3 interviews: L1 Passed, L2 Canceled, L2 Scheduled";
+   - a table, oldest first: interview ID, round, date and time with zone, recruiter, interviewer, result, score. Empty values show as `-`.
+   - Canceled and Need to Reschedule interviews are history, not the current attempt: keep them in the table and count, and say which interview is the live one for each round.
+3. If the user asked only about one round or one result, answer that and leave the rest out of the table.
+
+### One interview by ID
+
+`staffing_get_interview` with the `INT-…` code returns the interview with its candidate, result, score and version. If the code is not found, say so and ask for the candidate's name or ID.
+
+### Schedules by round and date
 
 To answer "who is interviewing today", "tomorrow's L1s" or "this week's L2 results", call `staffing_list_interviews` with the filters instead of reading candidates one by one:
 
@@ -14,7 +29,7 @@ To answer "who is interviewing today", "tomorrow's L1s" or "this week's L2 resul
 ## Steps
 
 1. **Find the interview.**
-   - Interview ID given: locate it with `staffing_list_interviews`.
+   - Interview ID given: read it with `staffing_get_interview`.
    - Name or Candidate ID given: `staffing_get_candidate` returns the candidate's interviews with their `version`. If the user names a round (L1 or L2), use it. If the candidate has several interviews and the request does not say which one, list them (ID, round, date and time, result, source) and ask.
    - Several interviews can share a round when earlier ones were canceled or ended as Need to Reschedule. "The L2" means the latest one that is neither Canceled nor Need to Reschedule; if more than one qualifies, ask.
 2. **Work out the change.** Fields: `interview_date`, `interview_time`, `time_zone`, `result`, `score`, `meeting_link`, `recruiter`, `interviewer`, `notes`.
