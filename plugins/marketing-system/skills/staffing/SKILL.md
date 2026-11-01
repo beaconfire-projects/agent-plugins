@@ -1,6 +1,6 @@
 ---
 name: staffing
-description: Use the user-connected Beaconfireinc Marketing System MCP (`staffing_*` tools) to change staffing data for a candidate (学员) by name, Candidate ID (CAN-xxxxx), Interview ID (INT-xxxx) or Onboarding ID (ONB-xxxx). Covers five requests - (1) change an interview's time or result, including Need to Reschedule (改面试时间/面试结果), (2) create an onboarding record when a candidate got an offer (创建 onboarding), (3) set or change the onboarding start date (改入职时间), (4) update candidate information such as name, email, location, work authorization, level, years of experience or rate (修改学员信息), (5) create interview slots in bulk, put a candidate on a slot, release or cancel slots (创建/占用/释放面试 Slot). Always resolve to exactly one record, show the before and after values, and wait for explicit confirmation before any write.
+description: Use the user-connected Beaconfireinc Marketing System MCP (`staffing_*` tools) to change staffing data for a candidate (学员) by name, Candidate ID (CAN-xxxxx), Interview ID (INT-xxxx) or Onboarding ID (ONB-xxxx). Covers six requests - (1) change an interview's time, result or score, including Need to Reschedule (改面试时间/面试结果/面试评分), (2) create an onboarding record when a candidate got an offer (创建 onboarding), (3) set or change the onboarding start date (改入职时间), (4) update candidate information such as name, email, location, work authorization, level, years of experience or rate (修改学员信息), (5) create interview slots in bulk, put one or several candidates on slots in one go, release or cancel slots (批量创建/批量占用/释放面试 Slot), (6) permanently delete a candidate, interview or onboarding record that was created from wrong data (删除候选人/面试/Onboarding). Always resolve to exactly one record, show the before and after values, and wait for explicit confirmation before any write.
 ---
 
 # Staffing changes
@@ -11,13 +11,14 @@ Use only the `staffing_*` tools of the connected `marketing-system` MCP server. 
 
 | The user wants | Read this reference |
 | --- | --- |
-| Change an interview's date, time, time zone, result, link, recruiter or notes | `references/interview.md` |
+| Change an interview's date, time, time zone, result, score, link, recruiter, interviewer or notes | `references/interview.md` |
 | Record that a candidate got an offer | `references/onboarding-create.md` |
 | Set, change or clear the start date | `references/onboarding-start-date.md` |
 | Change candidate information | `references/candidate.md` |
-| Create interview slots, put a candidate on a slot, release or cancel slots, or reschedule after Need to Reschedule | `references/slots.md` |
+| Create interview slots, put one or several candidates on slots, release or cancel slots, or reschedule after Need to Reschedule | `references/slots.md` |
+| Delete a candidate, an interview or an onboarding record created from wrong data | `references/delete.md` |
 
-One message may contain several requests; handle them one at a time, each with its own confirmation.
+One message may contain several requests; handle them one at a time, each with its own confirmation. **The exception is a batch of the same slot action** (creating slots for several recruiters, or putting several candidates on slots): that gets one confirmation table for the whole batch, as described in `references/slots.md`.
 
 ## Rules for every workflow
 
@@ -28,7 +29,7 @@ One message may contain several requests; handle them one at a time, each with i
    - An Onboarding ID (`ONB-…`) goes to `staffing_get_onboarding`.
 2. **Read before writing.** Every update needs the current `version` from the record you just read. If a write is rejected as stale, read again, tell the user what changed, and ask again before retrying.
 3. **Validate choices.** Call `staffing_list_options` once and only use its values for results, rounds, interview times, time zones, recruiters, states, work authorizations and levels. Interview times are fixed dropdown values (for example `5:15 PM`); if the user gives a time that is not in the list, show the nearest allowed values and ask.
-4. **Confirm before every write.** Show a short table of `field: old → new` for the one record, say which tool will run, and wait for a clear yes. A question, a correction or silence is not a yes. Only send the fields being changed.
+4. **Confirm before every write.** Show a short table of `field: old → new` for the one record (a batch of slot actions: one table with a row per item), say which tool will run, and wait for a clear yes. A question, a correction or silence is not a yes. Only send the fields being changed.
 5. **Report the result honestly.** After the write, restate what was saved from the tool's response (IDs, new values, resulting status). If the tool returns an error, show the message and do not claim success or retry silently.
 6. **Time and dates.** Interview times are business time (US Eastern, labelled `EST`) unless the user names another zone. Dates are `YYYY-MM-DD`; resolve relative dates ("next Monday") against today and show the exact date for confirmation.
 7. **Sensitive data.** The onboarding profile (SSN last 4, date of birth, address, phone, gender) is only read or written when the user explicitly asks for it, and its values are not repeated in the reply or in later summaries.

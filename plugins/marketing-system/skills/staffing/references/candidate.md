@@ -24,7 +24,7 @@ Not editable here: Offer Status, Start Date and Current Status. They come from t
    - `other_emails` **replaces** the whole list. To add one address, send the existing list plus the new one; to remove one, send the list without it. Show the final list in the confirmation.
    - Changing the primary `email` fails when another candidate already uses it. Report that and do not retry with a different address on your own.
    - A name change: use the name parts when the user gives them, otherwise `name`. The name is recomputed from the parts.
-   - `status_override` set to Candidate Withdrew or Company Dropped overrides the interview status. Confirm the effect on Current Status. Clear it with `null` only when asked.
+   - `status_override` set to Candidate Withdrew or Company Dropped overrides the interview status. "The candidate gave up / left" is **Candidate Withdrew**; "we dropped the candidate / ended the cooperation / company drop" is **Company Dropped**. If the user only says "drop" or "stop working with" and it is not clear who ended it, ask. Confirm the effect on Current Status. Clear it with `null` only when asked.
    - Profile fields: only when the user explicitly asks. Do not repeat SSN, date of birth or address in your reply; say which fields were changed.
 4. **Confirm** with `field: old → new` (for sensitive profile fields show only the field names and "changed"), then call `staffing_update_candidate` with `code` and `changes` (`version` plus only the changed fields). Send `null` only to clear a field the user asked to clear.
 5. **Report** what was saved and the candidate's current status.
@@ -33,3 +33,4 @@ Not editable here: Offer Status, Start Date and Current Status. They come from t
 
 - Do not send unknown fields; the tool rejects them.
 - Do not bulk-edit several candidates from one confirmation; confirm each candidate separately.
+- To remove a candidate created from wrong data, use `references/delete.md`, not an edit.
