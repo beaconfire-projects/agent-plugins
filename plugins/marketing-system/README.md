@@ -13,7 +13,7 @@
 
 ## `staffing` Skill
 
-按姓名、Candidate ID（`CAN-xxxxx`）、Interview 编号（`INT-xxxx`）或 Onboarding 编号（`ONB-xxxx`）处理六类请求：
+按姓名、Candidate ID（`CAN-xxxxx`）、Interview 编号（`INT-xxxx`）或 Onboarding 编号（`ONB-xxxx`）处理七类请求：
 
 | 请求 | 说明 | 参考文件 |
 | --- | --- | --- |
@@ -21,14 +21,15 @@
 | 创建 Onboarding | 记录学员拿到 offer，必须有 offer 日期；已有记录时改为修改 | `references/onboarding-create.md` |
 | 修改入职时间 | 设置、修改或清除 start date，状态在 Offered 与 Onboarding Scheduled 之间切换 | `references/onboarding-start-date.md` |
 | 修改学员信息 | 姓名、邮箱、地点、工作授权、等级、年限、费率、Status Override | `references/candidate.md` |
-| 面试 Slot | 按用户贴的时间表批量创建某天某轮次的 Slot（没有预览模式:展示读到的内容并核对已有 Slot，确认后只调用一次，成功后不要重复调用，否则会重复新建）、给候选人占 Slot（可以一次贴多人，如 `CAN-00012 10AM, CAN-00020 10AM`，同一时间有多个 Recruiter 会问；整批一张确认表；L2 必须和 L1 同一个 Recruiter）、释放、作废；占 Slot 后状态是 `L1/L2 Slot Held`，邀请邮件到了建出面试才是 Scheduled | `references/slots.md` |
+| 面试 Slot | 按用户贴的时间表批量创建某天某轮次的 Slot（先用 `dry_run` 让服务端预览会建几个、跳过几个、为什么，同时核对已有 Slot；确认后用同样的参数只调用一次，成功后不要重复调用，否则会重复新建）、给候选人占 Slot（可以一次贴多人，如 `CAN-00012 10AM, CAN-00020 10AM`，同一时间有多个 Recruiter 会问；先用 `staffing_hold_slots` 的 `dry_run` 预览每一行会不会成功，整批一张确认表，确认后同样参数再执行；L2 必须和 L1 同一个 Recruiter）、释放、作废；占 Slot 后状态是 `L1/L2 Slot Held`，邀请邮件到了建出面试才是 Scheduled | `references/slots.md` |
 | 删除记录 | 删除用错误数据建出来的候选人、面试或 Onboarding（不可恢复）；候选人名下还有面试或 Onboarding 时要先删它们；记录没发生过用改结果或 Status Override，不用删除 | `references/delete.md` |
+| 立即处理邮件、读取客户群 | 用户要“现在就处理”时:先用只读的预览工具看会创建/更新多少、哪些要人看、会发哪些飞书告警，确认后再手动运行，再看运行结果 | `references/ingest.md` |
 
 共同规则：先定位到唯一一条记录（重名或多条时必须询问）；写入前展示「字段：旧值 → 新值」并等待明确确认；更新必须带刚读取的 `version`；选项值只用 `staffing_list_options` 返回的；入职资料（SSN 后四位、出生日期、地址等）只在用户明确要求时读写，回复里不重复其值。
 
 ## 依赖的 MCP 工具
 
-`staffing_search_candidates`、`staffing_get_candidate`、`staffing_list_interviews`、`staffing_update_interview`、`staffing_create_interview`、`staffing_list_onboardings`、`staffing_get_onboarding`、`staffing_create_onboarding`、`staffing_update_onboarding`、`staffing_update_candidate`、`staffing_list_options`、`staffing_get_history`、`staffing_list_slots`、`staffing_create_slots`、`staffing_hold_slot`、`staffing_release_slot`、`staffing_cancel_slots`、`staffing_delete_candidate`、`staffing_delete_interview`、`staffing_delete_onboarding`。
+`staffing_search_candidates`、`staffing_get_candidate`、`staffing_list_interviews`、`staffing_update_interview`、`staffing_create_interview`、`staffing_list_onboardings`、`staffing_get_onboarding`、`staffing_create_onboarding`、`staffing_update_onboarding`、`staffing_update_candidate`、`staffing_list_options`、`staffing_get_history`、`staffing_list_slots`、`staffing_create_slots`、`staffing_hold_slot`、`staffing_release_slot`、`staffing_cancel_slots`、`staffing_delete_candidate`、`staffing_delete_interview`、`staffing_delete_onboarding`、`staffing_hold_slots`、`staffing_preview_mail_ingest`、`staffing_run_mail_ingest`、`staffing_get_mail_ingest_status`、`staffing_preview_chat_ingest`、`staffing_run_chat_ingest`、`staffing_get_chat_ingest_status`。
 
 ## 说明
 
