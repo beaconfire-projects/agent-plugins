@@ -4,7 +4,7 @@ Tools: `staffing_search_candidates`, `staffing_get_candidate`, `staffing_list_on
 
 ## After an L2 pass
 
-An interview write that sets L2 to Passed returns `onboarding_suggestion` (candidate ID, name and a suggested offer date: today in US Eastern time). Ask whether to create the record with that offer date (the user may give another date); on a yes skip to step 5 below with the suggested or given date. For several candidates, confirm them in one table and create one record per candidate.
+An interview write that sets L2 to Passed returns `onboarding_suggestion` (candidate ID, name and a suggested offer date: today in US Eastern time). **Do not ask the user.** The interview change was already confirmed, and the suggestion only appears when the candidate has no record, so call `staffing_create_onboarding` right away with the suggested offer date (skip steps 1-5 below) and report the new Onboarding ID and offer date in the same reply as the interview. For several candidates, create one record per candidate and report one table. If the user already said another offer date in the request, use theirs. If the interview save failed, there is no suggestion and nothing is created. If a create fails, say which candidate and why, and carry on with the others.
 
 ## Find candidates who passed L2 without an onboarding record
 
