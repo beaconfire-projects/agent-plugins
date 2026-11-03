@@ -2,7 +2,7 @@
 
 Tools: `staffing_search_candidates`, `staffing_get_candidate`, `staffing_list_interviews`, `staffing_get_onboarding`, `staffing_list_onboardings`, `staffing_delete_interview`, `staffing_delete_onboarding`, `staffing_delete_candidate`.
 
-Deleting is **permanent**. Use it only for a record that was created from wrong data (a wrong email, a wrong legacy row, a person created twice). It is not the way to record that something did not happen: for an interview that did not take place set the result (Canceled, No-show, Need to Reschedule) instead, and for a candidate who dropped out set the status override (see `references/candidate.md`). If the user's wording could mean either ("remove", "get rid of"), ask which they mean before going further.
+Deleting is **permanent**. Use it only for a record that was created from wrong data (a wrong email, a wrong legacy row, a person created twice). It is not the way to record that something did not happen: for an interview that did not take place set the result (Canceled, No-show, Need to Reschedule) instead, and for a candidate who dropped out set the status override (see `references/candidate.md`), and for an offer that was canceled (declined or rescinded) use the cancel workflow (see `references/onboarding-cancel.md`), which keeps the record. If the user's wording could mean either ("remove", "get rid of"), ask which they mean before going further.
 
 ## Steps
 

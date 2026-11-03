@@ -13,7 +13,7 @@ An interview write that sets L2 to Passed returns `onboarding_suggestion` (candi
 ## Steps
 
 1. **Resolve the candidate** (name or Candidate ID) to exactly one person.
-2. **Check for an existing record**: `staffing_list_onboardings` with `candidate_code`. If one exists, do not create another. Show it (ID, offer date, start date, status) and offer to change its dates instead (see `onboarding-start-date.md`).
+2. **Check for an existing record**: `staffing_list_onboardings` with `candidate_code`. If one exists, do not create another. Show it (ID, offer date, start date, status) and offer to change its dates instead (see `onboarding-start-date.md`). If the existing record is canceled (`canceled_at` is set), say so and offer to undo the cancellation (see `onboarding-cancel.md`); the candidate cannot get a second record.
 3. **Look at the interviews** from `staffing_get_candidate`. An offer normally follows a passed L2. If the candidate has no Passed L2, tell the user what the interviews show and ask whether to continue anyway; the record can still be created.
 4. **Get the offer date.** It is required. If the user did not give one, ask (after an L2 pass, offer the suggested date); do not assume one silently. Show the exact date.
 5. **Confirm**: "Create onboarding for `CAN-… Name`, offer date `YYYY-MM-DD`. The candidate becomes Offered."
