@@ -22,7 +22,7 @@
 | 创建 Onboarding | 记录学员拿到 offer，必须有 offer 日期；已有记录时改为修改。L2 改成 Passed（含批量）后，工具返回 `onboarding_suggestion` 时不再询问，保存成功后直接按建议的 offer 日期建 Onboarding 并在同一回复里报告；用 `status=L2 Passed` 找出之前漏建的人 | `references/onboarding-create.md` |
 | 取消 offer | offer 被取消（候选人拒绝 `candidate_declined`，或公司撤回 `company_rescinded`）：Onboarding 记录保留，候选人变 Candidate Withdrew / Company Dropped（原因 `Offer rescinded: …`），Offer Status 和 Start Date 清空，客户的 Onboarding Info Sheet 里整行划删除线；类型必须来自用户的话，说不清就问；可撤销，撤销后恢复。已取消的记录不能改，候选人的 Status Override 要先撤销才能改；列表默认不含已取消的 | `references/onboarding-cancel.md` |
 | 修改入职时间 | 设置、修改或清除 start date，状态在 Offered 与 Onboarding Scheduled 之间切换 | `references/onboarding-start-date.md` |
-| 修改学员信息 | 姓名、邮箱、地点、工作授权、等级、年限、费率、Status Override；入职资料（证件姓名、地址、电话、出生日期、SSN 后四位等）和其他字段一样直接读写，确认时显示旧值 → 新值，SSN 只存后四位 | `references/candidate.md` |
+| 修改学员信息 | 姓名（只能改 First / Middle / Last / Preferred，没有 `name`；用户只给全名时先拆成三段并展示给用户确认）、邮箱、地点、工作授权、等级、年限、费率、Status Override；入职资料（地址、电话、出生日期、SSN 后四位等，不含姓名）和其他字段一样直接读写，确认时显示旧值 → 新值，SSN 只存后四位 | `references/candidate.md` |
 | 面试 Slot | 按用户贴的时间表批量创建某天某轮次的 Slot（先用 `dry_run` 让服务端预览会建几个、跳过几个、为什么，同时核对已有 Slot；确认后用同样的参数只调用一次，成功后不要重复调用，否则会重复新建）、给候选人占 Slot（可以一次贴多人，如 `CAN-00012 10AM, CAN-00020 10AM`，同一时间有多个 Recruiter 会问；先用 `staffing_hold_slots` 的 `dry_run` 预览每一行会不会成功，整批一张确认表，确认后同样参数再执行；L2 必须和 L1 同一个 Recruiter）、释放、作废；占 Slot 后状态是 `L1/L2 Slot Held`，邀请邮件到了建出面试才是 Scheduled | `references/slots.md` |
 | 删除记录 | 删除用错误数据建出来的候选人、面试或 Onboarding（不可恢复）；候选人名下还有面试或 Onboarding 时要先删它们；记录没发生过用改结果或 Status Override，不用删除 | `references/delete.md` |
 | 立即处理邮件、读取客户群 | 用户要“现在就处理”时:先用只读的预览工具看会创建/更新多少、哪些要人看、会发哪些飞书告警，确认后再手动运行，再看运行结果 | `references/ingest.md` |

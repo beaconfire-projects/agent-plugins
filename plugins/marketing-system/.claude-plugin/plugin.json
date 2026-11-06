@@ -1,7 +1,7 @@
 {
   "name": "marketing-system",
   "displayName": "Beaconfireinc Marketing System",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "Connect Claude Code to the Beaconfireinc Marketing System MCP server with guided staffing workflows: look up a candidate's interviews and results by name or ID, change interview time, result, score or interviewer, create onboarding, change start date, update candidate information, manage interview slots (create in bulk, hold for one or several candidates, each with a preview before it is written, release, cancel), process emails or the client chat now after a preview, and delete records created from wrong data.",
   "author": {
     "name": "Beaconfire Engineering"
