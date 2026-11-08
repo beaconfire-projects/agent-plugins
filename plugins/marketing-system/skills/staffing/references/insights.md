@@ -11,7 +11,7 @@ Use this workflow for "how many", "what share", "by level / visa / status / roun
    - `measures`: the numbers (one or several in the same query, as long as they come from the same group, i.e. all `pipeline.*`, all `interviews.*` or all `onboardings.*`).
    - `dimensions`: group by these (for example `pipeline.level`, `pipeline.work_authorization`, `interviews.round`).
    - `filters`: `{member, operator, values}`; values are text, dates are `YYYY-MM-DD`.
-   - `time_dimensions`: trends or date ranges on a **time** dimension (`onboardings.offer_date`, `onboardings.start_date`, `pipeline.submitted_at`) with `granularity` (day, week, month, quarter, year) and `date_range` `[start, end]` (both included).
+   - `time_dimensions`: trends or date ranges on a **time** dimension (`onboardings.offer_date`, `onboardings.start_date`, `pipeline.submitted_at`, `submissions.submitted_at`, `submissions.offer_date`) with `granularity` (day, week, month, quarter, year) and `date_range` `[start, end]` (both included).
    - `order` and `limit` (default 50, at most 200). If the result says `truncated: true`, say that more rows exist and narrow the query (add a filter, a smaller `limit` with `order`) instead of presenting a partial list as complete.
 3. **Run `insights_query`.** Several independent questions can be separate calls in the same turn. Do not ask the user to confirm: it is read only.
 4. **Answer in plain words first, then a small table.** State the number or the finding in one sentence, then a table with the rows. Say the date range, filters and the date you ran it ("as of today"). Compute shares, rates and differences yourself from the returned counts and show the numerator and denominator (for example "L2 pass rate 89 / 96 = 93%").
@@ -32,6 +32,23 @@ Use this workflow for "how many", "what share", "by level / visa / status / roun
 | Interviews on a day or in a period | `interviews.*` with a filter on `interviews.interview_day` (text `YYYY-MM-DD`; use `equals`, or `gte` and `lte` for a range) | `time_dimensions` (this dimension is text, not a time type) |
 | Pass rate of a round | `interviews.passed`, `interviews.failed` by `interviews.round`; rate = passed / (passed + failed) | dividing by `interviews.total` (it includes scheduled, canceled and no-show) |
 
+### Vendor and Client questions (positions, submissions, candidates, offers)
+
+Only if `insights_list_metrics` shows `positions.*` and `submissions.*`; these are limited to Admin users, so for anyone else they are simply not in the list: say it is not available to them and do not try to work it out another way.
+
+| The user asks | Use |
+| --- | --- |
+| How many positions does a Vendor or Client have | `positions.count`, filter on `positions.vendor_name` / `positions.client_name`, or group by them |
+| How many submissions, candidates or offers for a Vendor or Client | `submissions.submissions`, `submissions.candidates` (distinct people), `submissions.offers`, with a filter on `submissions.vendor_name` / `submissions.client_name` |
+| Which stages are candidates in, for a Vendor or Client | `submissions.submissions` grouped by `pipeline.current_status`, with the Vendor / Client filter |
+| Submissions in a period | `submissions.submitted_at` as the `time_dimensions` entry (with `date_range`, and `granularity` for a trend). Offers in a period: `submissions.offer_date` |
+
+- **Vendor means the Primary Vendor of the position** (the billing vendor is not included). Filter by `vendor_name` or `vendor_code` (for example `VEN-000001`), not by the internal `vendor_id`. If the name is not exact, first query `submissions.submissions` (or `positions.count`) grouped by `vendor_name` to list the names, then use the exact one; if several look alike, ask the user which.
+- Positions have no date dimension; do not try to count positions by period.
+- Do not mix `positions.*` and `submissions.*` in one query (they are not joined). To combine them, run two queries.
+- Today there is one position (Tenarai / Meta); other Vendors and Clients appear as their data is imported, so say when a Vendor or Client returns nothing instead of reporting zero as a fact.
+- `submissions.submitted_at` for older candidates may be the time the record was created in the system, not the real submission time; mention it when a period answer looks lopsided.
+
 Things to say when they matter:
 - `interviews.total` includes canceled interviews (`interviews.canceled` is already inside it). "Held" interviews are passed + failed + no-show + need-to-reschedule + awaiting result.
 - `pipeline.candidates` counts submissions, one per candidate today.
@@ -42,7 +59,7 @@ Things to say when they matter:
 
 - No names, emails, phone numbers, rates or other personal details: counts only. For "who are they", switch to `staffing_search_candidates` (filter by `status`, `level` and so on) or `staffing_list_interviews`, and keep the list as short as the question needs.
 - No writes. To change a status or record, use the other workflows.
-- Only Staffing data is available; if `insights_list_metrics` shows no metric for what was asked (for example revenue, rates, or another business), say that it is not covered.
+- Only Staffing and Marketing (positions, submissions) data is available; if `insights_list_metrics` shows no metric for what was asked (for example revenue, rates, or another business), say that it is not covered.
 
 ## Example
 

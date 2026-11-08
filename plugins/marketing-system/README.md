@@ -25,7 +25,7 @@
 | 修改学员信息 | 姓名（只能改 First / Middle / Last / Preferred，没有 `name`；用户只给全名时先拆成三段并展示给用户确认）、邮箱、地点、工作授权、等级、年限、费率、Status Override；入职资料（地址、电话、出生日期、SSN 后四位等，不含姓名）和其他字段一样直接读写，确认时显示旧值 → 新值，SSN 只存后四位 | `references/candidate.md` |
 | 面试 Slot | 按用户贴的时间表批量创建某天某轮次的 Slot（先用 `dry_run` 让服务端预览会建几个、跳过几个、为什么，同时核对已有 Slot；确认后用同样的参数只调用一次，成功后不要重复调用，否则会重复新建）、给候选人占 Slot（可以一次贴多人，如 `PER-010012 10AM, PER-010020 10AM`，同一时间有多个 Recruiter 会问；先用 `staffing_hold_slots` 的 `dry_run` 预览每一行会不会成功，整批一张确认表，确认后同样参数再执行；L2 必须和 L1 同一个 Recruiter）、释放、作废；占 Slot 后状态是 `L1/L2 Slot Held`，邀请邮件到了建出面试才是 Scheduled | `references/slots.md` |
 | 删除记录 | 删除用错误数据建出来的候选人、面试或 Onboarding（不可恢复）；候选人名下还有面试或 Onboarding 时要先删它们；记录没发生过用改结果或 Status Override，不用删除 | `references/delete.md` |
-| 统计分析 | 只读，只有数字没有姓名：各状态多少人、等 L1 / L2 排期多少人、每月 offer 数、面试通过率、按 Level / 工作授权 / 年限分布、两个口径的对比；数字来自指标服务（Cube），与 Staffing Dashboard 同一口径，**不要靠翻候选人列表自己数**；先 `insights_list_metrics` 取指标和维度，再 `insights_query`；要看具体是谁时改用 `staffing_search_candidates` 等。服务不可用时直接告知，不用别的工具凑数 | `references/insights.md` |
+| 统计分析 | 只读，只有数字没有姓名：各状态多少人、等 L1 / L2 排期多少人、每月 offer 数、面试通过率、按 Level / 工作授权 / 年限分布、两个口径的对比；数字来自指标服务（Cube），与 Staffing Dashboard 同一口径，**不要靠翻候选人列表自己数**；先 `insights_list_metrics` 取指标和维度，再 `insights_query`；也能按 Vendor（只算 Primary Vendor）/ Client 统计岗位数、Submission 数、Candidate 数、Offer 数和各阶段人数，Submission 按提交时间统计（这部分只有 Admin 能查，其他人目录里没有）；要看具体是谁时改用 `staffing_search_candidates` 等。服务不可用时直接告知，不用别的工具凑数 | `references/insights.md` |
 | 立即处理邮件、读取客户群 | 用户要“现在就处理”时:先用只读的预览工具看会创建/更新多少、哪些要人看、会发哪些飞书告警，确认后再手动运行，再看运行结果 | `references/ingest.md` |
 
 共同规则：先定位到唯一一条记录（重名或多条时必须询问）；写入前展示「字段：旧值 → 新值」并等待明确确认；更新必须带刚读取的 `version`；选项值只用 `staffing_list_options` 返回的；入职资料（SSN 后四位、出生日期、地址等）和其他字段一样直接读写（变更记录里只显示 changed）；L2 改成 Passed 后必须问是否创建 Onboarding。
