@@ -39,7 +39,7 @@ The user pastes a day, a round and, for each recruiter, a list of times (`X 10AM
 
 ## B2. Put several candidates on slots (batch)
 
-The user pastes a list like `CAN-00012 10AM, CAN-00020 10AM` or `Alex Morgan 10:00 AM; Sam Rivera 2:30 PM`, usually for one day and one round. Read the meaning; do not ask the user to reformat.
+The user pastes a list like `PER-010012 10AM, PER-010020 10AM` or `Alex Morgan 10:00 AM; Sam Rivera 2:30 PM`, usually for one day and one round. Read the meaning; do not ask the user to reformat.
 
 1. Extract the **date**, the **round** (L1 or L2) and, for each line, the **candidate** and the **time** (and the recruiter if the user wrote one). If the date or round is missing, ask once for both. Never guess them. If AM or PM is missing and cannot be told from context, ask (`12AM` is midnight: confirm whether noon was meant).
 2. Resolve **each candidate to exactly one record** (rules in `SKILL.md`). If some names are ambiguous, ask about those only; the rest wait in the list.
