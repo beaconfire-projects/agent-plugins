@@ -2,6 +2,8 @@
 
 Tools: `insights_list_metrics`, `insights_query`. To find the **people** behind a number use `staffing_search_candidates`, `staffing_list_interviews` or `staffing_list_onboardings`; to read one record use the lookup workflows.
 
+**Scope.** The numbers only include the vendors you can see: an AM sees the vendors they are responsible for, a manager or admin sees all of them. If a number looks too small or an expected row is missing, say that the figures are limited to the user's vendors instead of treating it as a data problem. If the tools answer that statistics are not available, the user has no vendor assigned yet: they should ask an admin.
+
 Use this workflow for "how many", "what share", "by level / visa / status / round", "per week / per month" and "compare". The numbers are computed by the metrics service (Cube), the single place where the counting rules live, and they match what the Staffing Dashboard shows. **Never count by paging through candidates or interviews yourself**: it is slow, it can miss rows, and it can drift from the Dashboard.
 
 ## Steps

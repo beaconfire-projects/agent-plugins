@@ -2,6 +2,8 @@
 
 Tools: `staffing_preview_mail_ingest`, `staffing_run_mail_ingest`, `staffing_get_mail_ingest_status`, `staffing_preview_chat_ingest`, `staffing_run_chat_ingest`, `staffing_get_chat_ingest_status`.
 
+Each vendor has its own sources (mailboxes, client chat spaces, calendars); a run here only handles the sources of the vendors you can see, and the tools answer `Not found` if you have no access to the vendor. **Which sources are read, as whom, and whose emails or messages are accepted are managed on the web (Staffing → Sources → Configure), not with these tools**: send the user there to add a source, switch a person on or off, or turn dry run off.
+
 The system reads the mailbox (Submission and L2 Selected emails, interview invitations) and the client's chat group (interview results, scores and dates) by itself every few minutes. Use this workflow only when the user wants it **now**, for example "process the emails now" or "refresh the client chat". These runs create candidates, update interviews and send Feishu notices, so look before running.
 
 ## Steps
