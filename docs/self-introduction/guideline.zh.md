@@ -32,7 +32,7 @@
 | 5 | 整体思路和团队成果 | 团队怎么交付、怎么控制风险（分阶段、并行运行、回滚、测试）；整体成果，归属于团队 | ~45 |
 | 6 | 你的工作 | 什么时候加入、做了什么、一个用业务语言解释的代表性功能、你的所有权如何扩大、边界在哪（评审、审批、你不负责的部分） | ~60 |
 | 7 | 你的成果 | 你参与的一个具体成果，和代表性功能挂钩 | ~30 |
-| 8 | 工作中使用 AI | 你在自己的工作中怎么用 AI：哪个工具、做什么任务、带来什么帮助 | ~25 |
+| 8 | 工作中使用 AI | 你在自己的工作中怎么用 AI：说出工具，并覆盖**至少两个**开发阶段（见规则 5），再说它带来什么帮助 | ~35 |
 | 9 | 挑战（2–3 个钩子） | 每个挑战一句话，引导追问 | ~40 |
 | 10 | 收尾 | 有故事支撑的技术关键词，以及下一步想去的方向 | ~25 |
 
@@ -44,7 +44,16 @@
 2. **归属要对**：团队或项目整体的成果属于团队，要明说；你自己的成果放在第 7 部分。不能把团队成果说成个人成果。
 3. **指标不是必须的**：只有当你能解释这个数字怎么来的、你做了什么影响它时才用。初级工程师很难量化，也说不清的话，就描述具体结果（交付了什么、变了什么、哪个问题不再出现）。面试官会深挖你说的每个数字。
 4. **钩子就是钩子**：每个挑战一句话，说清问题是什么、为什么难。不要讲解决方案，留给面试官去问。
-5. **AI 是必填项**：说明你在自己的工作中怎么用 AI（例如用某个工具辅助编码、测试、调试、设计或评审）。开发 AI 产品不等于在工作中使用 AI。
+5. **AI 是必填项，且至少覆盖两个阶段**：说明你在自己的工作中怎么用 AI（Claude、ChatGPT、Copilot、Cursor、Gemini 等），要说出工具，并覆盖下面至少两个阶段：
+   - 写代码，或理解已有代码；
+   - 写测试；
+   - 调试；
+   - PR：写描述、提交前自查改动、代码评审；
+   - 检查：lint、CI、验证改动是否正确；
+   - 功能或技术设计；
+   - 文档。
+
+   再补一句它带来的帮助，例如在评审前发现问题。只在一个阶段用一个工具算单薄；开发 AI 产品不等于在工作中使用 AI。
 6. **不要走回头路**：开场结论 → 展开 → 钩子 → 收尾。开始讲你的工作后，不要再回头补项目背景。
 7. **不要编造**：只说真实的、你能深入讨论的内容。不要加你无法解释的术语。
 8. **技术服务于你的工作**：技术出现在能说明你做了什么、为什么重要的地方，不要罗列。
@@ -68,15 +77,15 @@
 
 > Hi, I'm a backend engineer with [X] years of experience building enterprise applications, mostly in financial services, especially consumer and mobile banking. *(1)*
 >
-> Most recently I'm a contractor at Wells Fargo, on the Account Summary team of the Mobile Banking platform. My core job is migrating mobile banking features from a legacy codebase into independent microservices, and I owned the backend for Merchant Deals and the Open Account tile. The program overall cut API response time from about 1,500 ms to 150 ms. *(2, 3, 5)*
+> Most recently I'm a contractor at Wells Fargo, on the Account Summary team of the Mobile Banking platform. My core job is migrating mobile banking features from a legacy codebase into independent microservices, and I migrated part of the Merchant Deals APIs and contributed to the Open Account tile. The program overall cut API response time from about 1,500 ms to 150 ms. *(2, 3, 5)*
 >
 > Some background. Account Summary, Merchant Deals and Offers all lived in one large legacy codebase, so features were tightly coupled, hard to deploy on their own, and some downstream calls were slow. *(4)*
 >
 > The teams migrated in phases, starting with smaller features, running legacy and new services in parallel and shifting traffic gradually, with rollback always available. *(5)*
 >
-> I joined in 2023. For Merchant Deals I built new endpoints and migrated the business logic for a subset of its seven or eight APIs over about six months, and those APIs are now served by the new microservice. Later, two backend engineers left my scrum team and I became the only backend engineer, so I took on day-to-day API work and coordination with the mobile teams, while my changes still went through the principal engineer's review. I also built the backend JSON for the server-driven Open Account tile, so the mobile app could render it dynamically, and I worked closely with the iOS, Android and QA teams to make sure our APIs met the app's needs. *(6, 7)*
+> I joined in 2023. For Merchant Deals I migrated the business logic for a subset of its seven or eight APIs; the team then added caching and rolled it out gradually, about six months end to end, and those APIs are now served by the new microservice. Later, two backend engineers left my scrum team and I became the only backend engineer, so I took on day-to-day API work and coordination with the mobile teams, while my changes still went through the principal engineer's review. I also contributed the backend JSON for the server-driven Open Account tile, so the mobile app could render it dynamically, and I worked closely with the iOS, Android and QA teams to make sure our APIs met the app's needs. *(6, 7)*
 >
-> *[Illustrative]* I use Copilot to draft unit tests and to explain unfamiliar legacy code before I change it. *(8)*
+> *[Illustrative]* I use Claude across my workflow: to explain unfamiliar legacy code, to draft unit tests, and to review my own diff before I open a PR, which catches issues early. *(8)*
 >
 > Two challenges I'm happy to go deeper on: keeping functional parity while the legacy app was still changing, and getting the core service ready for production traffic with enough test coverage for edge cases. *(9)*
 >
@@ -88,7 +97,7 @@
 - [ ] 先讲了业务问题，再讲技术。
 - [ ] 团队成果归团队；我自己的成果单独说。
 - [ ] 用到的数字，我都能解释并经得起追问。
-- [ ] 说了我在自己的工作中怎么用 AI。
+- [ ] 说了我在自己的工作中怎么用 AI：工具、至少两个阶段（代码、测试、PR、检查、设计）以及带来的帮助。
 - [ ] 有 2–3 个一句话挑战，没有讲方案。
 - [ ] 以技能和方向收尾。
 - [ ] 出声念一遍，用时 2.5–3 分钟。

@@ -24,7 +24,8 @@ Never use a connector whose name contains `-dev`, or any connector with another 
 2. Accept resume text, project story, interview notes or the user's own statements. If nothing usable is given, ask only for the candidate's experience.
 3. Use the candidate's **most recent** project unless the user names another. Do not use outside knowledge about the company or the industry.
 4. Sort the material into the 10 parts and list what is missing. The parts most often missing are: years of experience, join date, the candidate's own result, how the candidate uses AI, and the ownership boundary (reviews, approvals, what they did not own).
-5. If key facts are missing, ask once, in one short batch, for only those facts. If the user cannot supply them, continue and mark each gap `[confirm: ...]` in the script. Never invent a fact to fill a gap.
+5. If key facts are missing, ask once, in one short batch, for only those facts. If the user cannot supply them, continue and mark each gap `[confirm: ...]` in the script. Never invent a fact to fill a gap. The one exception is the AI part (see item 6 and Step 2), where a clearly marked proposal is allowed.
+6. **AI question (always check it).** Unless the source already covers at least two stages, include this in the batch: which AI tools the candidate uses (Claude, ChatGPT, Copilot, Cursor, Gemini …) and for which of these stages: writing or understanding code, tests, debugging, PRs (descriptions, self-review, code review), checks (lint, CI, verifying a change), feature design, docs; plus one concrete thing it helped with. If the candidate or requester cannot say, do not leave the part empty: write a proposal as described in Step 2.
 
 ## Step 2 — Draft
 
@@ -34,8 +35,12 @@ Follow the guideline's shape: headline (parts 1–3) → expand (4–8) → hook
 - **Business before technology.** Never open with a stack list. Name a technology only where it explains what the candidate did or why it mattered.
 - **Credit correctly.** Team or program results are credited to the team. The candidate's own result belongs in part 7. Never turn a team result into a personal one unless the source clearly attributes it to the candidate.
 - **Metrics are optional.** Use a number only if the source supports it and the candidate could explain it. Do not add or round up numbers. If there is no defensible number, describe the concrete outcome instead.
+- **Match the verb to the source.** "Participated in" or "worked on" in the source becomes "contributed to" or "worked on", not "owned" or "built". Credit the team for what the team did (caching, rollout, go-live) even inside a sentence about the candidate's own work. Say nothing about earlier career or industry history that the source does not contain; use `[confirm: ...]`.
 - **Ownership.** Say when the candidate joined, what they built, one representative feature in business terms, how ownership grew (only if the source shows it) and where it stopped.
-- **AI is required.** Say how the candidate uses AI in their own work, using only what the candidate stated: the tool, the task and what it helped with. Building an AI product does not count. If it is not stated, write the line with `[confirm: tool and task]` and flag it in the note; never invent a tool or task.
+- **AI is required, across at least two stages.** Say how the candidate uses AI in their own work: the tool, at least two stages (code, tests, debugging, PRs, checks such as lint/CI/verification, design, docs) and what it helped with, in two or three short sentences (about 35 words). Building an AI product does not count.
+  - If the source or the requester states it, use exactly what was stated.
+  - If it is not stated and cannot be obtained, **write a proposal instead of leaving the part empty**: pick at least two stages that fit work the candidate really did on this project (for example, migrated APIs → understanding legacy code, writing tests for the migrated endpoints, checking the diff before a PR), use a common tool (Claude, ChatGPT or Copilot) and one plausible, modest effect. Do not invent metrics, time savings or results.
+  - Mark every proposed sentence with `[suggested: confirm you really do this]` at its start, so the script is complete but nobody mistakes it for a stated fact. A proposal must never be presented as a confirmed fact, and the candidate must be able to discuss it in depth.
 - **Hooks.** Two or three challenges, one line each, what the problem was and why it was hard, ending with an offer to go deeper. No solutions.
 - **Close.** Skill keywords the story supports and the direction the candidate wants to grow in. No generic "hard-working" language.
 - **Spoken English.** First person, short and medium sentences, natural paragraph breaks, the candidate's own terminology. No section labels, numbers or headings in the script. No source-language such as "according to the resume".
@@ -45,13 +50,13 @@ Length: 325–390 words (about 2.5–3 minutes at 130 words per minute). If over
 
 ## Step 3 — Self-check (not a score)
 
-Before returning, check against the guideline's self-check list and the hard checks used by self-introduction-review: headline in the first 40 seconds; no stack-list opening; team vs personal credit correct; AI line present; 2–3 one-line hooks; no unsupported facts; word count in range; no going backwards. Fix problems before showing the script.
+Before returning, check against the guideline's self-check list and the hard checks used by self-introduction-review: headline in the first 40 seconds; no stack-list opening; team vs personal credit correct; AI line present (stated, or a marked proposal); 2–3 one-line hooks; no unsupported facts; word count in range; no going backwards. Fix problems before showing the script.
 
 ## Step 4 — Output
 
 1. The script as plain paragraphs in the message.
 2. Save it as a Markdown file (`self-introduction-<candidate>.md`) in the working directory when file writing is available; otherwise say it can be copied from the message.
-3. A short note for the Trainer/AM, in the requester's language (default Chinese), covering: word count and estimated time; every `[confirm]` item to settle with the candidate; facts left out because the source did not support them; anything the candidate may be asked to defend (numbers, tools).
+3. A short note for the Trainer/AM, in the requester's language (default Chinese), covering: word count and estimated time; every `[confirm]` item to settle with the candidate; every `[suggested]` AI proposal, which the Trainer/AM must verify with the candidate (the candidate should really use these practices and be ready for follow-up questions) and from which the marker must be removed before the script is used or sent to `self-introduction-review`; facts left out because the source did not support them; anything the candidate may be asked to defend (numbers, tools).
 4. Mention that once the candidate has practiced the script, `self-introduction-review` can score the recording or transcript.
 
 Do not send the script to the candidate or anyone else automatically; the requester decides delivery.

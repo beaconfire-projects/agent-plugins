@@ -1,6 +1,6 @@
 # Example — Walmart Fulfillment (about 340 words)
 
-Join date, years, the review process and AI use were not in the source, so they carry `[confirm]`. Numbers in brackets are guideline part numbers, not spoken.
+Join date, years and the review process were not in the source, so they carry `[confirm]`; AI use was not in the source either, so it carries a `[suggested]` proposal to verify. Numbers in brackets are guideline part numbers, not spoken.
 
 Hi, I'm Harvey, a backend engineer with [confirm: years] years of experience building enterprise and distributed systems, mostly in logistics and fulfillment. (1)
 
@@ -14,7 +14,7 @@ So the team used versioned APIs: keep the V2 contract, add V3, and let each work
 
 One flow that processes multiple items took about 30 seconds. By replacing repeated database lookups with batch fetches and reusing the data already fetched, I helped bring it under 2 seconds. (7)
 
-[confirm: tool and task] For example: I use Claude to generate test cases for new reservation scenarios. (8)
+[suggested: confirm you really do this] I use Claude to draft test cases for new reservation scenarios, and to review my changes for retry and concurrency issues before I open a PR. (8)
 
 Three challenges I'm happy to go deeper on: keeping V3 backward compatible with live V2 consumers while requirements were still inconsistent; making capacity reservations correct under retries and concurrency across several fulfillment centers; and troubleshooting production slowness. (9)
 

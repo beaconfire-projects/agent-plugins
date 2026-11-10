@@ -29,6 +29,7 @@ Never show the user the tool's output; the call only verifies sign-in.
   1. This environment cannot transcribe the audio, so it cannot be scored directly.
   2. Get a transcript elsewhere, and always name these options: a meeting tool's own transcript (Zoom, Otter, Feishu Minutes), or on the user's own Mac the command `mlx_whisper <file> --model mlx-community/whisper-large-v3-turbo --output-format txt` (needs ffmpeg). Give the CLI command, not a Python script, and do not name a specific Python version.
   3. Paste or attach the transcript with timestamps, and keep interviewer and candidate lines distinguishable. A transcript still gets a full structural score; only pace and delivery are "not assessed".
+- Bracketed markers such as `[confirm: ...]` or `[suggested: ...]` come from the generate skill and mark content the candidate has not stated or verified. Treat that content as not said, and tell the requester to remove the markers once the candidate has verified it.
 - If several speakers appear, evaluate only the candidate's prepared introduction. Prompted answers to interviewer follow-ups do not count toward coverage.
 - Text input: delivery and pace are "not assessed". Length is still scored: use the duration if the user supplies it, otherwise estimate it as words ÷ 130 and say it is an estimate.
 
@@ -42,7 +43,7 @@ Read `references/guideline.md` and `references/rubric.md` and follow them exactl
 - Metrics are optional. Do not penalize a candidate for having no number; flag numbers that are unexplained or unattributed as "needs verification".
 - Challenges (part 9) should be 2–3 one-line hooks that invite questions, not full solutions.
 - Score timing with the rubric's tiers (2:30–3:00 on target; 2:00–4:00 acceptable; 1:30–4:30 off target; outside that is a hard check).
-- **Required AI element:** the introduction must say how the candidate uses AI in their own work (AI-based SDLC, copilot-assisted development, using AI to bootstrap development and testing, or ChatGPT/Claude/Gemini/Copilot doing a named task). Score it per the rubric. Building an AI product is not the same as using AI in one's work. If missing or weak, deduct and make it a priority fix: say it is required and give a spoken line using only stated facts, with `[confirm]` for the tool and task.
+- **Required AI element:** the introduction must say how the candidate uses AI in their own work (AI-based SDLC, copilot-assisted development, or ChatGPT/Claude/Gemini/Copilot used in named stages such as coding, tests, debugging, PRs, checks like lint/CI/verification, and design). It should cover at least two stages for full credit. Score it per the rubric. Building an AI product is not the same as using AI in one's work. If missing or weak, deduct and make it a priority fix: say it is required and give a spoken line covering at least two stages using only stated facts, with `[confirm]` for the tool and stages.
 - Never invent facts, metrics, tools, ownership, or dates, and never penalize the candidate for experience they may have but did not say; say "not stated". Do not infer from accent or name.
 - Be objective. Do not inflate scores to be encouraging; do not use a bare "good/bad" without evidence.
 
