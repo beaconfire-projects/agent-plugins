@@ -22,3 +22,13 @@
   - 修复、措辞调整、小幅改动 → patch（如 `0.2.1` → `0.2.2`）
   - 不兼容的结构变更 → major
 - 提交前检查：`git diff` 中只要包含某插件目录下的文件，`plugin.json` 的 `version` 就必须在同一提交中被提升。
+
+## 自我介绍 Guideline 同步
+
+自我介绍的标准源是 `docs/self-introduction/guideline.en.md`（中文对照 `guideline.zh.md`）。`marketing-data-warehouse` 插件里 `self-introduction-generate` 和 `self-introduction-review` 各带一份相同的副本 `references/guideline.md`（skill 需自包含，不能互相引用）。修改标准源后，必须同步这两份副本，并同步 `guideline.zh.md`，同时调整 review 的 `references/rubric.md`。自我介绍相关 skill 只发布在正式版插件（`marketing-data-warehouse`），不放进 `-dev`。
+
+同步检查：
+
+```sh
+for f in plugins/marketing-data-warehouse/skills/self-introduction-{generate,review}/references/guideline.md; do diff -q docs/self-introduction/guideline.en.md "$f"; done
+```
