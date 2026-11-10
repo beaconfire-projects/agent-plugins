@@ -38,12 +38,12 @@ Never show the user the tool's output; the call only verifies sign-in.
 Read `references/guideline.md` and `references/rubric.md` and follow them exactly: the 10 parts, per-part criteria, score levels, weights, timing tiers, bands, and hard checks. Key principles:
 
 - Judge each part as **Covered / Partial / Missing** with evidence: a short quote (with timestamp when available) or an explicit "not found".
-- **Headline first:** parts 1–3 (who, latest company and project, core responsibility and what was delivered) must appear in the opening, within roughly the first 40 seconds. Parts 4–8 expand it; penalize going backwards in the narrative and technology lists that replace business explanation.
-- Team results must be credited to the team (part 5); the candidate's own result belongs in part 7. Flag any team result presented as personal.
+- **Headline first, AI right after:** parts 1–3 (who with an AI tagline, latest company and project, core responsibility and what was delivered) must appear in the opening, within roughly the first 40 seconds. Part 4 (AI in your work) should follow immediately, within about the first minute. Parts 5–8 expand; penalize going backwards in the narrative and technology lists that replace business explanation.
+- Team results must be credited to the team (part 6); the candidate's own result belongs in part 8. Flag any team result presented as personal.
 - Metrics are optional. Do not penalize a candidate for having no number; flag numbers that are unexplained or unattributed as "needs verification".
 - Challenges (part 9) should be 2–3 one-line hooks that invite questions, not full solutions.
 - Score timing with the rubric's tiers (2:30–3:00 on target; 2:00–4:00 acceptable; 1:30–4:30 off target; outside that is a hard check).
-- **Required AI element:** the introduction must say how the candidate uses AI in their own work (AI-based SDLC, copilot-assisted development, or ChatGPT/Claude/Gemini/Copilot used in named stages such as coding, tests, debugging, PRs, checks like lint/CI/verification, and design). It should cover at least two stages for full credit. Score it per the rubric. Building an AI product is not the same as using AI in one's work. If missing or weak, deduct and make it a priority fix: say it is required and give a spoken line covering at least two stages using only stated facts, with `[confirm]` for the tool and stages.
+- **Required AI element:** the introduction must say how the candidate uses AI in their own work (AI-based SDLC, copilot-assisted development, or ChatGPT/Claude/Gemini/Copilot used in named stages such as coding, tests, debugging, PRs, checks like lint/CI/verification, and design). It should cover at least two stages and sit right after the headline (about the first minute) for full credit; AI should be a highlight of roughly 15–25% of the words, not the whole story. The AI practice should fit the work the candidate says they did, and a language or stack the candidate would not plausibly have used is flagged "needs verification". Score it per the rubric. Building an AI product is not the same as using AI in one's work. If missing or weak, deduct and make it a priority fix: say it is required and give a spoken line covering at least two stages using only stated facts, with `[confirm]` for the tool and stages.
 - Never invent facts, metrics, tools, ownership, or dates, and never penalize the candidate for experience they may have but did not say; say "not stated". Do not infer from accent or name.
 - Be objective. Do not inflate scores to be encouraging; do not use a bare "good/bad" without evidence.
 
@@ -59,7 +59,7 @@ Coaching checks for the improvement advice (they feed the advice and the overall
 Write in the requester's language (default Chinese); keep quotes and sample wording in the language the candidate used. Use this order, concise and table-first:
 
 1. **Verdict line:** total score /100, band, one-sentence reason.
-2. **Part checklist table:** `# | Part | Status | Score | Evidence / what is missing`, all 10 parts (AI is part 8) plus the timing-and-concision row (with measured or estimated length and tier) and the overall-quality row.
+2. **Part checklist table:** `# | Part | Status | Score | Evidence / what is missing`, all 10 parts (AI is part 4) plus the timing-and-concision row (with measured or estimated length and tier) and the overall-quality row.
 3. **Covered vs missing:** two short lists.
 4. **Strengths:** at most 3, each with evidence.
 5. **Hard-check flags:** any that triggered (see rubric).

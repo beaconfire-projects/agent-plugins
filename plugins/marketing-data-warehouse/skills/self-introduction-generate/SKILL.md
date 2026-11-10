@@ -29,15 +29,20 @@ Never use a connector whose name contains `-dev`, or any connector with another 
 
 ## Step 2 — Draft
 
-Follow the guideline's shape: headline (parts 1–3) → expand (4–8) → hooks (9) → close (10).
+Follow the guideline's shape: headline (parts 1–3) → AI highlight (4) → expand (5–8) → hooks (9) → close (10).
 
-- **Headline first.** Within about 40 seconds the listener knows the role, latest company, project, core responsibility and what was delivered. If the company is not well known, add one line on what it does.
+- **Headline first, with an AI tagline.** Within about 40 seconds the listener knows the role, latest company, project, core responsibility and what was delivered. Part 1 carries a one-clause AI tagline in the candidate's real role, for example "a backend engineer who builds with AI across the development cycle". Name a language or stack (for example Java) only if the source says the candidate uses it. If the company is not well known, add one line on what it does.
 - **Business before technology.** Never open with a stack list. Name a technology only where it explains what the candidate did or why it mattered.
-- **Credit correctly.** Team or program results are credited to the team. The candidate's own result belongs in part 7. Never turn a team result into a personal one unless the source clearly attributes it to the candidate.
+- **Credit correctly.** Team or program results are credited to the team. The candidate's own result belongs in part 8. Never turn a team result into a personal one unless the source clearly attributes it to the candidate.
 - **Metrics are optional.** Use a number only if the source supports it and the candidate could explain it. Do not add or round up numbers. If there is no defensible number, describe the concrete outcome instead.
 - **Match the verb to the source.** "Participated in" or "worked on" in the source becomes "contributed to" or "worked on", not "owned" or "built". Credit the team for what the team did (caching, rollout, go-live) even inside a sentence about the candidate's own work. Say nothing about earlier career or industry history that the source does not contain; use `[confirm: ...]`.
 - **Ownership.** Say when the candidate joined, what they built, one representative feature in business terms, how ownership grew (only if the source shows it) and where it stopped.
-- **AI is required, across at least two stages.** Say how the candidate uses AI in their own work: the tool, at least two stages (code, tests, debugging, PRs, checks such as lint/CI/verification, design, docs) and what it helped with, in two or three short sentences (about 35 words). Building an AI product does not count.
+- **AI is required, up front, across at least two stages.** Put the AI tagline in part 1 and the full AI part (part 4, about 45 words, 2–3 short sentences) **right after the headline and before the project background**: the tool, at least two stages (code, tests, debugging, PRs, checks such as lint/CI/verification, design, docs), how the candidate checks the AI output (for example with tests or review) and what it helped with. Building an AI product does not count.
+  - **Take the practice from this project's real work, whatever the domain** (banking migration, logistics and warehousing, e-commerce and so on): for example tests for the allocation or reservation rules the candidate worked on, understanding legacy code before migrating it, checking a diff before a PR.
+  - **AI is a highlight, not the whole story**: about 15–25% of the words in total, namely the tagline, part 4, at most one short mention inside the candidate's own work, optionally one AI-related hook, and a phrase in the close. Everything else is the project and the candidate's contribution.
+  - If the source or the requester states it, use exactly what was stated.
+  - If it is not stated and cannot be obtained, **write a proposal instead of leaving the part empty**: pick at least two stages that fit work the candidate really did on this project, use a common tool (Claude, ChatGPT or Copilot), name one way to check the output and one plausible, modest effect. Do not invent metrics, time savings or results.
+  - Mark every proposed sentence, including a proposed AI tagline, with `[suggested: confirm you really do this]` at its start, so the script is complete but nobody mistakes it for a stated fact. A proposal must never be presented as a confirmed fact, and the candidate must be able to discuss it in depth, because the interviewer will ask about it first.
   - If the source or the requester states it, use exactly what was stated.
   - If it is not stated and cannot be obtained, **write a proposal instead of leaving the part empty**: pick at least two stages that fit work the candidate really did on this project (for example, migrated APIs → understanding legacy code, writing tests for the migrated endpoints, checking the diff before a PR), use a common tool (Claude, ChatGPT or Copilot) and one plausible, modest effect. Do not invent metrics, time savings or results.
   - Mark every proposed sentence with `[suggested: confirm you really do this]` at its start, so the script is complete but nobody mistakes it for a stated fact. A proposal must never be presented as a confirmed fact, and the candidate must be able to discuss it in depth.
@@ -46,11 +51,11 @@ Follow the guideline's shape: headline (parts 1–3) → expand (4–8) → hook
 - **Spoken English.** First person, short and medium sentences, natural paragraph breaks, the candidate's own terminology. No section labels, numbers or headings in the script. No source-language such as "according to the resume".
 - **Do not go backwards.** Once the candidate's own work starts, do not return to add project background.
 
-Length: 325–390 words (about 2.5–3 minutes at 130 words per minute). If over, cut in this order: minor features, implementation detail, repeated background, generic wording. Never cut the headline, the candidate's scope, a clear result, the AI line or the hooks. If under 325, add concrete detail from the source, not filler.
+Length: 325–390 words (about 2.5–3 minutes at 130 words per minute). If over, cut in this order: minor features, implementation detail, repeated background, generic wording. Never cut the headline, the candidate's scope, a clear result, the AI line or the hooks. If under 325, add concrete detail from the source, not filler. Keep AI within about 15–25% of the words when trimming or adding.
 
 ## Step 3 — Self-check (not a score)
 
-Before returning, check against the guideline's self-check list and the hard checks used by self-introduction-review: headline in the first 40 seconds; no stack-list opening; team vs personal credit correct; AI line present (stated, or a marked proposal); 2–3 one-line hooks; no unsupported facts; word count in range; no going backwards. Fix problems before showing the script.
+Before returning, check against the guideline's self-check list and the hard checks used by self-introduction-review: headline in the first 40 seconds; no stack-list opening; team vs personal credit correct; AI tagline in part 1 and AI part right after the headline (stated, or a marked proposal), AI roughly 15–25% of the words; 2–3 one-line hooks; no unsupported facts; word count in range; no going backwards. Fix problems before showing the script.
 
 ## Step 4 — Output
 
