@@ -41,7 +41,7 @@ Part-specific checks:
 - 4 (AI, required): the introduction must say how the candidate uses AI in their own work, for example AI-based SDLC, copilot-assisted development, or using ChatGPT, Claude, Gemini, Copilot or Cursor for specific work. It counts only if the candidate says it, not if the project merely is an AI product. Count the **stages** covered, from this list: writing or understanding code; writing tests; debugging; pull requests (descriptions, self-review of the diff, code review); checks (lint, CI, verifying a change); feature or technical design; documentation. Different tools for the same stage count as one stage.
   - Full: names the AI tool(s), covers **two or more stages**, says what it helped achieve or how the candidate checks AI output, **and sits right after the headline** (within about the first minute, before the project background).
   - Mostly: two or more stages but no effect and no check of the output; or one stage with a tool and a stated effect; or Full content that first appears after the project background but before the hooks.
-  - Partial: one stage with only a tool and no effect; a generic claim ("I use AI tools", "familiar with AI"); AI mentioned only inside a technology list; or the first full mention comes only after the hooks.
+  - Partial: one stage with only a tool and no effect; a generic claim ("I use AI tools", "familiar with AI"); AI mentioned only inside a technology list; or the first full mention comes only after the hooks. **The AI tagline in part 1 and a closing phrase such as "working AI-first" are not part 4 content**: a script that has only those has no stated AI practice and scores Partial at best, and the "no concrete AI practice" hard check applies.
   - Minimal: a passing keyword that gives the listener nothing usable.
   - Missing: no statement of using AI in their own work. Building an AI product or agent does not count by itself; note it as a project domain.
   - Should fit the work the candidate says they did on the project; an AI practice unrelated to the described work is flagged "needs verification".
@@ -88,7 +88,7 @@ Score 0–8:
 
 - Part 3 (headline) missing entirely, or the headline is absent from the opening.
 - Part 7 missing entirely.
-- AI in your work missing entirely (part 4 scores 0).
+- AI in your work missing entirely (part 4 scores 0), **or no concrete AI practice stated** (part 4 scores Partial or lower, for example only the part 1 tagline and a closing phrase, or a practice behind an unverified `[suggested]` marker).
 - A team/program result presented as the candidate's own.
 - Technology list used in place of project/business explanation in the opening or first half.
 - Facts that appear invented or contradict themselves (flag as "needs verification"; do not accuse), including an AI practice or a language or stack the candidate would not plausibly have used given the described work.
