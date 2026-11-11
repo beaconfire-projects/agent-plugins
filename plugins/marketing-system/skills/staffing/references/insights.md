@@ -1,6 +1,6 @@
 # Statistics: counts, distributions and trends (read only)
 
-Tools: `insights_list_metrics`, `insights_query`. To find the **people** behind a number use `staffing_search_candidates`, `staffing_list_interviews` or `staffing_list_onboardings`; to read one record use the lookup workflows.
+Tools: `insights_list_metrics`, `insights_query`. To find the **people** behind a number use `marketing_search_candidates`, `marketing_list_interviews` or `marketing_list_onboardings`; to read one record use the lookup workflows.
 
 **Scope.** The numbers only include the vendors you can see: an AM sees the vendors they are responsible for, a manager or admin sees all of them. If a number looks too small or an expected row is missing, say that the figures are limited to the user's vendors instead of treating it as a data problem. If the tools answer that statistics are not available, the user has no vendor assigned yet: they should ask an admin.
 
@@ -59,7 +59,7 @@ Things to say when they matter:
 
 ## What this cannot do
 
-- No names, emails, phone numbers, rates or other personal details: counts only. For "who are they", switch to `staffing_search_candidates` (filter by `status`, `level` and so on) or `staffing_list_interviews`, and keep the list as short as the question needs.
+- No names, emails, phone numbers, rates or other personal details: counts only. For "who are they", switch to `marketing_search_candidates` (filter by `status`, `level` and so on) or `marketing_list_interviews`, and keep the list as short as the question needs.
 - No writes. To change a status or record, use the other workflows.
 - Only Staffing and Marketing (positions, submissions) data is available; if `insights_list_metrics` shows no metric for what was asked (for example revenue, rates, or another business), say that it is not covered.
 

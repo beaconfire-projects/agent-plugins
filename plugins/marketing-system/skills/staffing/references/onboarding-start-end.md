@@ -1,23 +1,23 @@
 # Confirm the start, offboarding and the end
 
-Tools: `staffing_search_candidates`, `staffing_get_onboarding`, `staffing_list_onboardings`, `staffing_confirm_onboarding_start`, `staffing_create_offboarding`, `staffing_update_offboarding`, `staffing_cancel_offboarding`, `staffing_confirm_offboarding`.
+Tools: `marketing_search_candidates`, `marketing_get_onboarding`, `marketing_list_onboardings`, `marketing_confirm_onboarding_start`, `marketing_create_offboarding`, `marketing_update_offboarding`, `marketing_cancel_offboarding`, `marketing_confirm_offboarding`.
 
 An offer moves through these stages, and **only these actions change its status** (never edit the status directly):
 
 | Status | How it gets there |
 |---|---|
 | Offered | the onboarding record exists (no start date yet) |
-| Onboarding Scheduled | the planned start date is set (`staffing_update_onboarding`, see `onboarding-start-date.md`) |
-| **Active** | `staffing_confirm_onboarding_start`: the business confirms the first day the person actually worked |
-| still Active, with an offboarding | `staffing_create_offboarding`: the person is leaving; nothing is final yet |
-| **Remap / Quit / Fired** | `staffing_confirm_offboarding`: the business confirms the person actually left; the status is the outcome |
+| Onboarding Scheduled | the planned start date is set (`marketing_update_onboarding`, see `onboarding-start-date.md`) |
+| **Active** | `marketing_confirm_onboarding_start`: the business confirms the first day the person actually worked |
+| still Active, with an offboarding | `marketing_create_offboarding`: the person is leaving; nothing is final yet |
+| **Remap / Quit / Fired** | `marketing_confirm_offboarding`: the business confirms the person actually left; the status is the outcome |
 
 Remap means the person is not leaving the company: they go back into marketing and will get new submissions and interviews later.
 
 ## Steps
 
-1. **Find the onboarding record** (`staffing_get_onboarding`, or resolve the candidate and use `staffing_list_onboardings`). Read its `version`, `status`, `actual_start_date` and `offboarding_*` fields.
-   - Canceled (`canceled_at` set) or already ended (`offboarding_last_day` set): it cannot be changed. For a canceled offer offer to undo the cancellation first (`onboarding-cancel.md`); for an ended one, a new offer for the same position is created with `staffing_create_onboarding` (the old record stays as history).
+1. **Find the onboarding record** (`marketing_get_onboarding`, or resolve the candidate and use `marketing_list_onboardings`). Read its `version`, `status`, `actual_start_date` and `offboarding_*` fields.
+   - Canceled (`canceled_at` set) or already ended (`offboarding_last_day` set): it cannot be changed. For a canceled offer offer to undo the cancellation first (`onboarding-cancel.md`); for an ended one, a new offer for the same position is created with `marketing_create_onboarding` (the old record stays as history).
 2. **Pick the action** and check the rule:
    - **Confirm start**: needs the exact first day (`actual_start_date`). Confirming the same day again changes nothing; a different day is a correction. A started offer can no longer be canceled: use an offboarding to end it.
    - **Create offboarding**: only for an Active record. Every field is optional (`planned_last_day`, `current_status` = `Remap` / `Quit` / `Fired`, `reason`, `next_step`, `notes`); blank fields stay blank.
