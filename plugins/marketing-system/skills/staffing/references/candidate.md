@@ -1,12 +1,12 @@
 # Create and update candidate information
 
-Tools: `marketing_search_candidates`, `marketing_get_candidate_detail`, `marketing_get_candidate`, `marketing_list_options`, `marketing_create_candidate`, `marketing_search_bench_pool`, `marketing_convert_person_to_candidate`, `marketing_update_person`, `marketing_update_candidate`.
+Tools: `marketing_search_candidates`, `marketing_get_candidate_detail`, `marketing_get_candidate`, `marketing_list_options`, `marketing_create_candidate`, `marketing_search_bench_pool`, `marketing_convert_person_to_candidate`, `marketing_update_candidate_profile`, `marketing_update_candidate`.
 
 A candidate's data is in two places, and each has its own update tool:
 
 | Data | Tool to change it |
 | --- | --- |
-| **The person**: names, years of experience, visa type and its start / expiry dates, email, phone, address, date of birth, gender, LinkedIn, Facebook, phone and laptop preference, candidate type, C2C employer, marketing status, HR record (W-2 start date, recruiter, WeCom ID, company) | `marketing_update_person` |
+| **The person**: names, years of experience, visa type and its start / expiry dates, email, phone, address, date of birth, gender, LinkedIn, Facebook, phone and laptop preference, candidate type, C2C employer, marketing status, HR record (W-2 start date, recruiter, WeCom ID, company) | `marketing_update_candidate_profile` |
 | **The submission** (the candidate on one position): pay rate, availability, same client history, the C2C employer written in that submission | `marketing_update_submission` (see `references/submission.md`) |
 | **Level, lead, Status Override, updated rate, rate deduction, OSHA, splicing, other emails, city / state, SSN last 4 and the rest of the onboarding profile** | `marketing_update_candidate` (see "Other fields" below) |
 
@@ -22,7 +22,7 @@ Required: `candidate_type`, `first_name`, `last_name`, `email`. Everything else 
 4. **Confirm** the fields as a short table, then call `marketing_create_candidate`. Give `position` (a `POS-…` of your own vendor) only when the user asked to submit the candidate to a position as well; the submission is a separate step, and you can set its details in the same call with `marketing_submit_candidate_to_position` (see `references/submission.md`).
 5. **Report** the new Candidate ID, the type, and the warnings.
 
-## Update the person (`marketing_update_person`)
+## Update the person (`marketing_update_candidate_profile`)
 
 1. **Resolve the candidate** to exactly one person and read them with `marketing_get_candidate_detail` (current values and `version`).
 2. **Map the request to fields**; send only the fields that change, with `changes.version`. `null` or empty text clears a field (first name, last name and email cannot be cleared). Check choice fields against `marketing_list_options` (state, work authorization).
@@ -33,12 +33,12 @@ Required: `candidate_type`, `first_name`, `last_name`, `email`. Everything else 
    - **Visa**: `work_authorization` is the type; the start and expiry dates are `work_authorization_start_date` and `work_authorization_expires` (`YYYY-MM-DD`; the expiry cannot be before the start).
    - **Address** is saved as four parts; changing it keeps the old address as history. **Date of birth** is `mm-dd-yyyy` and is open to everyone who can see the candidate. The change history shows address and date of birth as `changed`, without values.
    - **Marketing status** can be set by hand only between `In Preparation` and `In Marketing` (a candidate coming back from `Remap` goes to one of them). `On Project`, `Off Project` and `Remap` follow the offer and cannot be set.
-4. **Confirm** with `field: old → new`, then call `marketing_update_person` with `code` and `changes`.
+4. **Confirm** with `field: old → new`, then call `marketing_update_candidate_profile` with `code` and `changes`.
 5. **Report** what was saved from the response (name, type, marketing status, new version) and any warning.
 
 ## Other fields (`marketing_update_candidate`)
 
-For the fields `marketing_update_person` does not take. `changes.version` is the candidate's version (read with `marketing_get_candidate`).
+For the fields `marketing_update_candidate_profile` does not take. `changes.version` is the candidate's version (read with `marketing_get_candidate`).
 
 | Group | Fields |
 | --- | --- |
@@ -47,7 +47,7 @@ For the fields `marketing_update_person` does not take. `changes.version` is the
 | Position-related | `level`, `is_lead`, `osha_certification`, `splicing_experience` |
 | Pay | `updated_rate` (USD per hour), `rate_deduction` (USD, may be negative) |
 | Status | `status_override`: Candidate Withdrew or Company Dropped (wins over every other status) |
-| Onboarding profile | `profile`: `ssn_last4`, `work_authorization_detail`, `phone_preference`, `laptop_preference`, `splicing_certification`, `fb_url` (the address, phone, date of birth and gender are also accepted there, but change them with `marketing_update_person`) |
+| Onboarding profile | `profile`: `ssn_last4`, `work_authorization_detail`, `phone_preference`, `laptop_preference`, `splicing_certification`, `fb_url` (the address, phone, date of birth and gender are also accepted there, but change them with `marketing_update_candidate_profile`) |
 
 Not editable anywhere on a candidate: Offer Status, Start Date and Current Status. They come from the onboarding record and the interviews (see the onboarding workflows).
 

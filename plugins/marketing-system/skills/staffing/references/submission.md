@@ -2,7 +2,7 @@
 
 Tools: `marketing_get_candidate_detail`, `marketing_get_submission`, `marketing_submit_candidate_to_position`, `marketing_update_submission`.
 
-A **submission** is a candidate on one position of one vendor (`SUB-nnnnnn`). It holds what the recruiter's Submission email said about that submission: the pay rate, when the candidate can start, relocation and travel, when the candidate can interview, earlier work with the same client, and the C2C employer with its contact. These belong to the submission, not to the person, and differ from position to position. LinkedIn, Facebook, phone and laptop preference are the **person's**: change them with `marketing_update_person` (see `references/candidate.md`).
+A **submission** is a candidate on one position of one vendor (`SUB-nnnnnn`). It holds what the recruiter's Submission email said about that submission: the pay rate, when the candidate can start, relocation and travel, when the candidate can interview, earlier work with the same client, and the C2C employer with its contact. These belong to the submission, not to the person, and differ from position to position. LinkedIn, Facebook, phone and laptop preference are the **person's**: change them with `marketing_update_candidate_profile` (see `references/candidate.md`).
 
 ## Fields
 
@@ -16,7 +16,7 @@ A **submission** is a candidate on one position of one vendor (`SUB-nnnnnn`). It
 | `same_client_history` | Earlier work with the same client, project and manager, as written |
 | `employer_name`, `employer_contact_name`, `employer_contact_email`, `employer_contact_phone` | The C2C employer written in this submission and its contact |
 
-The C2C employer here belongs to this submission only. It does not change the candidate's own employer (`marketing_update_person`), and the two do not sync. Level, lead and status are not changed here (`marketing_update_candidate`).
+The C2C employer here belongs to this submission only. It does not change the candidate's own employer (`marketing_update_candidate_profile`), and the two do not sync. Level, lead and status are not changed here (`marketing_update_candidate`).
 
 ## Read a submission
 
