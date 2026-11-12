@@ -12,6 +12,14 @@ A candidate's data is in two places, and each has its own update tool:
 
 Read a candidate with **`marketing_get_candidate_detail`** (by person ID, no position needed): it returns the whole profile, the submissions, interviews and offers on your vendors' positions, every event about the candidate, and the `version` that every update needs. `marketing_get_candidate` is the older read by the current position; use it only when the request is about `include_profile` fields it alone returns (SSN last 4).
 
+## Find candidates (`marketing_search_candidates`)
+
+One tool for searching by name, email or ID (`query` alone) and for listing with filters; the Web list and the sheet menu take the very same filters. Filters (all optional, combinable): `vendor`, `client`, `position` (company / position codes), `candidate_type` (a category or a full value or `Not set`), `marketing_status` (one or more: In Preparation, In Marketing, On Hold, Offer, On Project, Remap, Quit, Fired), `current_status` (interview progress such as `L2 Passed`), `lead`, `yoe_min` / `yoe_max` (years of experience, inclusive; people without years are left out), `page`, `page_size`.
+
+- **Marketing status and Current Status are different things.** Marketing status is the person's marketing state (On Project, Remap, …). Current Status is worked out from one submission's interviews (L2 Scheduled, L2 Passed, …) and is not stored.
+- **`current_status` needs a position** (`position`, or the only one you can see); otherwise the call is rejected with `current_status needs a position`.
+- With no filter the list is everything you can see, not just one position. To find a person by name, send `query` only; do not add filters.
+
 ## Add a candidate (`marketing_add_candidate`)
 
 One action with two sources. **A person already in the system** (for example someone who finished a batch): find them with `marketing_search_addable_people` (name, email or person ID; it lists people who are not candidates yet and have batch information), confirm the one person, then call `marketing_add_candidate` with `candidate.person_code` and, only if asked, `position` and `level`; **nothing else is accepted** for an existing person (change their data with the update afterwards). **A new person**: leave `person_code` out and follow the steps below. Either way the candidate starts as `In Preparation`.

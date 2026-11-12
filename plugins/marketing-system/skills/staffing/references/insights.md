@@ -59,7 +59,7 @@ Things to say when they matter:
 
 ## What this cannot do
 
-- No names, emails, phone numbers, rates or other personal details: counts only. For "who are they", switch to `marketing_search_candidates` (filter by `status`, `level` and so on) or `marketing_list_interviews`, and keep the list as short as the question needs.
+- No names, emails, phone numbers, rates or other personal details: counts only. For "who are they", switch to `marketing_search_candidates` (filters: `marketing_status`, `current_status`, `candidate_type`, `yoe_min` / `yoe_max`, `vendor`, `client`, `lead`) or `marketing_list_interviews`, and keep the list as short as the question needs.
 - No writes. To change a status or record, use the other workflows.
 - Only Staffing and Marketing (positions, submissions) data is available; if `insights_list_metrics` shows no metric for what was asked (for example revenue, rates, or another business), say that it is not covered.
 

@@ -8,7 +8,7 @@ An interview write that sets L2 to Passed returns `onboarding_suggestion` (candi
 
 ## Find candidates who passed L2 without an onboarding record
 
-`marketing_search_candidates` with `status` `L2 Passed` lists them (once a record exists the status becomes Offered). Show the list (ID, name, the L2 interview date from `marketing_get_candidate`) and ask which ones got an offer and on what date.
+`marketing_search_candidates` with `current_status` `L2 Passed` lists them (Current Status belongs to a submission, so work in the position: pass `position`, or leave it out when you can see only one; without a position the call is rejected) (once a record exists the status becomes Offered). Show the list (ID, name, the L2 interview date from `marketing_get_candidate`) and ask which ones got an offer and on what date.
 
 ## Steps
 
