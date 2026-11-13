@@ -5,12 +5,15 @@ description: Use the user-connected Beaconfireinc Marketing System MCP (`marketi
 
 # Staffing lookups and changes
 
+**Independent Offers (OFR):** 新 Offers 管理、创建后 HR 编辑、确认入职/离职和审计使用 `references/offers.md`。它覆盖下方旧 ONB 工作流的自动 L2 入职、人员状态联动等规则：新 Offer 不要求面试通过、不自动联动、不复用旧 Onboarding 工具。同一 Submission 可以有多个独立 Offer。
+
 Use only the `marketing_*` and `insights_*` tools of the connected `marketing-system` MCP server. Do not call the REST API, SQL, scripts or another plugin, and never invent IDs, versions or option values. If the tools are not visible, report a connection problem instead of guessing.
 
 ## Pick the workflow
 
 | The user wants | Read this reference |
 | --- | --- |
+| Manage independent Offers (OFR): list/create after reviewing submission interviews, edit HR information, onboard/offboard or inspect audit trail | `references/offers.md` |
 | Look up interviews: one candidate's interviews and results, one interview by ID, or a schedule by round and date (read only) | `references/interview.md` (Looking up interviews) |
 | Change an interview's date, time, time zone, result, score, link, recruiter, interviewer or notes | `references/interview.md` |
 | Record that a candidate got an offer, or find candidates who passed L2 and have no onboarding record yet | `references/onboarding-create.md` |
@@ -34,6 +37,7 @@ One message may contain several requests; handle them one at a time, each with i
    - A name goes to `marketing_search_candidates` with `query` alone, no other filter (words in any order, case and single letters ignored; the ID and the email work too). If more than one candidate matches, or the match is not clearly the person, list the candidates (ID, name, email, current status) and ask which one. Never pick for the user.
    - An Interview ID (`INT-…`) goes to `marketing_get_interview`. If it is not found, ask for the candidate's name or ID. If the server does not offer `marketing_get_interview` yet, find the code with `marketing_list_interviews` (`limit=500`).
    - An Onboarding ID (`ONB-…`) goes to `marketing_get_onboarding`.
+   - An Offer ID (`OFR-…`) goes to `marketing_get_offer`; independent Offer workflows follow `references/offers.md` rather than the legacy ONB rules below.
 2. **Read before writing.** Every update needs the current `version` from the record you just read. If a write is rejected as stale, read again, tell the user what changed, and ask again before retrying.
 3. **Validate choices.** Call `marketing_list_options` once and only use its values for results, rounds, interview times, time zones, recruiters, states, work authorizations and levels. Interview times are fixed dropdown values (for example `5:15 PM`); if the user gives a time that is not in the list, show the nearest allowed values and ask.
 4. **Confirm before every write.** When a tool has a `dry_run` (creating slots, holding slots), use it to build the confirmation table from what the server says it will do, then send the same request without `dry_run` after the yes. Show a short table of `field: old → new` for the one record (a batch of slot actions: one table with a row per item), say which tool will run, and wait for a clear yes. A question, a correction or silence is not a yes. Only send the fields being changed.
