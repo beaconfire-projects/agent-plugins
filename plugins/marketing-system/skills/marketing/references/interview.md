@@ -1,0 +1,43 @@
+# Marketing Interview Management
+
+This reference governs submission-based interview creation and explicit Marketing / Interview Management queries or edits. Existing Staffing candidate-based result/schedule, Slot and ONB workflows remain in staffing; do not combine their policies with this workflow. Use only the seven verified Interview tools in [Tool boundary](tool-boundary.md).
+
+## Search a submission and select its person / position
+
+Use `marketing_search_interview_submissions(query?, candidate_code?, submission_code?, position_code?, vendor?, client?, status?, submitted_from?, submitted_to?, page=1, page_size=20)` (max 100 per page).
+
+- `query` matches legal/preferred name, PER ID, primary/current alternate email or phone, Submission ID (`SUB-…` or `HIST-PL-…`), Position ID/title/technology/family, Vendor or Client names/codes. Multiple words narrow results. No need to look up all People first.
+- Exact codes and separate vendor/client filters are optional when the user's intent is specific; do not add restrictive filters guessed from a previous request. Submitted dates filter submission time in US Eastern; result order is **Submission creation time descending**, with stable ID tie-break, not interview time or code magnitude.
+- Present a compact list: person code/name/contact, submission code, position code/title, vendor/client, configured rounds. Each row is one submission; the same person may appear more than once. Paginate and state total/page; do not assume the first match or an empty first-page filter proves the Person has no submissions.
+- Ask which row if there is ambiguity. Never select based only on a shared name or silently create a new submission to make interview creation possible.
+
+Read the selected `marketing_get_interview_submission(code)`. It returns person/contact, position/vendor/client, configured and currently available rounds, existing interviews, allowed results/times/timezones and position-specific recruiters/trainers. Display the chosen person and position before writing. A Person without a visible submission cannot be selected here; scoped denial is not permission for a broad Person lookup workaround.
+
+## Create an interview
+
+Required for this workflow: **one selected existing Submission and one configured available round**. For a scheduled interview collect **date, start time, timezone and positive duration**; choose `Scheduled` from returned results. If the user explicitly wants an unscheduled record, confirm that timing and result will remain unset. API optional fields support legacy/unscheduled data; do not assume optional in a schema means an appointment can be scheduled without a complete time.
+
+1. Show existing interviews for that submission. A live interview already occupying the round should be updated, not duplicated. Canceled / Need to Reschedule records are history and do not occupy the round; a retry is a new interview on the **same selected submission**.
+2. Ask for missing required information together. Date is ISO `YYYY-MM-DD`. Resolve relative dates against today; US Eastern uses the returned `EST` label and includes daylight saving. Confirm any assumed timezone. Use returned fixed time choices; if an unsupported time is given, show nearby choices and ask. Duration is minutes, above 0 and at most 1440; do not invent a duration or meeting URL.
+3. Optional: interview type/place, result/score, recruiter, client interviewer, trainers, meeting/questions links, timeline, trainee message, communication log and notes. Trainer values are returned **Person codes**, not names/emails. Recruiter must belong to the selected position's vendor/client chain and uses the returned company-contact name. Do not pass a Person/HR Recruiter PER code or TEMP-P ID here. Interviewer is the client's evaluator, distinct from recruiter and trainer.
+4. Confirm a concise summary including person, submission, position, round, appointment/unscheduled state, result and participant changes. Mention that newly added trainers can receive the existing Calendar/email follow-up and links can update the established sheet projections/Copy File Record flow. User confirmation of this interview does not authorize an offer or onboarding action.
+5. Call `marketing_create_interview(interview={submission_code,round,...provided_fields})` once. Candidate is derived from the submission; do not send a guessed candidate. IDs are assigned by the server: internal `INT-…`, separate `google_sheet_interview_id=HIST-IV-…`; neither is client-settable.
+6. Read `marketing_get_interview(code)` and report the returned internal/Sheet IDs, exact person/submission/position, round, time and warnings. Audit history is available through `marketing_get_interview_history(code)`.
+
+## Query / update / reschedule
+
+- A known **INT** code goes to `marketing_get_interview`. A HIST-IV Sheet ID is a separate identity: do not convert its number into an INT code. Find the linked submission and its returned interviews, or ask for the internal code.
+- A person/submission request first resolves the submission(s) above. Context lists strictly linked interviews. `marketing_list_interviews(candidate_code?, result?, round?, recruiter?, date_from?, date_to?, limit?)` is useful for a person's interviews or a schedule; results can span submissions, so retain submission/position in the reply. It is a bounded list, not a statistics/counting service. Date filters use each interview's local date; with `date_from` results are chronological, otherwise latest recorded first. Configured rounds can include C1/C2, not only L1/L2.
+- For an edit, get the exact interview and current version, then its submission context for valid choices. Keep unchanged person/submission/position; they are not reassignable by patch. Round changes are only for correcting a wrong round with the user's explicit intent, and must not collide with another active interview.
+- Editing has no universally required fields beyond current `version`; ask only for information needed for the requested change. For partial time changes retain existing date/zone when complete and say so. An explicitly given time with missing date/zone requires clarification; do not silently lose it. The server calculates end time from start and duration.
+- When recording a final result (`Passed`, `Failed`, `No-show`, `Need to Reschedule`) and no score exists, ask once for the score or “none”, together with other missing items. Never infer score/result from prose or from each other. Score format is `value/maximum`, e.g. `9/10`, with positive maximum and score no greater than maximum; maximum is not always 10. If the user says none, omit or explicitly clear only as requested, then continue without another score question.
+- A Canceled / Need to Reschedule interview given a new appointment becomes a **new record**, retaining the old record. For a passed/failed interview, clarify whether a changed date corrects the history or requests another event; do not reset result silently. Marketing imposes no hardcoded L1/L2 recruiter rule: use the selected position's returned choices. Slot-specific rules belong to staffing.
+- Show exact target and old → new fields, including clears and trainer follow-up, then confirm. Call `marketing_update_interview(code,changes={version,...only_changed_fields})`. Omitted fields remain; null clears nullable fields; `trainers=[]` replaces current trainers with none. Do not resend all read-only metadata or untouched imported values.
+
+## After saving and recovery
+
+Report saved fields/version and warnings. A queued follow-up or sheet sync does not prove delivery. `onboarding_suggestion` is informational here: **do not call staffing ONB or create an OFR automatically**. If the user separately requests an independent formal offer, follow [Offer](offer.md), including its review and confirmation; do not infer consent from L2 Passed.
+
+Stale version: reread, show the new diff, reconfirm. Duplicate round: inspect the returned existing interview, do not cancel/overwrite automatically. Permission/not found: stop within authorized scope. Unknown create outcome: refresh the selected submission's interview list and inspect existing IDs before any retry; no client create-idempotency key is available. For several interviews, resolve and confirm each target; report per-record success/error and do not replay already successful writes.
+
+Audit records include operator, entry point, time and actual old/new fields. New Person and Interview writes use the same transactional audit store. Startup sync remains projection-only: it writes the two Read Only pages and does not process Copy File Record; explicit interview saves retain the existing follow-up flow.

@@ -1,6 +1,6 @@
 # marketing-system
 
-连接 Beaconfireinc Marketing System 的 MCP 服务（`https://api-marketing-mcp.beaconfireinc.com/mcp`），并提供 `staffing` Skill，用来对 Staffing（Meta Data Center 招聘流程）的数据做受控修改。目前只有生产环境（没有 dev 环境），所以只提供正式版插件 `marketing-system`。
+连接 Beaconfireinc Marketing System 的 MCP 服务（`https://api-marketing-mcp.beaconfireinc.com/mcp`），并提供 `marketing` 和 `staffing` Skills，用来对 Staffing（Meta Data Center 招聘流程）的数据做受控修改。目前只有生产环境（没有 dev 环境），所以只提供正式版插件 `marketing-system`。
 
 ## 安装
 
@@ -18,6 +18,14 @@ v0.14.1：`marketing_search_candidates` 和 Web / 表格菜单共用同一套筛
 v0.14.0：Candidate 能力收敛为四个入口共用的一组工具——`marketing_add_candidate`（已有 Person 传 `person_code`，或新建，同一个动作）、`marketing_search_addable_people`、`marketing_update_candidate`（个人资料含营销状态）；原 `marketing_create_candidate`、`marketing_convert_person_to_candidate`、`marketing_search_bench_pool`、`marketing_update_candidate_profile`、`marketing_delete_candidate` 已删除（删除 Candidate 只在 Admin 网页后台）；原 `marketing_update_candidate`（Level / Lead / Status Override 等）改名 `marketing_update_candidate_submission`。
 
 v0.13.0 起 MCP 工具名从 `staffing_*` 改为 `marketing_*`（统计工具仍是 `insights_*`），旧名不再保留；候选人自己的资料更新叫 `marketing_update_candidate`（`marketing_update_person` 是 Admin / Manager 用的共用 Person / HR 资料管理工具，两者不同）。**插件和后端要配套**：先发后端，再更新到 v0.14.1；只更新插件而后端还是旧版时，Skill 找不到工具；后端已发新版而插件还是旧版时同理。
+
+## `marketing` Skill：Person 与 Interview Management（v0.17.0）
+
+共享 Person/HR 支持查询、手动创建、HR 导入、修改、选项及字段审计。创建 Person 的必填信息、联系方式替换、HR/签证/批次的字段含义见 `skills/marketing/references/person.md` 和 `create-person.md`。
+
+Interview Management 支持用人名、PER ID、邮箱/电话、Submission ID、Position、Vendor/Client 搜索已有投递，选择后带出人、岗位与轮次，再创建/查看/修改面试及查询审计。场景限制、预约必填项、评分追问、确认与失败恢复见 `skills/marketing/references/interview.md`。内部 INT 与 Sheet HIST-IV 是两个编号。
+
+这次只更新 marketing Skill，staffing 文件保持不变。共享 Person/HR 和 Submission 驱动的面试管理走 marketing；已有 Staffing Candidate/Slot/ONB 流程仍走 staffing，不混用自动后续动作。Marketing 面试保存返回的 onboarding_suggestion 不会授权自动创建 ONB/OFR。运行时工具须符合 `skills/marketing/references/tool-boundary.md` 的能力清单（本次源码验证 Person/Interview 14 个工具，其余 35 项保留已有契约）；后端部署未提供新工具时报告版本缺口。
 
 ## `staffing` Skill
 
