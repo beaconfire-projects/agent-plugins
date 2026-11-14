@@ -1,6 +1,6 @@
 # Marketing Interview Management
 
-This reference governs submission-based interview creation and explicit Marketing / Interview Management queries or edits. Existing Staffing candidate-based result/schedule, Slot and ONB workflows remain in staffing; do not combine their policies with this workflow. Use only the seven verified Interview tools in [Tool boundary](tool-boundary.md).
+This reference governs submission-based interview creation and explicit Marketing / Interview Management queries or edits. Existing Staffing candidate-based result/schedule, Slot and ONB workflows remain in staffing; do not combine their policies with this workflow. Use only the eight verified Interview tools in [Tool boundary](tool-boundary.md).
 
 ## Search a submission and select its person / position
 
@@ -33,6 +33,14 @@ Required for this workflow: **one selected existing Submission and one configure
 - When recording a final result (`Passed`, `Failed`, `No-show`, `Need to Reschedule`) and no score exists, ask once for the score or “none”, together with other missing items. Never infer score/result from prose or from each other. Score format is `value/maximum`, e.g. `9/10`, with positive maximum and score no greater than maximum; maximum is not always 10. If the user says none, omit or explicitly clear only as requested, then continue without another score question.
 - A Canceled / Need to Reschedule interview given a new appointment becomes a **new record**, retaining the old record. For a passed/failed interview, clarify whether a changed date corrects the history or requests another event; do not reset result silently. Marketing imposes no hardcoded L1/L2 recruiter rule: use the selected position's returned choices. Slot-specific rules belong to staffing.
 - Show exact target and old → new fields, including clears and trainer follow-up, then confirm. Call `marketing_update_interview(code,changes={version,...only_changed_fields})`. Omitted fields remain; null clears nullable fields; `trainers=[]` replaces current trainers with none. Do not resend all read-only metadata or untouched imported values.
+
+## Delete one Interview (the UI button is Cancel)
+
+An explicit request to delete an erroneous record uses `marketing_delete_interview(code, version)`. The web/Sheet detail button is named **Cancel**, but performs permanent single-record deletion. This is distinct from setting the result to `Canceled`, which retains history. When intent is ambiguous, clarify whether the user wants record deletion or a retained canceled result before writing.
+
+Read the exact interview/version and identify person, submission, position and round. `submission_has_offer=true` blocks deletion: **any Offer on the same Submission, in any status**, is sufficient. Do not delete an Offer or Submission to bypass this rule. There is no bulk-delete operation in this workflow.
+
+Explain that one Interview and its participants/feedback will be removed, its ID will not be reused, pending follow-ups will stop, and completed delivery history and operation audit remain. Show the exact target and obtain explicit confirmation, then call once with its current version. Report the returned deleted code and verify the exact record is unavailable; a not-found response without a successful deletion response does not establish deletion. A stale version requires a fresh read and confirmation; an unknown outcome requires inspection before retrying. The audit records actor, channel, time and old fields in the deletion transaction; audit failure rolls back deletion. This action does not trigger an Offer/ONB workflow.
 
 ## After saving and recovery
 

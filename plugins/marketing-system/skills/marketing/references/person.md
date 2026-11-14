@@ -1,6 +1,6 @@
-# Shared Person / HR: lookup, edit and audit
+# Shared Person / HR: lookup, edit, single deletion and audit
 
-All seven Person tools require Admin/Manager-style all-vendor access. They use no `position`. Ordinary AM denial must not be bypassed through candidate tools.
+All eight Person tools require Admin/Manager-style all-vendor access. They use no `position`. Ordinary AM denial must not be bypassed through candidate tools.
 
 ## Find the person
 
@@ -14,6 +14,14 @@ For a person who needs an interview, search actual submissions with the [Intervi
 2. For batch or visa changes, call `marketing_get_person_options()` for current batch IDs/names/category/track, allowed authorization values and existing HR Recruiters. Resolve ambiguous batch names with the user; do not invent an ID or create a batch through this tool.
 3. Show only proposed old → new values, explicit clears, contact replacements and current batch changes. Obtain confirmation, then call `marketing_update_person(code, changes={version,...})` once. Omitted top-level and nested HR fields are preserved. A true no-op does not advance the version.
 4. Read back the exact person and verify the saved fields/version. `marketing_get_person_history(code)` exposes actual field changes, actor, channel and time, including new HR imports and existing candidate/profile audit entries. A missing historic log is not proof no past modification occurred.
+
+## Delete one Person
+
+Use only `marketing_delete_person(code, version)` for an explicit request to delete **one selected Person**. First read `marketing_get_person(code)` and its current `version` and `submission_count`. Any existing Submission blocks deletion. This is the only business-reference blocker; do not invent additional Interview, Offer, candidate-flag or role checks. Admin/Manager-style access and optimistic version checks still apply.
+
+Show the exact PER code, name and minimal identifying contact, and explain that this permanently removes the Person and owned profile/contact/role records while retaining the operation audit. Obtain explicit confirmation for that record, then call once. Never delete a linked Submission to bypass the blocker, offer a cascade, or expand a search result into bulk deletion. There is no bulk-delete tool.
+
+A successful response returns the deleted code. Check that the exact record is no longer available and report success from the delete response; a subsequent not-found by itself is insufficient evidence. On a stale version, reread and reconfirm; on an unknown outcome, inspect the exact record before any retry. The same-transaction deletion audit includes actor, channel, time and before-values with sensitive fields redacted; deletion rolls back if audit fails. Audit history remains stored even though the deleted Person detail/history endpoint may no longer be available.
 
 ## Fields and meanings
 

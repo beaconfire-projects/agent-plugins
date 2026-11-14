@@ -1,6 +1,6 @@
 # Verified tool boundary
 
-The combined capability contract lists **49 tools** (companies 6, positions/vendors 7, submissions 11, offers 11, people 7, interviews 7). This change verifies the 14 Person/Interview decorators against the current development checkout. The other 35 entries retain the previously reviewed marketing skill contract; their implementations are not in this development checkout and must not be described as newly reverified. Allow only tools whose actual decorator tags include `marketing`. The connected deployment must expose the matching schema; stop on missing tools, unverified tags or incompatible schemas. This list does not authorize future tools solely because their names look similar.
+The combined capability contract lists **51 tools** (companies 6, positions/vendors 7, submissions 11, offers 11, people 8, interviews 8). This change verifies the 16 Person/Interview decorators against the current development checkout. The other 35 entries retain the previously reviewed marketing skill contract; their implementations are not in this development checkout and must not be described as newly reverified. Allow only tools whose actual decorator tags include `marketing`. The connected deployment must expose the matching schema; stop on missing tools, unverified tags or incompatible schemas. This list does not authorize future tools solely because their names look similar.
 
 Source paths below are code provenance under `backend/app/`, not runtime calls or relative file links.
 
@@ -47,11 +47,12 @@ Existing marketing contract (retained): tags `marketing`, `offers`. Verify the c
 - `marketing_search_offer_submissions`
 - `marketing_update_offer`
 
-## People (7)
+## People (8)
 
 Source: `modules/staffing/mcp/tools.py`. Tags: `marketing`, `people`.
 
 - `marketing_create_person`
+- `marketing_delete_person`
 - `marketing_get_person_options`
 - `marketing_get_person_history`
 - `marketing_get_person`
@@ -59,9 +60,9 @@ Source: `modules/staffing/mcp/tools.py`. Tags: `marketing`, `people`.
 - `marketing_list_people`
 - `marketing_update_person`
 
-## Interviews (7)
+## Interviews (8)
 
-Source: `modules/staffing/mcp/tools.py`. Tags contain `marketing`, `interviews`; existing shared list/get/create/update also retain `staffing` for compatibility.
+Source: `modules/staffing/mcp/tools.py`. Tags contain `marketing`, `interviews`; existing shared list/get/create/update/delete also retain `staffing` for compatibility.
 
 - `marketing_search_interview_submissions`
 - `marketing_get_interview_submission`
@@ -69,6 +70,7 @@ Source: `modules/staffing/mcp/tools.py`. Tags contain `marketing`, `interviews`;
 - `marketing_get_interview`
 - `marketing_get_interview_history`
 - `marketing_create_interview`
+- `marketing_delete_interview`
 - `marketing_update_interview`
 
 Use the submission selector/context for per-position choices. No staffing `marketing_list_options` fallback is needed. A shared tool's tags do not import staffing's workflow/automatic ONB rules into marketing.
@@ -89,6 +91,6 @@ These names previously belonged to Staffing; require the deployed Marketing tags
 
 ## Explicit exclusions
 
-Staffing options, candidate create/update/search, Slot, legacy ONB/offboarding, old submission, generic history, ingest, delete and staffing-only position-management tools do not qualify merely because their names begin `marketing_`. Insights/statistics are outside this boundary. Do not load staffing or call REST/SQL/scripts to bypass a missing marketing capability. Person and Interview tools listed above qualify because their decorators explicitly include `marketing`, despite their source module name.
+Staffing options, candidate create/update/search, Slot, legacy ONB/offboarding, old submission, generic history, ingest, other delete and staffing-only position-management tools do not qualify merely because their names begin `marketing_`. Insights/statistics are outside this boundary. Do not load staffing or call REST/SQL/scripts to bypass a missing marketing capability. Person and Interview tools listed above qualify because their decorators explicitly include `marketing`, despite their source module name.
 
-There is no candidate-conversion, interview delete, offer cancel/undo or batch-create tool in this inventory. Independent formal OFR actions and legacy ONB actions are distinct. See [Interview](interview.md), [Person](person.md), and [Offer](offer.md) for each workflow's explicit confirmation and field requirements.
+Only single Person/Interview deletion is included. There is no bulk delete, candidate deletion/conversion, offer cancel/undo or batch-create tool in this inventory. Independent formal OFR actions and legacy ONB actions are distinct. See [Interview](interview.md), [Person](person.md), and [Offer](offer.md) for each workflow's explicit confirmation and field requirements.

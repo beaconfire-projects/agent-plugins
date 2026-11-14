@@ -19,9 +19,9 @@ v0.14.0：Candidate 能力收敛为四个入口共用的一组工具——`marke
 
 v0.13.0 起 MCP 工具名从 `staffing_*` 改为 `marketing_*`（统计工具仍是 `insights_*`），旧名不再保留；候选人自己的资料更新叫 `marketing_update_candidate`（`marketing_update_person` 是 Admin / Manager 用的共用 Person / HR 资料管理工具，两者不同）。**插件和后端要配套**：先发后端，再更新到 v0.14.1；只更新插件而后端还是旧版时，Skill 找不到工具；后端已发新版而插件还是旧版时同理。
 
-## `marketing` Skill：Person 与 Interview Management（v0.17.0）
+## `marketing` Skill：Person 与 Interview Management（v0.18.0）
 
-共享 Person/HR 支持查询、手动创建、HR 导入、修改、选项及字段审计。创建 Person 的必填信息、联系方式替换、HR/签证/批次的字段含义见 `skills/marketing/references/person.md` 和 `create-person.md`。
+共享 Person/HR 支持查询、手动创建、HR 导入、修改、选项及字段审计。 支持显式确认后的单条删除：Person 只在存在 Submission 时禁止删除；Interview 对应 Submission 存在任意状态的 Offer 时禁止删除。Interview 页面按钮显示 Cancel，实际删除当前记录，与保留记录的 Canceled 结果不同。删除和操作日志同事务，失败回滚；不支持批量或连带删除。创建 Person 的必填信息、联系方式替换、HR/签证/批次的字段含义见 `skills/marketing/references/person.md` 和 `create-person.md`。
 
 Interview Management 支持用人名、PER ID、邮箱/电话、Submission ID、Position、Vendor/Client 搜索已有投递，选择后带出人、岗位与轮次，再创建/查看/修改面试及查询审计。场景限制、预约必填项、评分追问、确认与失败恢复见 `skills/marketing/references/interview.md`。内部 INT 与 Sheet HIST-IV 是两个编号。
 
