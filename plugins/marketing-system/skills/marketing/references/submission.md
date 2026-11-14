@@ -1,6 +1,6 @@
 # Submissions
 
-These are workspace submissions, not the staffing-only submission tools. They use vendor-scoped positions. Candidate search uses everyone=True semantics: candidate flag plus consultant-info row, and either no open offer with marketing status `In Preparation`, `In Marketing` or `Remap`, or an open offer in scope. The current selector excludes On Hold; its open-offer test requires no withdrawal/last day and excludes source `marketing-offers` and stored `Offboarded`. Use the actual selector rather than inferring eligibility solely from an Offer status. Ordinary imported people are not automatically candidates.
+These are workspace submissions, not the staffing-only submission tools. They use vendor-scoped positions. Candidate search uses everyone=True semantics: candidate flag plus consultant-info row, and either no open offer with marketing status `In Preparation`, `In Marketing` or `Remap`, or an open offer in scope. The current selector excludes On Hold; its open-offer test requires no cancellation/last day and excludes source `marketing-offers` and stored `Offboarded`. Use the actual selector rather than inferring eligibility solely from an Offer status. Ordinary imported people are not automatically candidates.
 
 ## Lookup and review
 

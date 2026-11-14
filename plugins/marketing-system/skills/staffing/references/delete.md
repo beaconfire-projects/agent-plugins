@@ -9,7 +9,7 @@ Deleting is **permanent**. Use it only for a record that was created from wrong 
 1. **Resolve to exactly one record** (rules in `SKILL.md`) and read it to get its `version`.
 2. **Work out what depends on it** and tell the user:
    - **Interview**: the candidate's Current Status is recomputed from the remaining interviews. A later invitation email for the same calendar event does not bring it back (it is reported to Feishu instead). If the interview came from the legacy tabs (source `backfill`), a rebuild from the legacy tabs would create it again.
-   - **Offer**: there is no delete tool. A wrong or ended offer is canceled with `marketing_withdraw_offer` (see `references/offer.md`).
+   - **Offer**: there is no delete tool. A wrong or ended offer is canceled with `marketing_cancel_offer` (see `references/offer.md`).
    - **Candidate**: there is no tool for it. A candidate is deleted by an Admin in the web back office (Candidate detail page); say so and stop.
 3. **Confirm**: name the record (ID, person, round or dates), say what it affects and that it cannot be undone, and wait for a clear yes. When the user asked to remove a candidate together with their interviews, show the whole chain (every ID that will go, in the order above) in one table and take one yes for it. Never extend the list on your own.
 4. Call the delete tool with the `code` and the `version` you just read. A stale version means someone changed the record: read it again, say what changed, and ask again.

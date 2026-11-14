@@ -2,11 +2,11 @@
 
 Formal Offers are independent records (`OFR-…`), not a submission's Offered label. Multiple offers per submission are supported and each is independent. Vendor scope follows the source position; missing and inaccessible records both return Not found. No implicit default position is supplied.
 
-**The status is derived, never written.** `status` is Offered, On Project, Off Project or Canceled, computed from the facts on the offer: Canceled if withdrawn; Off Project the day **after** the actual last day; On Project from the actual start date (business days, US Eastern); otherwise Offered. Actual dates may be in the future, can be changed and can be cleared. Expected dates never change the status. See [offer lifecycle](offer-lifecycle.md) for the date actions and cancellation.
+**The status is derived, never written.** `status` is Offered, On Project, Off Project or Canceled, computed from the facts on the offer: Canceled if the offer was canceled; Off Project the day **after** the actual last day; On Project from the actual start date (business days, US Eastern); otherwise Offered. Actual dates may be in the future, can be changed and can be cleared. Expected dates never change the status. See [offer lifecycle](offer-lifecycle.md) for the date actions and cancellation.
 
 ## Lookup and history
 
-Call `marketing_list_offers(query={q, status, page, page_size})` with optional fields (q defaults empty, page 1, size 25, max 100); `status` is an array of the four derived statuses. Resolve the specific code, then `marketing_get_offer(code)` (fields, derived status, version, history). Read actual history with `marketing_get_offer_history(code)`; never synthesize events from dates or neighboring offers. `marketing_offer_options()` returns statuses, withdraw parties, PO companies, states, offboarding reasons and next steps. History masks sensitive changes (addresses, marketing email, rate, BGC contact, notes) as `changed`.
+Call `marketing_list_offers(query={q, status, page, page_size})` with optional fields (q defaults empty, page 1, size 25, max 100); `status` is an array of the four derived statuses. Resolve the specific code, then `marketing_get_offer(code)` (fields, derived status, version, history). Read actual history with `marketing_get_offer_history(code)`; never synthesize events from dates or neighboring offers. `marketing_offer_options()` returns statuses, cancel parties, PO companies, states, offboarding reasons and next steps. History masks sensitive changes (addresses, marketing email, rate, BGC contact, notes) as `changed`.
 
 ## Create after interview review
 
