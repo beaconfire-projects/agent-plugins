@@ -13,6 +13,8 @@
 
 ## 工具名与版本
 
+v0.26.0：配套后端清理旧的 Vendor / Client / Position 选项：`marketing_submission_options` 的返回里不再有 `vendors`、`clients`、`positions`，只剩 `statuses`；这三类选项一律用 `marketing_list_scope_options`。没有删除任何工具（`marketing_offer_options`、`marketing_list_options` 本来就不含这三类）；`marketing_list_vendors`、`marketing_list_position_clients`、`marketing_search_submission_positions` 保留，它们服务创建岗位 / 创建 Submission，不是筛选范围。请先发后端、再更新插件。
+
 v0.21.0：Marketing skill 的创建 Candidate 流程改调 `marketing_add_candidate`（四个入口共用的完整版），并用同样带 `marketing` 标签的 `marketing_search_candidates`、`marketing_search_addable_people`、`marketing_get_candidate_detail` 搜索和读回；不再引用 `marketing_create_candidate`（后端稍后删除，不留旧名）。审计在 `module=staffing` 下，可用 `marketing_get_history` 读到。配套后端 0.1.0-169：这 15 个 Candidate 工具标签为 `staffing`、`marketing`、`candidates`。
 
 v0.20.0：配套后端 Offer 接口整理：取消 Offer 的 MCP 工具统一叫 cancel——`marketing_withdraw_offer` 改为 `marketing_cancel_offer`，`marketing_undo_withdraw_offer` 改为 `marketing_undo_cancel_offer`，旧名已删除不留别名；Offer 选项里的 `withdraw_parties` 改叫 `cancel_parties`，Offer 返回里的撤回字段改叫 `cancel_party` / `cancel_reason` / `canceled_at`。取消的业务规则不变（候选人拒绝或公司撤回，任何阶段都可取消，可撤销，不动 Submission）。后端 Offer REST 同时改为 `/api/v1/offers`，skill 只调 MCP，不受路径影响。
