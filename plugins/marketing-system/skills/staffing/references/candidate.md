@@ -16,7 +16,7 @@ Read a candidate with **`marketing_get_candidate_detail`** (by person ID, no pos
 One tool for searching by name, email or ID (`query` alone) and for listing with filters; the Web list and the sheet menu take the very same filters. Filters (all optional, combinable): `vendor`, `client`, `position` (company / position codes), `candidate_type` (a category or a full value or `Not set`), `marketing_status` (one or more: In Preparation, In Marketing, On Hold, Offer, On Project, Remap, Quit, Fired), `current_status` (interview progress such as `L2 Passed`), `lead`, `yoe_min` / `yoe_max` (years of experience, inclusive; people without years are left out), `page`, `page_size`.
 
 - **Marketing status and Current Status are different things.** Marketing status is the person's marketing state (On Project, Remap, …). Current Status is worked out from one submission's interviews (L2 Scheduled, L2 Passed, …) and is not stored.
-- **`current_status` needs a position** (`position`, or the only one you can see); otherwise the call is rejected with `current_status needs a position`.
+- **`current_status` needs a position** (pass at least one `position` filter); otherwise the call is rejected with `current_status needs a position`.
 - With no filter the list is everything you can see, not just one position. To find a person by name, send `query` only; do not add filters.
 
 ## Add a candidate (`marketing_add_candidate`)
@@ -30,7 +30,7 @@ Required: `candidate_type`, `first_name`, `last_name`, `email`. Everything else 
 1. **Candidate type**: `Skip Training`, `Staffing - W-2`, `Staffing - C2C` or `Staffing - 1099` for a new person. **Bench is not created as a new person**: add them from the existing people (above). If the user does not say the type, ask; never guess.
 2. **Do not ask for optional fields the user did not mention**; send only what was given. Split a full name into first / middle / last yourself and show the split; split an address into its four parts.
 3. **Check for duplicates**: the email or phone must not belong to another candidate (the error names the existing ID, report it and do not retry with another value). A candidate with the same name but another email is created with a warning; tell the user.
-4. **Confirm** the fields as a short table, then call `marketing_add_candidate` (the fields go inside `candidate`). Give `position` (a `POS-…` of your own vendor) only when the user asked to submit the candidate to a position as well; the submission is a separate step: call `marketing_create_submission` afterwards (see `references/submission.md`).
+4. **Confirm** the fields as a short table, then call `marketing_add_candidate` (the fields go inside `candidate`). Never send a position here; submitting the candidate to a position is a separate step: call `marketing_create_submission` afterwards (see `references/submission.md`).
 5. **Report** the new Candidate ID, the type, and the warnings.
 
 ## Update the person (`marketing_update_candidate`)

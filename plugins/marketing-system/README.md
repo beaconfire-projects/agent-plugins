@@ -17,6 +17,8 @@ v0.21.0：Marketing skill 的创建 Candidate 流程改调 `marketing_add_candid
 
 v0.20.0：配套后端 Offer 接口整理：取消 Offer 的 MCP 工具统一叫 cancel——`marketing_withdraw_offer` 改为 `marketing_cancel_offer`，`marketing_undo_withdraw_offer` 改为 `marketing_undo_cancel_offer`，旧名已删除不留别名；Offer 选项里的 `withdraw_parties` 改叫 `cancel_parties`，Offer 返回里的撤回字段改叫 `cancel_party` / `cancel_reason` / `canceled_at`。取消的业务规则不变（候选人拒绝或公司撤回，任何阶段都可取消，可撤销，不动 Submission）。后端 Offer REST 同时改为 `/api/v1/offers`，skill 只调 MCP，不受路径影响。
 
+v0.25.0：新增 `marketing_list_scope_options`（可见的 Vendor / Client / Position 选项），所有列表的 `vendor` / `client` / `position` 筛选和搜索规则统一（词顺序无关、多词忽略单字母、有搜索词按相关度排序），Offer、面试、Slot 列表新增这三个筛选；**破坏性变更**：不再有服务器注入的隐藏 `position` 参数，创建 / 占用 Slot 改用显式 `position_code`，`current_status` 必须带 `position` 筛选。旧选项工具本版仍保留，后续版本删除。
+
 v0.24.0：旧工具 `marketing_update_candidate_submission` 已删除——人的资料（含其他邮箱、city / state、SSN 后四位、工作身份详情、Splicing Certification）全部用 `marketing_update_candidate`，Updated rate / Rate deduction 与 Level、Lead、拒绝一样用 Submission 工具（`marketing_update_workspace_submission`）；没有 Active 投递时邮件邀请和面试反馈进 review，不建面试。
 
 v0.23.0：岗位特殊要求 + 投递回答——OSHA、Splicing 是岗位的要求（`marketing_create_position` / `marketing_update_position` 的 `requirements`），候选人的回答跟着 Submission 走（`marketing_create_submission` / `marketing_update_workspace_submission` 的 `answers`，`marketing_check_submission` 带出 `prefill_answers`）；`marketing_update_candidate_submission` 不再接受 `osha_certification` / `splicing_experience`。

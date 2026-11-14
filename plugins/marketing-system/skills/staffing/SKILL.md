@@ -44,4 +44,4 @@ One message may contain several requests; handle them one at a time, each with i
 
 ## Position ownership
 
-Position create/edit/JD parsing and `marketing_list_vendors` now belong to the Marketing workflow and are tagged `marketing,positions`. Use the Marketing skill for these operations; do not infer Staffing ownership from historical names or the URL. Existing Staffing tools retain their existing tags and business rules. Marketing no longer creates legacy Staffing client-name compatibility rows.
+Vendor / Client / Position choices and filters come from `marketing_list_scope_options` and are described in `../marketing/references/scope-filters.md`; there is no hidden current position, and slot writes take `position_code`. Position create/edit/JD parsing and `marketing_list_vendors` now belong to the Marketing workflow and are tagged `marketing,positions`. Use the Marketing skill for these operations; do not infer Staffing ownership from historical names or the URL. Existing Staffing tools retain their existing tags and business rules. Marketing no longer creates legacy Staffing client-name compatibility rows.

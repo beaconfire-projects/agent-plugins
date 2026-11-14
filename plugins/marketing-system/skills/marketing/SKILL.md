@@ -9,7 +9,7 @@ Use only the connected `marketing-system` MCP tools in the [verified tag invento
 
 ## Pick the workflow
 
-For any create goal, load [Create orchestration](references/create-orchestration.md) first, then only the entity references needed for its dependencies.
+For Vendor / Client / Position choices, filters and search words on any list tool, read [Scope filters](references/scope-filters.md). For any create goal, load [Create orchestration](references/create-orchestration.md) first, then only the entity references needed for its dependencies.
 
 | Request | Reference |
 | --- | --- |

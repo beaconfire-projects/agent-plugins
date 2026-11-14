@@ -13,7 +13,7 @@ One create tool: **`marketing_add_candidate(candidate={...})`**. Its decorator t
 | Create / convert | `marketing_add_candidate(candidate={...})` |
 | Read back | `marketing_get_candidate_detail(code)` |
 
-Every `marketing_*` business tool also accepts an optional `position` argument added by the server; creating a candidate does not depend on a position, so never send it. Creation is available to Admin/Manager and to AMs. When an **AM** creates a candidate, that AM is assigned as the responsible AM after the create has committed; this second step is best-effort, so report any warning and never recreate to repair the assignment. Admin/Manager are not auto-assigned. This tool creates no Submission, Interview or Offer.
+Creating a candidate does not depend on a position: never send one. Creation is available to Admin/Manager and to AMs. When an **AM** creates a candidate, that AM is assigned as the responsible AM after the create has committed; this second step is best-effort, so report any warning and never recreate to repair the assignment. Admin/Manager are not auto-assigned. This tool creates no Submission, Interview or Offer.
 
 Do not use REST, SQL, scripts, or candidate **update / AM-assignment / note** tools from this workflow: they are outside this skill.
 
