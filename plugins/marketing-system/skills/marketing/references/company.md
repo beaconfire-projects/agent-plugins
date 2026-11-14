@@ -2,12 +2,14 @@
 
 Vendor and Client are additive roles on one shared company. All admitted users can read/create Clients and edit basic fields. Adding Vendor requires a lowercase JWT role code `am`, `admin` or `am-manager`, plus exactly one person whose primary email matches the operator; that person is automatically bound as AM. Flags `is_own_entity` and `is_po_vendor` are independent and do not assign an AM.
 
+Use [Create orchestration](create-orchestration.md) for search-first dependency creation and partial-failure recovery.
+
 ## Find/create or attach a role
 
 1. Call `marketing_list_companies(q?, role?)` (`role`: `vendor` or `client`; no pagination, omitted filters return the catalog). Resolve ambiguity; `marketing_get_company(code)` returns business `id`, internal decimal-string `company_id`, and `version`.
 2. For a Vendor addition call `marketing_company_capabilities`; stop if unavailable and report its reason. Do not try to repair identity/permissions implicitly.
 3. Call `marketing_check_company(request)` with required `name`, `legal_name`, `roles`, optional `domain`, flags, and `use_ai=false` by default. Roles may be empty only with an enabled flag. Optional AI enrichment needs explicit user consent and is only a suggestion. Review matching company/preview; `ready_create` can mean attach-role, not a new company. A check neither writes nor authorizes a write, and does not establish that existing flags match the request.
-4. Show identity, roles/flags and approved profile, plus automatic AM assignment and sheet sync; obtain confirmation.
+4. State identity, roles/flags and supplied profile, plus automatic AM assignment and sheet sync. Under an explicit create goal, proceed without per-company confirmation when unambiguous and complete; ask for missing legal identity/type or ambiguous matches. AI enrichment still requires explicit consent.
 5. Call `marketing_create_company(request)` with `name`, `legal_name`, `roles`, optional domain/flags. New company may include approved `enrichment` (`full_legal_name`, `domain`, `industry`, `notes`, `slug`, `quality_score` as text or null). For role attachment include **both** existing `company_id` and `version`; omit enrichment and both flag fields. Existing flags must be changed with update. `sync_google_sheets` defaults false; true requests only a bounded wait, not guaranteed sheet success.
 6. Read `marketing_get_company(code)` using the returned `company.id`; report `created`, `added_roles`, actual roles/flags and task statuses separately.
 

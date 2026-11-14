@@ -1,6 +1,6 @@
 # Submissions
 
-These are workspace submissions, not the staffing-only submission tools. They use vendor-scoped positions. Candidate search uses everyone=True semantics: candidate flag plus consultant-info row, and either no open offer with marketing status `In Preparation`, `In Marketing` or `Remap`, or an open offer in scope. The current eligibility test defines open as no withdrawal and no offboarding last day; do not infer eligibility solely from offer status. Ordinary imported people are not automatically candidates.
+These are workspace submissions, not the staffing-only submission tools. They use vendor-scoped positions. Candidate search uses everyone=True semantics: candidate flag plus consultant-info row, and either no open offer with marketing status `In Preparation`, `In Marketing` or `Remap`, or an open offer in scope. The current selector excludes On Hold; its open-offer test requires no withdrawal/last day and excludes source `marketing-offers` and stored `Offboarded`. Use the actual selector rather than inferring eligibility solely from an Offer status. Ordinary imported people are not automatically candidates.
 
 ## Lookup and review
 
@@ -8,10 +8,12 @@ These are workspace submissions, not the staffing-only submission tools. They us
 
 ## Create or repeat a submission
 
-1. `marketing_search_submission_candidates(q, page, page_size)` resolves an eligible person (no target-position filter); `marketing_search_submission_positions(q, page, page_size)` resolves an existing scoped position and its allowed levels. These selectors use page 1, size 25 by default, max 100. If candidate/position is missing, stop for manual readiness/position setup; see [candidate gap](create-candidate.md).
-2. If an employer is needed, `marketing_search_submission_employers(q, page, page_size)` finds an existing shared company. It does not create one; use a separately confirmed [company workflow](company.md) if needed.
-3. `marketing_check_submission(request={candidate_code, position_code})` returns all existing submissions for the pair. Show their codes/statuses/timestamps. Ask whether to reuse a specific existing record or create a separate one.
-4. Confirm candidate, position, new `Active` record and editable details. Call `marketing_create_submission(request)` with required `candidate_code`, `position_code`, and optional fields below. Set `create_separate=true` **only** after explicit duplicate/separate-record confirmation when any record exists. There is no request UUID or idempotency guarantee.
+Follow [Create orchestration](create-orchestration.md); missing supported dependencies do not require a new confirmation for each create.
+
+1. `marketing_search_submission_candidates(q, page, page_size)` resolves an eligible person (no target-position filter); `marketing_search_submission_positions(q, page, page_size)` resolves a scoped position and its allowed levels. These selectors use page 1, size 25 by default, max 100. If position is missing, create it and any missing Vendor/Client dependencies using [Position](position.md), then refresh the selector. For a missing eligible candidate, use [Create candidate](create-candidate.md) to resolve identity and create/convert when supported, then re-query eligibility before continuing. An existing Person alone is insufficient; unresolved identity, batch/readiness or scope stops that branch.
+2. If an employer is needed, `marketing_search_submission_employers(q, page, page_size)` finds an existing shared company. It does not create one; use the [company workflow](company.md) within the create goal if identity and supported role/flag information are sufficient, then re-query the employer selector. Do not invent an employer role or create a Person for contact text.
+3. `marketing_check_submission(request={candidate_code, position_code})` returns all existing submissions for the pair. If any exist, show their codes/statuses/timestamps and ask whether to reuse a specific record or create a separate one. If none exist, proceed without an extra confirmation.
+4. State candidate, position, new `Active` record and supplied editable details; no routine per-record confirmation is needed. Call `marketing_create_submission(request)` with required `candidate_code`, `position_code`, and optional fields below. Set `create_separate=true` **only** after explicit duplicate/separate-record confirmation when any record exists. There is no request UUID or idempotency guarantee.
 5. Read returned code with `marketing_get_workspace_submission`; report saved data/version. Creation does not change the person or create a formal offer. Do not claim `submitted_at` defaults to now.
 
 ## Edit details

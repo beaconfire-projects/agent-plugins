@@ -2,12 +2,14 @@
 
 These are two distinct entry paths. A user asking to create one Person from supplied profile details can use manual creation; an approved HR export uses import. Do not manufacture HR rows or a WeCom ID to satisfy an ordinary request. Neither path creates a consultant/candidate, submission, interview or offer.
 
+Follow [Create orchestration](create-orchestration.md) for manual creates; HR import retains its separate preview/confirmation.
+
 ## Manual creation
 
-1. Search `marketing_list_people` by the supplied email and name; show possible existing identities. Reuse/edit an existing Person only with the user's intended action; do not merge people automatically.
+1. Search `marketing_list_people` by the supplied email and name; show possible existing identities. Reuse an unambiguous existing Person for the intended goal; edits require separate diff confirmation. Do not merge people automatically.
 2. Required information: **legal first name, legal last name, primary email**. Middle/preferred names, phone, birth date, professional/preferences, HR, authorization and batch are optional. Ask for missing required values together. Do not infer names from email or split an ambiguous legal name silently.
 3. If a batch, HR recruiter or authorization is requested, get `marketing_get_person_options()`. Use returned batch IDs, HR recruiter IDs and authorization choices. ISO dates, valid email and complete social URLs are required when those values are supplied; authorization expiration must not precede start. Do not add default HR status, checkbox values or an arbitrary batch.
-4. Show the planned fields and the fact this creates only a Person. Confirm, then call `marketing_create_person(person={first_name,last_name,email,...optional_fields})` once. No client-chosen Person ID or version is sent; the server assigns PER and version 1.
+4. Show the planned fields and the fact this creates only a Person. With complete, unambiguous supplied data and an explicit create goal, call `marketing_create_person(person={first_name,last_name,email,...optional_fields})` once. No client-chosen Person ID or version is sent; the server assigns PER and version 1.
 5. Read `marketing_get_person` and, when needed, `marketing_get_person_history`. Report returned code and saved values. Duplicate conflicts return the existing owner when known; inspect that identity rather than retrying with a fabricated contact. Unknown outcome: search exact email before another create.
 
 Optional field meanings and patch rules are in [Person](person.md). No SSN/address or consultant-only fields are accepted.
@@ -47,7 +49,7 @@ Batch mapping first uses the server's upstream reviewed WeCom mapping when avail
 2. Call `marketing_import_people(request={rows: [...], dry_run: true})`. Report each row's number/name, create/skip/error and safe message. Preview `created` is only the number **planned**, not persisted.
 3. Explain: existing `wecom_id` skips the entire row; duplicate new WeCom IDs in this batch error; an email already owned or repeated in this batch skips. No merging/upserting existing values. Phone uniqueness may still fail at commit. Present exact rows and the partial-success behavior for explicit confirmation. If rows change, preview again before consent.
 4. After a clear yes send the identical rows with `dry_run:false`. Valid rows commit independently; errors do not imply rollback of earlier rows. Report actual created/skipped/error counts, every returned `person_code`, and `import_id` for the batch. Applied imports record started/completed batch outcomes and successful per-person create audits; skipped/error rows are not person creations. Preview writes no audit or person rows. Applied imports also link unique existing HR Sheet people referenced by nonblank `recruiter_id` to the fixed Recruiter role, reporting created links and unresolved references.
-5. Read each created code using `marketing_get_person`. Verify identity, shared/HR values, authorization and current batch; imported records have source `wecom_hr_import`, `is_consultant=false`, `visible_to_team=true`, `is_internal=false`. This does **not** establish candidate eligibility or create submissions/offers. Read [candidate gap](create-candidate.md) if promotion is requested.
+5. Read each created code using `marketing_get_person`. Verify identity, shared/HR values, authorization and current batch; imported records have source `wecom_hr_import`, `is_consultant=false`, `visible_to_team=true`, `is_internal=false`. This does **not** establish candidate eligibility or create submissions/offers. Read [Create candidate](create-candidate.md) if promotion is requested.
 
 ## Failure and recovery
 

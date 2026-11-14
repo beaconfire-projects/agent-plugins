@@ -6,14 +6,14 @@ All eight Person tools require Admin/Manager-style all-vendor access. They use n
 
 Use `marketing_list_people(query?, page=1, page_size=50)` (max 500). Search supports legal/preferred name, PER ID, primary/alternate email, phone and WeCom ID; words narrow the results. Paginate, then show code, name and a minimal contact to distinguish people. A match is not permission to modify every result. Read one selected `marketing_get_person(code)` for version, common fields, HR, contacts, current/historical authorization, current batch and read-only consultant information. No SSN/address fields are exposed.
 
-For a person who needs an interview, search actual submissions with the [Interview selector](interview.md); a Person match alone does not establish submission eligibility. For creating a Person use [Create person](create-person.md); for candidate conversion use [Candidate gap](create-candidate.md).
+For a person who needs an interview, search actual submissions with the [Interview selector](interview.md); a Person match alone does not establish submission eligibility. For creating a Person use [Create person](create-person.md); for candidate conversion use [Create candidate](create-candidate.md).
 
 ## Edit
 
 1. Read the exact person and identify requested changes. No fields beyond `version` are universally required for a patch. When changing legal names, first and last must remain nonblank. Obtain missing information together rather than issuing one question per field.
 2. For batch or visa changes, call `marketing_get_person_options()` for current batch IDs/names/category/track, allowed authorization values and existing HR Recruiters. Resolve ambiguous batch names with the user; do not invent an ID or create a batch through this tool.
 3. Show only proposed old → new values, explicit clears, contact replacements and current batch changes. Obtain confirmation, then call `marketing_update_person(code, changes={version,...})` once. Omitted top-level and nested HR fields are preserved. A true no-op does not advance the version.
-4. Read back the exact person and verify the saved fields/version. `marketing_get_person_history(code)` exposes actual field changes, actor, channel and time, including new HR imports and existing candidate/profile audit entries. A missing historic log is not proof no past modification occurred.
+4. Read back the exact person and verify the saved fields/version. `marketing_get_person_history(code)` exposes actual field changes, actor, channel and time, including new HR imports and existing candidate/profile audit entries. A missing historic log is not proof no past modification occurred. This reader filters `module=staffing`; it does not expose the independent Marketing candidate create/conversion or creator-assignment audits (`module=marketing`) and cannot verify those attempts.
 
 ## Delete one Person
 

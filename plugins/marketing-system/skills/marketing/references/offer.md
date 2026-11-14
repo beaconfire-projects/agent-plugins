@@ -10,13 +10,15 @@ Call `marketing_list_offers(query={q, status, page, page_size})` with optional f
 
 ## Create after interview review
 
-Precondition: one existing visible submission and explicit intent to record a formal offer. The service does not require a Passed interview or an Offered submission; do not invent such gates or create an offer automatically from L2 Passed.
+Precondition at the Offer call: one resolved visible submission and explicit intent to record a formal offer. Follow [Create orchestration](create-orchestration.md): first search existing offers/submissions; if no appropriate submission exists, create its supported dependencies and the submission, preserving returned IDs. Missing candidate dependencies use [Create candidate](create-candidate.md), then eligibility verification; standalone Person creation is not sufficient. The service does not require a Passed interview or an Offered submission; do not invent such gates or create an offer automatically from L2 Passed.
 
-1. `marketing_search_offer_submissions(query={q, page, page_size})` resolves the exact submission (page 1, size 25, max 100). Repeated pairs remain separate.
+1. Reuse an unambiguously intended existing offer; a new independent offer requires the preview confirmation below. `marketing_search_offer_submissions(query={q, page, page_size})` resolves the exact submission (page 1, size 25, max 100). Repeated pairs remain separate.
 2. `marketing_preview_offer_submission(code)` returns that submission with **all linked interviews** and offers. Show rounds, results and dates, including a missing interview set, and any existing offers.
 3. Collect the fields and confirm: **`po_company` is required** (`marketing_offer_options`: Invct, BSS, BFS; never guess it). `offer_date`, `onboarding_tentative_start_date` and `work_location` are optional; blank dates stay null (no today default, no inheritance). Ask the user to explicitly confirm that the full interview set was reviewed and that a new independent offer is intended.
-4. Call `marketing_create_offer(request={request_id, submission_code, interviews_confirmed:true, po_company, offer_date?, onboarding_tentative_start_date?, work_location?})`. `request_id` is a fresh UUID for this creation attempt; keep it with the exact payload for outcome verification.
+4. Only after that explicit confirmation, call `marketing_create_offer(request={request_id, submission_code, interviews_confirmed:true, po_company, offer_date?, onboarding_tentative_start_date?, work_location?})`. `request_id` is a fresh UUID for this creation attempt; keep it with the exact payload for outcome verification.
 5. Read the returned code with `marketing_get_offer`. Verify the submission, status Offered, PO Company, dates and version. Creation does not mark the submission Offered. The candidate's marketing status becomes `Offer` automatically; report it if it changed.
+
+Only the listed fields belong in Offer create: no nested candidate, position, company, interview or submission objects; `po_vendor_code`, rate and other update-only values require a later separately confirmed update. `po_company` is a fixed choice, not a company lookup/create.
 
 ### Creation recovery
 
@@ -24,7 +26,7 @@ Precondition: one existing visible submission and explicit intent to record a fo
 
 ## Edit offer details
 
-Read offer → `marketing_offer_options` and, if needed, `marketing_search_offer_po_vendors(query={q, page, page_size})` → confirm changed fields → `marketing_update_offer(code, request={version, ...changed_fields})` → exact readback. PO Vendor must be an existing company flagged `is_po_vendor`; it is not the PO Company dropdown. If missing, use the separately confirmed [company workflow](company.md).
+Read offer → `marketing_offer_options` and, if needed, `marketing_search_offer_po_vendors(query={q, page, page_size})` → confirm changed fields → `marketing_update_offer(code, request={version, ...changed_fields})` → exact readback. PO Vendor must be an existing company flagged `is_po_vendor`; it is not the PO Company dropdown. If missing, resolve/create it through [Create orchestration](create-orchestration.md) and [Company](company.md), refresh the selector, then confirm the Offer update. An existing company flag change remains a separately confirmed company update.
 
 Editable fields include:
 - Dates: `offer_date`, `onboarding_tentative_start_date`, `onboarding_actual_start_date`, `offboarding_tentative_last_day`, `offboarding_last_day` (actual), `onboarding_bgc_form_sent_date`, `onboarding_bgc_completed_date` (a completion date marks BGC completed).
