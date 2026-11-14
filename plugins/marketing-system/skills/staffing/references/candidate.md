@@ -1,14 +1,14 @@
 # Add and update candidate information
 
-Tools: `marketing_search_candidates`, `marketing_get_candidate_detail`, `marketing_get_candidate`, `marketing_list_options`, `marketing_add_candidate`, `marketing_search_addable_people`, `marketing_update_candidate`, `marketing_update_candidate_submission`.
+Tools: `marketing_search_candidates`, `marketing_get_candidate_detail`, `marketing_get_candidate`, `marketing_list_options`, `marketing_add_candidate`, `marketing_search_addable_people`, `marketing_update_candidate`, `marketing_update_candidate_submission` (only for the fields listed under "Other fields").
 
 A candidate's data is in two places, and each has its own update tool:
 
 | Data | Tool to change it |
 | --- | --- |
 | **The person**: names, years of experience, visa type and its start / expiry dates, email, phone, address, date of birth, gender, LinkedIn, Facebook, phone and laptop preference, candidate type, C2C employer, marketing status, HR record (W-2 start date, recruiter, WeCom ID, company) | `marketing_update_candidate` |
-| **The submission** (the candidate on one position): pay rate, availability, same client history, the C2C employer written in that submission | `marketing_update_submission` (see `references/submission.md`) |
-| **Level, lead, Status Override, updated rate, rate deduction, OSHA, splicing, other emails, city / state, SSN last 4 and the rest of the onboarding profile** | `marketing_update_candidate_submission` (see "Other fields" below) |
+| **The submission** (the candidate on one position): level, lead, pay rate, availability, same client history, the C2C employer written in that submission, rejecting and reopening | `marketing_update_workspace_submission`, `marketing_reject_submission`, `marketing_reopen_submission` (see `references/submission.md`) |
+| **Updated rate, rate deduction, OSHA, splicing, other emails, city / state, SSN last 4 and the rest of the onboarding profile** | `marketing_update_candidate_submission` (see "Other fields" below) |
 
 Read a candidate with **`marketing_get_candidate_detail`** (by person ID, no position needed): it returns the whole profile, the submissions, interviews and offers on your vendors' positions, every event about the candidate, and the `version` that every update needs. `marketing_get_candidate` is the older read by the current position; use it only when the request is about `include_profile` fields it alone returns (SSN last 4).
 
@@ -31,7 +31,7 @@ Required: `candidate_type`, `first_name`, `last_name`, `email`. Everything else 
 1. **Candidate type**: `Skip Training`, `Staffing - W-2`, `Staffing - C2C` or `Staffing - 1099` for a new person. **Bench is not created as a new person**: add them from the existing people (above). If the user does not say the type, ask; never guess.
 2. **Do not ask for optional fields the user did not mention**; send only what was given. Split a full name into first / middle / last yourself and show the split; split an address into its four parts.
 3. **Check for duplicates**: the email or phone must not belong to another candidate (the error names the existing ID, report it and do not retry with another value). A candidate with the same name but another email is created with a warning; tell the user.
-4. **Confirm** the fields as a short table, then call `marketing_add_candidate` (the fields go inside `candidate`). Give `position` (a `POS-…` of your own vendor) only when the user asked to submit the candidate to a position as well; the submission is a separate step, and you can set its details in the same call with `marketing_submit_candidate_to_position` (see `references/submission.md`).
+4. **Confirm** the fields as a short table, then call `marketing_add_candidate` (the fields go inside `candidate`). Give `position` (a `POS-…` of your own vendor) only when the user asked to submit the candidate to a position as well; the submission is a separate step: call `marketing_create_submission` afterwards (see `references/submission.md`).
 5. **Report** the new Candidate ID, the type, and the warnings.
 
 ## Update the person (`marketing_update_candidate`)
@@ -56,15 +56,14 @@ For the fields `marketing_update_candidate` does not take. `changes.version` is 
 | --- | --- |
 | Contact | `other_emails` (list, each unique across all candidates) |
 | Location | `city`, `state` (two-letter code) |
-| Position-related | `level`, `is_lead`, `osha_certification`, `splicing_experience` |
+| Position-related | `osha_certification`, `splicing_experience` (Level and Lead are changed on the submission, see `references/submission.md`) |
 | Pay | `updated_rate` (USD per hour), `rate_deduction` (USD, may be negative) |
-| Status | `status_override`: Candidate Withdrew or Company Dropped (wins over every other status) |
 | Onboarding profile | `profile`: `ssn_last4`, `work_authorization_detail`, `phone_preference`, `laptop_preference`, `splicing_certification`, `fb_url` (the address, phone, date of birth and gender are also accepted there, but change them with `marketing_update_candidate`) |
 
 Not editable anywhere on a candidate: offer status, start date and Current Status. They come from the offers (see `references/offer.md`) and the interviews.
 
 - `other_emails` **replaces** the whole list. To add one address, send the existing list plus the new one; to remove one, send the list without it. Show the final list in the confirmation.
-- `status_override` set to Candidate Withdrew or Company Dropped overrides the interview status. "The candidate gave up / left" is **Candidate Withdrew**; "we dropped the candidate / ended the cooperation / company drop" is **Company Dropped**. If the user only says "drop" or "stop working with" and it is not clear who ended it, ask. Company Dropped needs a reason (`Candidate Issue`, `Duplicate` or the user's own text). Clear it with `null` only when asked. Cancelling an offer does not set it; use the offer workflow (see `references/offer.md`).
+- Withdrawn or dropped is no longer set here: reject the submission with `marketing_reject_submission` and the rejecting party (`Candidate` withdrew, `Company` dropped). Cancelling an offer does not reject the submission; use the offer workflow (see `references/offer.md`).
 - `ssn_last4` takes exactly 4 digits: a full 9-digit SSN is saved as its last 4 (say so), anything else is rejected.
 - A candidate who is `In Preparation` or `In Marketing` from another vendor is visible to you in the pool but a candidate on another vendor's project is not (`Not found`).
 

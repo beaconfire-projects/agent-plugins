@@ -1,10 +1,10 @@
 # Submissions
 
-These are workspace submissions, not the staffing-only submission tools. They use vendor-scoped positions. Candidate search uses everyone=True semantics: candidate flag plus consultant-info row, and either no open offer with marketing status `In Preparation`, `In Marketing` or `Remap`, or an open offer in scope. The current selector excludes On Hold; its open-offer test requires no cancellation/last day and excludes source `marketing-offers` and stored `Offboarded`. Use the actual selector rather than inferring eligibility solely from an Offer status. Ordinary imported people are not automatically candidates.
+These are the one set of submission tools (the old staffing-only submission tools no longer exist). They use vendor-scoped positions. Candidate search uses everyone=True semantics: candidate flag plus consultant-info row, and either no open offer with marketing status `In Preparation`, `In Marketing` or `Remap`, or an open offer in scope. The current selector excludes On Hold; its open-offer test requires no cancellation/last day and excludes source `marketing-offers` and stored `Offboarded`. Use the actual selector rather than inferring eligibility solely from an Offer status. Ordinary imported people are not automatically candidates.
 
 ## Lookup and review
 
-`marketing_submission_options()` returns visible Vendor/Client/Position and stored status filter values. `marketing_list_submissions(q?, vendor?, client?, position?, status?, page?, page_size?)` accepts arrays of codes/exact statuses; values in a filter are OR, filters combine. Page starts at 1, size defaults 25 and max 100; respect total/pagination. Resolve one code then `marketing_get_workspace_submission(code)`. Interviews, offers and history are linked to that exact submission, never inferred from candidate-position similarity. Stored legacy/blank statuses are not normalized.
+`marketing_submission_options()` returns visible Vendor/Client/Position and stored status filter values. `marketing_list_submissions(q?, vendor?, client?, position?, status?, rejected_by?, offer?, page?, page_size?)` accepts arrays of codes/exact statuses (`Active`, `Rejected`), `rejected_by` (`Candidate`, `Company`, `Unknown` = legacy rejection with no recorded party) and `offer` (`Offered`, `On Project`, `Off Project`, `None`: derived from the Offers created from the submission); values in a filter are OR, filters combine. Page starts at 1, size defaults 25 and max 100; respect total/pagination. Resolve one code then `marketing_get_workspace_submission(code)`. Interviews, offers and history are linked to that exact submission, never inferred from candidate-position similarity. Stored legacy/blank statuses are not normalized.
 
 ## Create or repeat a submission
 
@@ -12,13 +12,13 @@ Follow [Create orchestration](create-orchestration.md); missing supported depend
 
 1. `marketing_search_submission_candidates(q, page, page_size)` resolves an eligible person (no target-position filter); `marketing_search_submission_positions(q, page, page_size)` resolves a scoped position and its allowed levels. These selectors use page 1, size 25 by default, max 100. If position is missing, create it and any missing Vendor/Client dependencies using [Position](position.md), then refresh the selector. For a missing eligible candidate, use [Create candidate](create-candidate.md) to resolve identity and create/convert when supported, then re-query eligibility before continuing. An existing Person alone is insufficient; unresolved identity, batch/readiness or scope stops that branch.
 2. If an employer is needed, `marketing_search_submission_employers(q, page, page_size)` finds an existing shared company. It does not create one; use the [company workflow](company.md) within the create goal if identity and supported role/flag information are sufficient, then re-query the employer selector. Do not invent an employer role or create a Person for contact text.
-3. `marketing_check_submission(request={candidate_code, position_code})` returns all existing submissions for the pair. If any exist, show their codes/statuses/timestamps and ask whether to reuse a specific record or create a separate one. If none exist, proceed without an extra confirmation.
+3. `marketing_check_submission(request={candidate_code, position_code})` returns all existing submissions for the pair. The same candidate may have **several** submissions on one position (for example a new one after a rejection); if any exist, show their codes/statuses/timestamps and ask whether to reuse a specific record or create a separate one. If none exist, proceed without an extra confirmation.
 4. State candidate, position, new `Active` record and supplied editable details; no routine per-record confirmation is needed. Call `marketing_create_submission(request)` with required `candidate_code`, `position_code`, and optional fields below. Set `create_separate=true` **only** after explicit duplicate/separate-record confirmation when any record exists. There is no request UUID or idempotency guarantee.
 5. Read returned code with `marketing_get_workspace_submission`; report saved data/version. Creation does not change the person or create a formal offer. Do not claim `submitted_at` defaults to now.
 
 ## Edit details
 
-Read → resolve changed employer/position-level choices if needed → confirm diff → `marketing_update_workspace_submission(code, request={version, ...changed_fields})` → read back. Candidate, position, `status`, `customer_rate`, lead marker and closure fields are not writable through this patch. Editable details remain editable even on Rejected or legacy records; that does not reopen them.
+Read → resolve changed employer/position-level choices if needed → confirm diff → `marketing_update_workspace_submission(code, request={version, ...changed_fields})` → read back. Candidate, position, `status`, `customer_rate` and the rejection fields are not writable through this patch (use reject / reopen). `is_lead` is: a lead is always Senior, so `is_lead=true` also sets Level to the position's Senior and Level cannot be changed to anything else until `is_lead=false` is sent. Level, lead and status are all changed with **this submission's own `version`**, never the candidate's. Editable details remain editable even on Rejected or legacy records; that does not reopen them.
 
 Allowed optional fields:
 - `submitted_at` (timezone-aware timestamp); `am_notes`.
@@ -29,13 +29,15 @@ Allowed optional fields:
 
 Omitted fields stay unchanged; explicit null/blank clears optional fields subject to validation. Contact email/phone history only says `changed`; never reconstruct hidden history.
 
-## Offered or rejected
+## Rejected, reopen and Offered
+
+The stored status is only `Active` or `Rejected`. **Offered is never set by hand**: a submission shows `offer_status` (`Offered`, `On Project`, `Off Project`) when a non-canceled Offer was created from it (see [offer](offer.md)); rejecting or reopening never touches an Offer.
 
 Read exact submission/version and confirm each action separately:
-- Active → Offered: `marketing_mark_submission_offered(code, request={version})`. **Does not create/modify a formal Offer.** Use [offer](offer.md) only on separate explicit intent.
-- Active or Offered → Rejected: `marketing_reject_submission(code, request={version, reason})`; reason must be nonblank, max 4000 characters. Explain Rejected is terminal for status actions.
+- Active → Rejected: `marketing_reject_submission(code, request={version, rejected_by, reason})`. **`rejected_by` is required**: `Candidate` (the candidate withdrew) or `Company` (the company dropped the candidate); if the user does not say who, ask. `reason` must be nonblank, max 4000 characters.
+- Rejected → Active: `marketing_reopen_submission(code, request={version})`. It clears the rejecting party and reason (the old values stay in the change history) and is the only way back; tell the user that.
 
-Read back status, reason and version. No reopening, deletion or automatic status inference from linked interviews/offers. Legacy/blank states cannot use these transitions.
+Read back status, party, reason and version. No deletion. Legacy rejections show `rejected_by` empty ("unknown (legacy)"); old `Closed`/blank states cannot use these actions.
 
 ## Recovery
 

@@ -34,8 +34,8 @@ Source: `modules/marketing/mcp/submissions.py`. Each listed decorator has tags `
 - `marketing_create_submission`
 - `marketing_get_workspace_submission`
 - `marketing_list_submissions`
-- `marketing_mark_submission_offered`
 - `marketing_reject_submission`
+- `marketing_reopen_submission`
 - `marketing_search_submission_candidates`
 - `marketing_search_submission_employers`
 - `marketing_search_submission_positions`
