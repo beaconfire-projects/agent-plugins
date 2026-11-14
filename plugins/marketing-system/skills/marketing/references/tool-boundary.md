@@ -1,6 +1,6 @@
 # Verified tool boundary
 
-The combined capability contract lists **52 tools** (companies 6, candidates 1, positions/vendors 7, submissions 11, offers 11, people 8, interviews 8). All 52 entries were individually rechecked against their actual decorators in the local backend checkout for this documentation change. This is source-contract verification, not a claim that the connected deployment has these tools. The candidate source contract and registration were also checked; local declarations do not establish deployed availability. Allow only tools whose actual decorator tags include `marketing`. The connected deployment must expose the matching schema; stop on missing tools, unverified tags or incompatible schemas. This list does not authorize future tools solely because their names look similar.
+The combined capability contract lists **55 tools** (companies 6, candidates 4, positions/vendors 7, submissions 11, offers 11, people 8, interviews 8). The 52 entries that existed before the candidate change were individually rechecked against their actual decorators in the local backend checkout for this documentation change. This is source-contract verification, not a claim that the connected deployment has these tools. The four candidate tools were checked against the deployed backend (image 0.1.0-169): their tags include `marketing`; local declarations alone do not establish deployed availability. Allow only tools whose actual decorator tags include `marketing`. The connected deployment must expose the matching schema; stop on missing tools, unverified tags or incompatible schemas. This list does not authorize future tools solely because their names look similar.
 
 Source paths below are code provenance under `backend/app/`, not runtime calls or relative file links.
 
@@ -15,13 +15,16 @@ Source: `modules/marketing/mcp/tools.py`. Each listed decorator has tags `market
 - `marketing_list_companies`
 - `marketing_update_company`
 
-## Candidates (1)
+## Candidates (4)
 
-Source: `modules/marketing/mcp/candidates.py`. Actual decorator tags: `marketing`, `candidates`; registered in `app/main.py`.
+Source: `modules/staffing/mcp/tools.py`. Actual decorator tags: `staffing`, `marketing`, `candidates` (the `staffing` tag is kept for compatibility, like the shared interview tools).
 
-- `marketing_create_candidate`
+- `marketing_add_candidate`
+- `marketing_search_candidates`
+- `marketing_search_addable_people`
+- `marketing_get_candidate_detail`
 
-Uses `candidate={...}` for new intake or only `person_code` for existing-Person Bench conversion. No general Marketing candidate detail/addable-person search/status-update tool is authorized. Lookup/readback uses the verified Submission candidate selector and, for authorized Admin/Manager only, Person tools; see [Create candidate](create-candidate.md) for limitations and unknown outcomes.
+`marketing_add_candidate(candidate={...})` takes new-intake fields, or only `person_code` for existing-Person Bench conversion. The other three find and read back candidates; see [Create candidate](create-candidate.md). The candidate update, responsible-AM assignment, note and history tools carry the same tags but have no workflow in this skill, so they are not authorized here.
 
 ## Submissions (11)
 
@@ -101,6 +104,6 @@ These names previously belonged to Staffing; require the deployed Marketing tags
 
 ## Explicit exclusions
 
-Staffing options, staffing-only candidate create/update/search/detail/addable-person tools, Slot, legacy ONB/offboarding, old submission, generic history, ingest, other delete and staffing-only position-management tools do not qualify merely because their names begin `marketing_`. Insights/statistics are outside this boundary. Do not load staffing or call REST/SQL/scripts to bypass a missing marketing capability. Person and Interview tools listed above qualify because their decorators explicitly include `marketing`, despite their source module name.
+Staffing options, candidate update / responsible-AM / note / history tools (not part of any workflow in this skill), Slot, legacy ONB/offboarding, old submission, generic history, ingest, other delete and staffing-only position-management tools do not qualify merely because their names begin `marketing_`. Insights/statistics are outside this boundary. Do not load staffing or call REST/SQL/scripts to bypass a missing marketing capability. Person and Interview tools listed above qualify because their decorators explicitly include `marketing`, despite their source module name.
 
 Only single Person/Interview deletion is included. There is no bulk delete, candidate deletion, offer deletion or batch-create tool in this inventory. Dependency orchestration uses multiple existing calls, not a new nested/batch-create tool; see [Create orchestration](create-orchestration.md). The legacy staffing onboarding / offboarding tools were removed; formal OFR offers use the tools above. See [Interview](interview.md), [Person](person.md), and [Offer](offer.md) for each workflow's explicit confirmation and field requirements.
