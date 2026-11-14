@@ -39,8 +39,8 @@ Cancel when the candidate turned the offer down or the company rescinded it. It 
 
 1. Read the offer and its version; if it is already Canceled, offer an undo instead.
 2. Get the party from the user's words: `Candidate` (turned it down, declined) or `Company` (rescinded, the client pulled it). If unclear, ask; never guess. A short `reason` is optional.
-3. Confirm the offer, the party, the reason and `status → Canceled`, then call `marketing_withdraw_offer(code, request={version, party, reason?})`.
-4. Undo ("the offer is back on"): `marketing_undo_withdraw_offer(code, request={version})` after confirmation; the status is derived again from the dates.
+3. Confirm the offer, the party, the reason and `status → Canceled`, then call `marketing_cancel_offer(code, request={version, party, reason?})`.
+4. Undo ("the offer is back on"): `marketing_undo_cancel_offer(code, request={version})` after confirmation; the status is derived again from the dates.
 
 A canceled offer cannot be edited.
 

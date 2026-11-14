@@ -1,6 +1,6 @@
 # Offers: create, read, change dates, cancel
 
-Tools: `marketing_search_offer_submissions`, `marketing_preview_offer_submission`, `marketing_create_offer`, `marketing_list_offers`, `marketing_get_offer`, `marketing_get_offer_history`, `marketing_update_offer`, `marketing_withdraw_offer`, `marketing_undo_withdraw_offer`, `marketing_offer_options`, `marketing_search_offer_po_vendors`.
+Tools: `marketing_search_offer_submissions`, `marketing_preview_offer_submission`, `marketing_create_offer`, `marketing_list_offers`, `marketing_get_offer`, `marketing_get_offer_history`, `marketing_update_offer`, `marketing_cancel_offer`, `marketing_undo_cancel_offer`, `marketing_offer_options`, `marketing_search_offer_po_vendors`.
 
 An **Offer** (`OFR-nnnnnn`) belongs to one submission (one candidate and one position). The same submission can have several offers; each is independent. There is no separate onboarding or offboarding record: onboarding and offboarding are field groups of the offer, and nothing here deletes an offer (use cancel).
 
@@ -60,8 +60,8 @@ Cancel when the candidate turned the offer down or the company rescinded it. It 
 1. Find the offer and read its `version`. If its status is already Canceled, offer an undo instead.
 2. **Get the party from the user's words**: `Candidate` ("turned it down", "declined", "withdrew") or `Company` ("the client pulled it", "we rescinded"). If it is unclear who ended it, ask; never guess. A short `reason` is optional.
 3. **Confirm**: the offer (`OFR-... Name`), the party, the reason, the status `old -> Canceled`, and that the candidate's marketing status is recalculated. Wait for a clear yes.
-4. Call `marketing_withdraw_offer` with `code` and `request` (`version`, `party`, `reason`).
-5. To undo ("the offer is back on"), call `marketing_undo_withdraw_offer` with `code` and `request` (`version`) after the same kind of confirmation; the status is derived again from the dates.
+4. Call `marketing_cancel_offer` with `code` and `request` (`version`, `party`, `reason`).
+5. To undo ("the offer is back on"), call `marketing_undo_cancel_offer` with `code` and `request` (`version`) after the same kind of confirmation; the status is derived again from the dates.
 
 Cancelling does not change the submission.
 

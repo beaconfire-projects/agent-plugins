@@ -51,9 +51,9 @@ Source: `modules/marketing/mcp/offers.py`. Each listed decorator has tags `marke
 - `marketing_preview_offer_submission`
 - `marketing_search_offer_po_vendors`
 - `marketing_search_offer_submissions`
-- `marketing_undo_withdraw_offer`
+- `marketing_undo_cancel_offer`
 - `marketing_update_offer`
-- `marketing_withdraw_offer`
+- `marketing_cancel_offer`
 
 ## People (8)
 
