@@ -27,6 +27,8 @@ Allowed optional fields:
 - `open_to_relocate`, `travel_availability`, `start_availability`, `interview_availability`, `same_client_history`: text, not invented dropdown values.
 - `employer_code` (existing company), `contact_name`, `contact_email`, `contact_phone`.
 
+**Special requirements**: when the position has `requirements` (shown by `marketing_search_submission_positions`, `marketing_check_submission` and `marketing_get_workspace_submission`), the candidate's answers are part of the submission. Send `answers` as `{requirement_key: value}` (create or update; null or empty clears one). A choice answer must be one of the requirement's options, a number answer a number, text at most 200 characters. Answers saved this way are protected from later Submission emails. `marketing_check_submission` returns `prefill_answers` from the candidate's earlier submission: offer them as defaults and ask before sending. A missing answer never blocks saving, even for a required requirement; mention it. OSHA and Splicing are answered here, not on the candidate.
+
 Omitted fields stay unchanged; explicit null/blank clears optional fields subject to validation. Contact email/phone history only says `changed`; never reconstruct hidden history.
 
 ## Rejected, reopen and Offered

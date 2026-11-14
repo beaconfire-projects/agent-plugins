@@ -8,7 +8,7 @@ A candidate's data is in two places, and each has its own update tool:
 | --- | --- |
 | **The person**: names, years of experience, visa type and its start / expiry dates, email, phone, address, date of birth, gender, LinkedIn, Facebook, phone and laptop preference, candidate type, C2C employer, marketing status, HR record (W-2 start date, recruiter, WeCom ID, company) | `marketing_update_candidate` |
 | **The submission** (the candidate on one position): level, lead, pay rate, availability, same client history, the C2C employer written in that submission, rejecting and reopening | `marketing_update_workspace_submission`, `marketing_reject_submission`, `marketing_reopen_submission` (see `references/submission.md`) |
-| **Updated rate, rate deduction, OSHA, splicing, other emails, city / state, SSN last 4 and the rest of the onboarding profile** | `marketing_update_candidate_submission` (see "Other fields" below) |
+| **Updated rate, rate deduction, other emails, city / state, SSN last 4 and the rest of the onboarding profile** | `marketing_update_candidate_submission` (see "Other fields" below) |
 
 Read a candidate with **`marketing_get_candidate_detail`** (by person ID, no position needed): it returns the whole profile, the submissions, interviews and offers on your vendors' positions, every event about the candidate, and the `version` that every update needs. `marketing_get_candidate` is the older read by the current position; use it only when the request is about `include_profile` fields it alone returns (SSN last 4).
 
@@ -56,7 +56,7 @@ For the fields `marketing_update_candidate` does not take. `changes.version` is 
 | --- | --- |
 | Contact | `other_emails` (list, each unique across all candidates) |
 | Location | `city`, `state` (two-letter code) |
-| Position-related | `osha_certification`, `splicing_experience` (Level and Lead are changed on the submission, see `references/submission.md`) |
+| Position-related | none: Level, Lead and the position's special requirements (OSHA, Splicing) are changed on the submission, see `references/submission.md` |
 | Pay | `updated_rate` (USD per hour), `rate_deduction` (USD, may be negative) |
 | Onboarding profile | `profile`: `ssn_last4`, `work_authorization_detail`, `phone_preference`, `laptop_preference`, `splicing_certification`, `fb_url` (the address, phone, date of birth and gender are also accepted there, but change them with `marketing_update_candidate`) |
 
