@@ -1,14 +1,13 @@
 # Add and update candidate information
 
-Tools: `marketing_search_candidates`, `marketing_get_candidate_detail`, `marketing_get_candidate`, `marketing_list_options`, `marketing_add_candidate`, `marketing_search_addable_people`, `marketing_update_candidate`, `marketing_update_candidate_submission` (only for the fields listed under "Other fields").
+Tools: `marketing_search_candidates`, `marketing_get_candidate_detail`, `marketing_get_candidate`, `marketing_list_options`, `marketing_add_candidate`, `marketing_search_addable_people`, `marketing_update_candidate`.
 
 A candidate's data is in two places, and each has its own update tool:
 
 | Data | Tool to change it |
 | --- | --- |
-| **The person**: names, years of experience, visa type and its start / expiry dates, email, phone, address, date of birth, gender, LinkedIn, Facebook, phone and laptop preference, candidate type, C2C employer, marketing status, HR record (W-2 start date, recruiter, WeCom ID, company) | `marketing_update_candidate` |
-| **The submission** (the candidate on one position): level, lead, pay rate, availability, same client history, the C2C employer written in that submission, rejecting and reopening | `marketing_update_workspace_submission`, `marketing_reject_submission`, `marketing_reopen_submission` (see `references/submission.md`) |
-| **Updated rate, rate deduction, other emails, city / state, SSN last 4 and the rest of the onboarding profile** | `marketing_update_candidate_submission` (see "Other fields" below) |
+| **The person**: names, years of experience, visa type and its start / expiry dates, email, phone, other emails, city / state (where the candidate lives for interviews), address, date of birth, gender, LinkedIn, Facebook, phone and laptop preference, SSN last 4, work authorization detail, splicing certification, candidate type, C2C employer, marketing status, HR record (W-2 start date, recruiter, WeCom ID, company) | `marketing_update_candidate` |
+| **The submission** (the candidate on one position): level, lead, pay rate, updated rate, rate deduction, availability, same client history, the C2C employer written in that submission, rejecting and reopening | `marketing_update_workspace_submission`, `marketing_reject_submission`, `marketing_reopen_submission` (see `references/submission.md`) |
 
 Read a candidate with **`marketing_get_candidate_detail`** (by person ID, no position needed): it returns the whole profile, the submissions, interviews and offers on your vendors' positions, every event about the candidate, and the `version` that every update needs. `marketing_get_candidate` is the older read by the current position; use it only when the request is about `include_profile` fields it alone returns (SSN last 4).
 
@@ -48,22 +47,15 @@ Required: `candidate_type`, `first_name`, `last_name`, `email`. Everything else 
 4. **Confirm** with `field: old → new`, then call `marketing_update_candidate` with `code` and `changes`.
 5. **Report** what was saved from the response (name, type, marketing status, new version) and any warning.
 
-## Other fields (`marketing_update_candidate_submission`)
+## Notes on person fields (`marketing_update_candidate`)
 
-For the fields `marketing_update_candidate` does not take. `changes.version` is the candidate's version (read with `marketing_get_candidate`).
-
-| Group | Fields |
-| --- | --- |
-| Contact | `other_emails` (list, each unique across all candidates) |
-| Location | `city`, `state` (two-letter code) |
-| Position-related | none: Level, Lead and the position's special requirements (OSHA, Splicing) are changed on the submission, see `references/submission.md` |
-| Pay | `updated_rate` (USD per hour), `rate_deduction` (USD, may be negative) |
-| Onboarding profile | `profile`: `ssn_last4`, `work_authorization_detail`, `phone_preference`, `laptop_preference`, `splicing_certification`, `fb_url` (the address, phone, date of birth and gender are also accepted there, but change them with `marketing_update_candidate`) |
+`changes.version` is the candidate's version (read with `marketing_get_candidate_detail`). Updated rate and rate deduction belong to the submission: change them with `marketing_update_workspace_submission` (see `references/submission.md`).
 
 Not editable anywhere on a candidate: offer status, start date and Current Status. They come from the offers (see `references/offer.md`) and the interviews.
 
-- `other_emails` **replaces** the whole list. To add one address, send the existing list plus the new one; to remove one, send the list without it. Show the final list in the confirmation.
+- `other_emails` (list, each unique across all candidates) **replaces** the whole list. To add one address, send the existing list plus the new one; to remove one, send the list without it. Show the final list in the confirmation.
 - Withdrawn or dropped is no longer set here: reject the submission with `marketing_reject_submission` and the rejecting party (`Candidate` withdrew, `Company` dropped). Cancelling an offer does not reject the submission; use the offer workflow (see `references/offer.md`).
+- `city` / `state` (two-letter code) are where the candidate lives for interviews, not the onboarding address.
 - `ssn_last4` takes exactly 4 digits: a full 9-digit SSN is saved as its last 4 (say so), anything else is rejected.
 - A candidate who is `In Preparation` or `In Marketing` from another vendor is visible to you in the pool but a candidate on another vendor's project is not (`Not found`).
 
