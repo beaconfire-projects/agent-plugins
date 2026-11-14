@@ -13,36 +13,35 @@
 
 ## 工具名与版本
 
+v0.15.0：Offer 生命周期改版，配套后端 Offer lifecycle v2。Offer 状态 Offered / On Project / Off Project / Canceled **全部由日期和取消推导**（实际入职日到了才是 On Project，实际最后工作日的第二天起是 Off Project，实际日期可填未来、可改可清；预计日期不改状态）；创建 Offer 必填 PO Company，从 Submission 创建（`marketing_create_offer`），修改、确认入职 / 离职都用 `marketing_update_offer`，取消用 `marketing_withdraw_offer` / `marketing_undo_withdraw_offer`；人的营销状态随 Offer 自动变。**已删除**：`marketing_create_onboarding`、`marketing_update_onboarding`、`marketing_get_onboarding`、`marketing_list_onboardings`、`marketing_delete_onboarding`、`marketing_confirm_onboarding_start`、`marketing_cancel_onboarding`、`marketing_undo_cancel_onboarding`、`marketing_create_offboarding`、`marketing_update_offboarding`、`marketing_confirm_offboarding`、`marketing_cancel_offboarding`、`marketing_onboard_offer`、`marketing_offboard_offer`（不留旧名）；原四份 onboarding 参考文件合并为 `references/offer.md`。L2 通过后不再自动建，要先问 PO Company。
+
 v0.14.1：`marketing_search_candidates` 和 Web / 表格菜单共用同一套筛选（`query`、`vendor`、`client`、`position`、`candidate_type`、`marketing_status`、`current_status`、`lead`、`yoe_min`、`yoe_max`）；原参数 `status` 改名 `current_status`（面试进度，必须有岗位范围，否则报错），`on_project` 已去掉（用 `marketing_status=On Project`）；不带筛选时返回看得到的全部范围，不再只看当前岗位。
 
 v0.14.0：Candidate 能力收敛为四个入口共用的一组工具——`marketing_add_candidate`（已有 Person 传 `person_code`，或新建，同一个动作）、`marketing_search_addable_people`、`marketing_update_candidate`（个人资料含营销状态）；原 `marketing_create_candidate`、`marketing_convert_person_to_candidate`、`marketing_search_bench_pool`、`marketing_update_candidate_profile`、`marketing_delete_candidate` 已删除（删除 Candidate 只在 Admin 网页后台）；原 `marketing_update_candidate`（Level / Lead / Status Override 等）改名 `marketing_update_candidate_submission`。
 
-v0.13.0 起 MCP 工具名从 `staffing_*` 改为 `marketing_*`（统计工具仍是 `insights_*`），旧名不再保留；候选人自己的资料更新叫 `marketing_update_candidate`（`marketing_update_person` 是 Admin / Manager 用的共用 Person / HR 资料管理工具，两者不同）。**插件和后端要配套**：先发后端，再更新到 v0.14.1；只更新插件而后端还是旧版时，Skill 找不到工具；后端已发新版而插件还是旧版时同理。
+v0.13.0 起 MCP 工具名从 `staffing_*` 改为 `marketing_*`（统计工具仍是 `insights_*`），旧名不再保留；候选人自己的资料更新叫 `marketing_update_candidate`（`marketing_update_person` 是 Admin / Manager 用的共用 Person / HR 资料管理工具，两者不同）。**插件和后端要配套**：先发后端，再更新到 v0.15.0；只更新插件而后端还是旧版时，Skill 找不到工具；后端已发新版而插件还是旧版时同理。
 
 ## `staffing` Skill
 
-按姓名、Candidate ID（`PER-nnnnnn`）、Interview 编号（`INT-xxxx`）或 Onboarding 编号（`ONB-xxxx`）处理十一类请求：
+按姓名、Candidate ID（`PER-nnnnnn`）、Interview 编号（`INT-xxxx`）或 Offer 编号（`OFR-nnnnnn`）处理九类请求：
 
 | 请求 | 说明 | 参考文件 |
 | --- | --- | --- |
 | 查询面试 | 只读：某人有几个面试、每场的轮次、时间、结果和评分（重名先问是哪一个；已取消、Need to Reschedule 的保留为历史并标出当前有效的一场）；按 Interview 编号直接读一场；按轮次和日期查日程 | `references/interview.md` |
 | 修改面试时间或结果 | 改日期、时间、时区、结果（含 Need to Reschedule）、评分、会议链接、Recruiter、面试官（客户方评估人，聊天反馈里的 Evaluator）、备注；已取消或标了 Need to Reschedule 的面试重约会新建一条面试 | `references/interview.md` |
-| 创建 Onboarding | 记录学员拿到 offer，必须有 offer 日期；已有记录时改为修改。L2 改成 Passed（含批量）后，工具返回 `onboarding_suggestion` 时不再询问，保存成功后直接按建议的 offer 日期建 Onboarding 并在同一回复里报告；用 `status=L2 Passed` 找出之前漏建的人 | `references/onboarding-create.md` |
-| 取消 offer | offer 被取消（候选人拒绝 `candidate_declined`，或公司撤回 `company_rescinded`）：Onboarding 记录保留，候选人变 Candidate Withdrew / Company Dropped（原因 `Offer rescinded: …`），Offer Status 和 Start Date 清空，客户的 Onboarding Info Sheet 里整行划删除线；类型必须来自用户的话，说不清就问；可撤销，撤销后恢复。已取消的记录不能改，候选人的 Status Override 要先撤销才能改；列表默认不含已取消的 | `references/onboarding-cancel.md` |
-| 确认入职和 Offboarding | 业务确认学员真的到岗（填实际开始日期，状态变 Active）；创建 Offboarding（所有字段可空，更新时只合并非空值，可取消）；确认离开（结果 Remap / Quit / Fired，原因和下一步取自业务表单，投递关闭）。Offer 的状态只能由这些动作驱动 | `references/onboarding-start-end.md` |
-| 修改入职时间 | 设置、修改或清除 start date，状态在 Offered 与 Onboarding Scheduled 之间切换 | `references/onboarding-start-date.md` |
+| Offer | 从 Submission 创建 Offer（必填 PO Company，日期可空；创建前要看过全部面试）；查询 Offer（同一 Submission 可有多条）；设置、修改、清除预计或实际入职日 / 最后工作日（状态由日期推导，不能直接改；实际日期可填未来；实际离职需要实际入职且不早于它）；确认入职、确认离职（Remap / Quit / Fired，原因和下一步取自业务表单）；BGC、HR 清单、地址、费率等字段；取消 offer（候选人拒绝 `Candidate` 或公司撤回 `Company`，任何阶段都可，可撤销，不动 Submission）。L2 改成 Passed 后返回 `onboarding_suggestion` 时要提示并询问 PO Company，不自动建 | `references/offer.md` |
 | 创建、修改学员信息 | 创建 Candidate（必填类型、First、Last、Email，其余都可空：年限、签证类型和起止日期、电话、地址、出生日期、性别、LinkedIn、Facebook、手机和电脑偏好；Bench 不新建，从已有的人里添加（`marketing_search_addable_people`））；修改时个人资料用 `marketing_update_candidate`（姓名只能改 First / Middle / Last / Preferred，没有 `name`；邮箱和电话不能属于别人；类型必填；地址和出生日期审计只记 changed），Level、Lead、费率、Status Override、SSN 后四位等用 `marketing_update_candidate_submission`；确认时显示旧值 → 新值 | `references/candidate.md` |
 | 创建、修改 Submission | 把候选人投递到自己 Vendor 的岗位（可同时给费率、可入职时间、出差、面试可约时间、同客户经历、C2C 雇主及联系人）；读取 Submission 详情；修改投递信息（只改给了的字段，改过的以后 Submission 邮件不再覆盖；投递里的 C2C 雇主和候选人自己的雇主互不影响；Level / Lead / 状态不在这里改） | `references/submission.md` |
 | 面试 Slot | 按用户贴的时间表批量创建某天某轮次的 Slot（先用 `dry_run` 让服务端预览会建几个、跳过几个、为什么，同时核对已有 Slot；确认后用同样的参数只调用一次，成功后不要重复调用，否则会重复新建）、给候选人占 Slot（可以一次贴多人，如 `PER-010012 10AM, PER-010020 10AM`，同一时间有多个 Recruiter 会问；先用 `marketing_hold_slots` 的 `dry_run` 预览每一行会不会成功，整批一张确认表，确认后同样参数再执行；L2 必须和 L1 同一个 Recruiter）、释放、作废；占 Slot 后状态是 `L1/L2 Slot Held`，邀请邮件到了建出面试才是 Scheduled | `references/slots.md` |
-| 删除记录 | 删除用错误数据建出来的候选人、面试或 Onboarding（不可恢复）；候选人名下还有面试或 Onboarding 时要先删它们；记录没发生过用改结果或 Status Override，不用删除 | `references/delete.md` |
+| 删除记录 | 删除用错误数据建出来的面试（不可恢复；候选人只能由 Admin 在网页后台删除，Offer 不能删除、只能取消）；记录没发生过用改结果或 Status Override，不用删除 | `references/delete.md` |
 | 统计分析 | 只读，只有数字没有姓名：各状态多少人、等 L1 / L2 排期多少人、每月 offer 数、面试通过率、按 Level / 工作授权 / 年限分布、两个口径的对比；数字来自指标服务（Cube），与 Staffing Dashboard 同一口径，**不要靠翻候选人列表自己数**；先 `insights_list_metrics` 取指标和维度，再 `insights_query`；也能按 Vendor（只算 Primary Vendor）/ Client 统计岗位数、Submission 数、Candidate 数、Offer 数和各阶段人数，Submission 按提交时间统计（这部分只有 Admin 能查，其他人目录里没有）；要看具体是谁时改用 `marketing_search_candidates` 等。服务不可用时直接告知，不用别的工具凑数 | `references/insights.md` |
 | 立即处理邮件、读取客户群 | 用户要“现在就处理”时:先用只读的预览工具看会创建/更新多少、哪些要人看、会发哪些飞书告警，确认后再手动运行，再看运行结果 | `references/ingest.md` |
 
-共同规则：先定位到唯一一条记录（重名或多条时必须询问）；写入前展示「字段：旧值 → 新值」并等待明确确认；更新必须带刚读取的 `version`；选项值只用 `marketing_list_options` 返回的；入职资料（SSN 后四位、出生日期、地址等）和其他字段一样直接读写（变更记录里只显示 changed）；L2 改成 Passed 后必须问是否创建 Onboarding。
+共同规则：先定位到唯一一条记录（重名或多条时必须询问）；写入前展示「字段：旧值 → 新值」并等待明确确认；更新必须带刚读取的 `version`；选项值只用 `marketing_list_options` 返回的；入职资料（SSN 后四位、出生日期、地址等）和其他字段一样直接读写（变更记录里只显示 changed）；L2 改成 Passed 后要提示可以建 Offer 并询问 PO Company。
 
 ## 依赖的 MCP 工具
 
-`marketing_search_candidates`、`marketing_get_candidate`、`marketing_get_interview`、`marketing_list_interviews`、`marketing_update_interview`、`marketing_create_interview`、`marketing_list_onboardings`、`marketing_get_onboarding`、`marketing_create_onboarding`、`marketing_update_onboarding`、`marketing_confirm_onboarding_start`、`marketing_create_offboarding`、`marketing_update_offboarding`、`marketing_cancel_offboarding`、`marketing_confirm_offboarding`、`marketing_cancel_onboarding`、`marketing_undo_cancel_onboarding`、`marketing_update_candidate_submission`、`marketing_get_candidate_detail`、`marketing_add_candidate`、`marketing_search_addable_people`、`marketing_get_submission`、`marketing_update_submission`、`marketing_list_options`、`marketing_get_history`、`marketing_list_slots`、`marketing_create_slots`、`marketing_hold_slot`、`marketing_release_slot`、`marketing_cancel_slots`、`marketing_delete_interview`、`marketing_delete_onboarding`、`marketing_hold_slots`、`marketing_preview_mail_ingest`、`marketing_run_mail_ingest`、`marketing_get_mail_ingest_status`、`marketing_preview_chat_ingest`、`marketing_run_chat_ingest`、`marketing_get_chat_ingest_status`、`insights_list_metrics`、`insights_query`。
+`marketing_search_candidates`、`marketing_get_candidate`、`marketing_get_interview`、`marketing_list_interviews`、`marketing_update_interview`、`marketing_create_interview`、`marketing_list_offers`、`marketing_get_offer`、`marketing_get_offer_history`、`marketing_search_offer_submissions`、`marketing_preview_offer_submission`、`marketing_create_offer`、`marketing_update_offer`、`marketing_withdraw_offer`、`marketing_undo_withdraw_offer`、`marketing_offer_options`、`marketing_search_offer_po_vendors`、`marketing_update_candidate_submission`、`marketing_get_candidate_detail`、`marketing_add_candidate`、`marketing_search_addable_people`、`marketing_get_submission`、`marketing_update_submission`、`marketing_list_options`、`marketing_get_history`、`marketing_list_slots`、`marketing_create_slots`、`marketing_hold_slot`、`marketing_release_slot`、`marketing_cancel_slots`、`marketing_delete_interview`、`marketing_hold_slots`、`marketing_preview_mail_ingest`、`marketing_run_mail_ingest`、`marketing_get_mail_ingest_status`、`marketing_preview_chat_ingest`、`marketing_run_chat_ingest`、`marketing_get_chat_ingest_status`、`insights_list_metrics`、`insights_query`。
 
 ## 说明
 

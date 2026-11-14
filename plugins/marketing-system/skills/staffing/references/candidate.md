@@ -44,7 +44,7 @@ Required: `candidate_type`, `first_name`, `last_name`, `email`. Everything else 
    - **Name**: change the parts (`first_name`, `middle_name`, `last_name`, `preferred_name`); there is no `name` field. A part you do not send keeps its value, so send `middle_name: null` when the new name has no middle name. When the user gives only a full name, split it (first word = First, last word = Last, the rest = Middle; a suffix such as Jr. stays in Last) and show the split.
    - **Visa**: `work_authorization` is the type; the start and expiry dates are `work_authorization_start_date` and `work_authorization_expires` (`YYYY-MM-DD`; the expiry cannot be before the start).
    - **Address** is saved as four parts; changing it keeps the old address as history. **Date of birth** is `mm-dd-yyyy` and is open to everyone who can see the candidate. The change history shows address and date of birth as `changed`, without values.
-   - **Marketing status** can be set by hand to `In Preparation`, `In Marketing`, `On Hold`, `Offer`, `On Project`, `Remap`, `Quit` or `Fired` (the legacy values `Off Project`, `Pause` and `Withdrawn / MIA` can exist but cannot be chosen). There is no automation yet except the existing rule that follows offers (an active offer sets `On Project`; an ended one sets `Quit`, `Fired` or `Remap`). `In Preparation`, `In Marketing` and `Remap` are visible to every AM; the other states only to the vendors the candidate was submitted to or has an offer with.
+   - **Marketing status** can be set by hand to `In Preparation`, `In Marketing`, `On Hold`, `Offer`, `On Project`, `Remap`, `Quit` or `Fired` (the legacy values `Off Project`, `Pause` and `Withdrawn / MIA` can exist but cannot be chosen). Offers drive it automatically at the moment they change (an Offered offer sets `Offer`, an On Project offer `On Project`, an ended one `Quit`, `Fired` or `Remap`, all offers canceled `In Marketing`); a value set by hand is not overwritten until the person's next offer change, and the reply warns when the value you set is normally automatic. `In Preparation`, `In Marketing` and `Remap` are visible to every AM; the other states only to the vendors the candidate was submitted to or has an offer with.
 4. **Confirm** with `field: old → new`, then call `marketing_update_candidate` with `code` and `changes`.
 5. **Report** what was saved from the response (name, type, marketing status, new version) and any warning.
 
@@ -61,10 +61,10 @@ For the fields `marketing_update_candidate` does not take. `changes.version` is 
 | Status | `status_override`: Candidate Withdrew or Company Dropped (wins over every other status) |
 | Onboarding profile | `profile`: `ssn_last4`, `work_authorization_detail`, `phone_preference`, `laptop_preference`, `splicing_certification`, `fb_url` (the address, phone, date of birth and gender are also accepted there, but change them with `marketing_update_candidate`) |
 
-Not editable anywhere on a candidate: Offer Status, Start Date and Current Status. They come from the onboarding record and the interviews (see the onboarding workflows).
+Not editable anywhere on a candidate: offer status, start date and Current Status. They come from the offers (see `references/offer.md`) and the interviews.
 
 - `other_emails` **replaces** the whole list. To add one address, send the existing list plus the new one; to remove one, send the list without it. Show the final list in the confirmation.
-- `status_override` set to Candidate Withdrew or Company Dropped overrides the interview status. "The candidate gave up / left" is **Candidate Withdrew**; "we dropped the candidate / ended the cooperation / company drop" is **Company Dropped**. If the user only says "drop" or "stop working with" and it is not clear who ended it, ask. Company Dropped needs a reason (`Candidate Issue`, `Duplicate` or the user's own text). Clear it with `null` only when asked. While the candidate's offer is canceled, the override and its reason are refused: undo the cancellation first (see `onboarding-cancel.md`).
+- `status_override` set to Candidate Withdrew or Company Dropped overrides the interview status. "The candidate gave up / left" is **Candidate Withdrew**; "we dropped the candidate / ended the cooperation / company drop" is **Company Dropped**. If the user only says "drop" or "stop working with" and it is not clear who ended it, ask. Company Dropped needs a reason (`Candidate Issue`, `Duplicate` or the user's own text). Clear it with `null` only when asked. Cancelling an offer does not set it; use the offer workflow (see `references/offer.md`).
 - `ssn_last4` takes exactly 4 digits: a full 9-digit SSN is saved as its last 4 (say so), anything else is rejected.
 - A candidate who is `In Preparation` or `In Marketing` from another vendor is visible to you in the pool but a candidate on another vendor's project is not (`Not found`).
 
@@ -72,4 +72,4 @@ Not editable anywhere on a candidate: Offer Status, Start Date and Current Statu
 
 - Do not send unknown fields; the tools reject them.
 - Do not bulk-edit several candidates from one confirmation; confirm each candidate separately.
-- Deleting a candidate is not available here: it is done by an Admin in the web back office only. For an interview or onboarding record created from wrong data use `references/delete.md`.
+- Deleting a candidate is not available here: it is done by an Admin in the web back office only. For an interview created from wrong data use `references/delete.md`; offers are canceled, not deleted (`references/offer.md`).

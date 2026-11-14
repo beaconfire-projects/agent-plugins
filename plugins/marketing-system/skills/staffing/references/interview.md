@@ -46,11 +46,11 @@ To answer "who is interviewing today", "tomorrow's L1s" or "this week's L2 resul
    - A **Canceled** result set by hand means the interview did not happen; if it will be rescheduled, offer to create the new interview too.
    - If the interview source is `email` (it came from a calendar invitation), say so: a later invitation update can change the time again.
 4. **Confirm** with `field: old → new` (include the score when one is given or changes), then call `marketing_update_interview` with `code` and `changes` (`version` plus only the changed fields). Clear a field only when asked, by sending `null`.
-5. **Report** the saved interview and the candidate's current status. If the reply has `onboarding_suggestion` (the candidate just passed L2 and has no onboarding record), do not ask: call `marketing_create_onboarding` right away with the suggested offer date (see `references/onboarding-create.md`) and report the new Onboarding ID together with the interview.
+5. **Report** the saved interview and the candidate's current status. If the reply has `onboarding_suggestion` (the candidate just passed L2), say in the same reply that the candidate is ready for an offer and ask for the PO Company and any dates; do not create the offer without them (see `references/offer.md`, After an L2 pass).
 
 ## Several interviews at once
 
-When the user gives results for several interviews in one message (for example "these four passed L2"), resolve each one, show one confirmation table with a row per interview (interview ID, candidate, round, `result: old → new`, score), ask for any missing scores once, and after the yes update them one by one. Then report one table of what was saved. **Every reply that carried `onboarding_suggestion` gets its onboarding record created right away, without a follow-up question**: one `marketing_create_onboarding` per candidate with the suggested offer date, one at a time. Add the Onboarding ID and offer date to the report table (or the error, if one failed; keep going with the others).
+When the user gives results for several interviews in one message (for example "these four passed L2"), resolve each one, show one confirmation table with a row per interview (interview ID, candidate, round, `result: old → new`, score), ask for any missing scores once, and after the yes update them one by one. Then report one table of what was saved. **Every reply that carried `onboarding_suggestion` gets one offer question in the report**: list those candidates in one table and ask once for each PO Company (and dates); create the offers one at a time after the answer (see `references/offer.md`).
 
 ## Do not
 
