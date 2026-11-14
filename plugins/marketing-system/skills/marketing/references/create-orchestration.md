@@ -11,7 +11,7 @@ This is **multiple sequential MCP calls**, not a nested-create API or atomic tra
 Exceptions that always retain explicit review/confirmation:
 - Existing candidate-position submissions: show the pair check and ask reuse versus **separate submission**; only explicit separate-record consent permits `create_separate=true`.
 - Offer: preview the exact submission's full interview set (including none) and existing offers, then obtain explicit interview-review and independent-offer confirmation. A general create goal cannot pre-confirm an unseen preview.
-- HR import retains its row preview/confirmation; optional AI enrichment requires consent. Conflicts or changed versions require fresh review, not automatic overwrite.
+- HR import retains its row preview/confirmation. Vendor creation uses `use_ai=true` by default without separate AI-enrichment consent (respect an explicit opt-out); optional AI enrichment for other company creation requires consent. Conflicts or changed versions require fresh review, not automatic overwrite.
 
 ## Actual dependencies and scope
 
