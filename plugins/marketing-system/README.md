@@ -1,6 +1,6 @@
 # marketing-system
 
-连接 Beaconfireinc Marketing System 的 MCP 服务（`https://api-marketing-mcp.beaconfireinc.com/mcp`），并提供 `staffing` Skill，用来对 Staffing（Meta Data Center 招聘流程）的数据做受控修改。目前只有生产环境（没有 dev 环境），所以只提供正式版插件 `marketing-system`。
+连接 Beaconfireinc Marketing System 的 MCP 服务（`https://api-marketing-mcp.beaconfireinc.com/mcp`），并提供 `marketing` 和 `staffing` Skills，用来对 Staffing（Meta Data Center 招聘流程）的数据做受控修改。目前只有生产环境（没有 dev 环境），所以只提供正式版插件 `marketing-system`。
 
 ## 安装
 
@@ -13,13 +13,21 @@
 
 ## 工具名与版本
 
-v0.15.0：Offer 生命周期改版，配套后端 Offer lifecycle v2。Offer 状态 Offered / On Project / Off Project / Canceled **全部由日期和取消推导**（实际入职日到了才是 On Project，实际最后工作日的第二天起是 Off Project，实际日期可填未来、可改可清；预计日期不改状态）；创建 Offer 必填 PO Company，从 Submission 创建（`marketing_create_offer`），修改、确认入职 / 离职都用 `marketing_update_offer`，取消用 `marketing_withdraw_offer` / `marketing_undo_withdraw_offer`；人的营销状态随 Offer 自动变。**已删除**：`marketing_create_onboarding`、`marketing_update_onboarding`、`marketing_get_onboarding`、`marketing_list_onboardings`、`marketing_delete_onboarding`、`marketing_confirm_onboarding_start`、`marketing_cancel_onboarding`、`marketing_undo_cancel_onboarding`、`marketing_create_offboarding`、`marketing_update_offboarding`、`marketing_confirm_offboarding`、`marketing_cancel_offboarding`、`marketing_onboard_offer`、`marketing_offboard_offer`（不留旧名）；原四份 onboarding 参考文件合并为 `references/offer.md`。L2 通过后不再自动建，要先问 PO Company。
+v0.19.0：Offer 生命周期改版，配套后端 Offer lifecycle v2。Offer 状态 Offered / On Project / Off Project / Canceled **全部由日期和取消推导**（实际入职日到了才是 On Project，实际最后工作日的第二天起是 Off Project，实际日期可填未来、可改可清；预计日期不改状态）；创建 Offer 必填 PO Company，从 Submission 创建（`marketing_create_offer`），修改、确认入职 / 离职都用 `marketing_update_offer`，取消用 `marketing_withdraw_offer` / `marketing_undo_withdraw_offer`；人的营销状态随 Offer 自动变。**已删除**：`marketing_create_onboarding`、`marketing_update_onboarding`、`marketing_get_onboarding`、`marketing_list_onboardings`、`marketing_delete_onboarding`、`marketing_confirm_onboarding_start`、`marketing_cancel_onboarding`、`marketing_undo_cancel_onboarding`、`marketing_create_offboarding`、`marketing_update_offboarding`、`marketing_confirm_offboarding`、`marketing_cancel_offboarding`、`marketing_onboard_offer`、`marketing_offboard_offer`（不留旧名）；staffing 的四份 onboarding 参考文件合并为 `references/offer.md`，原 `staffing/references/offers.md` 并入其中；`marketing` Skill 的 `offer.md`、`offer-lifecycle.md`、`tool-boundary.md` 同步改为新规则。L2 通过后不再自动建，要先问 PO Company。
 
 v0.14.1：`marketing_search_candidates` 和 Web / 表格菜单共用同一套筛选（`query`、`vendor`、`client`、`position`、`candidate_type`、`marketing_status`、`current_status`、`lead`、`yoe_min`、`yoe_max`）；原参数 `status` 改名 `current_status`（面试进度，必须有岗位范围，否则报错），`on_project` 已去掉（用 `marketing_status=On Project`）；不带筛选时返回看得到的全部范围，不再只看当前岗位。
 
 v0.14.0：Candidate 能力收敛为四个入口共用的一组工具——`marketing_add_candidate`（已有 Person 传 `person_code`，或新建，同一个动作）、`marketing_search_addable_people`、`marketing_update_candidate`（个人资料含营销状态）；原 `marketing_create_candidate`、`marketing_convert_person_to_candidate`、`marketing_search_bench_pool`、`marketing_update_candidate_profile`、`marketing_delete_candidate` 已删除（删除 Candidate 只在 Admin 网页后台）；原 `marketing_update_candidate`（Level / Lead / Status Override 等）改名 `marketing_update_candidate_submission`。
 
-v0.13.0 起 MCP 工具名从 `staffing_*` 改为 `marketing_*`（统计工具仍是 `insights_*`），旧名不再保留；候选人自己的资料更新叫 `marketing_update_candidate`（`marketing_update_person` 是 Admin / Manager 用的共用 Person / HR 资料管理工具，两者不同）。**插件和后端要配套**：先发后端，再更新到 v0.15.0；只更新插件而后端还是旧版时，Skill 找不到工具；后端已发新版而插件还是旧版时同理。
+v0.13.0 起 MCP 工具名从 `staffing_*` 改为 `marketing_*`（统计工具仍是 `insights_*`），旧名不再保留；候选人自己的资料更新叫 `marketing_update_candidate`（`marketing_update_person` 是 Admin / Manager 用的共用 Person / HR 资料管理工具，两者不同）。**插件和后端要配套**：先发后端，再更新到 v0.19.0；只更新插件而后端还是旧版时，Skill 找不到工具；后端已发新版而插件还是旧版时同理。
+
+## `marketing` Skill：Person 与 Interview Management（v0.18.0）
+
+共享 Person/HR 支持查询、手动创建、HR 导入、修改、选项及字段审计。 支持显式确认后的单条删除：Person 只在存在 Submission 时禁止删除；Interview 对应 Submission 存在任意状态的 Offer 时禁止删除。Interview 页面按钮显示 Cancel，实际删除当前记录，与保留记录的 Canceled 结果不同。删除和操作日志同事务，失败回滚；不支持批量或连带删除。创建 Person 的必填信息、联系方式替换、HR/签证/批次的字段含义见 `skills/marketing/references/person.md` 和 `create-person.md`。
+
+Interview Management 支持用人名、PER ID、邮箱/电话、Submission ID、Position、Vendor/Client 搜索已有投递，选择后带出人、岗位与轮次，再创建/查看/修改面试及查询审计。场景限制、预约必填项、评分追问、确认与失败恢复见 `skills/marketing/references/interview.md`。内部 INT 与 Sheet HIST-IV 是两个编号。
+
+这次只更新 marketing Skill，staffing 文件保持不变。共享 Person/HR 和 Submission 驱动的面试管理走 marketing；已有 Staffing Candidate/Slot 流程仍走 staffing（旧 ONB 工具已在 v0.19.0 删除，Offer 统一走 `marketing_*_offer`），不混用自动后续动作。Marketing 面试保存返回的 onboarding_suggestion 不会授权自动创建 ONB/OFR。运行时工具须符合 `skills/marketing/references/tool-boundary.md` 的能力清单（本次源码验证 Person/Interview 14 个工具，其余 35 项保留已有契约）；后端部署未提供新工具时报告版本缺口。
 
 ## `staffing` Skill
 
