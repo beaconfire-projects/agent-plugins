@@ -4,6 +4,8 @@
 
 **Choices for filters.** Call `marketing_list_scope_options()` once: it returns the visible `positions` (code, title, vendor, client), `vendors` and `clients` (a client lists the `vendor_codes` it has positions under). Use these exact codes in filters. A code outside your scope returns an empty result, not an error.
 
+If the connected client does not expose that tool, use `marketing_list_positions(q=...)` or `marketing_search_submission_positions(q=...)` to find the scoped position and retrieve its Vendor and Client codes. For a search that does not require a structured filter, pass the user's terms to `q` or `query`. `marketing_submission_options()` supplies statuses only.
+
 **The three filters.** `vendor`, `client` and `position` are arrays of codes (`COM-…`, `COM-…`, `POS-…`); several values in one filter are OR, the three filters together are AND. They exist on `marketing_search_candidates`, `marketing_list_submissions`, `marketing_list_offers`, `marketing_list_interviews`, `marketing_list_slots`, `marketing_list_positions` and the interview overview. For a candidate they keep people who have, or ever had, a submission, interview or offer on those positions; for every other record they match the record's own position.
 
 **Position is never injected.** Tools no longer accept a hidden "current position". Where a write targets one position (creating or holding slots) pass `position_code`; everywhere else `position` is only a filter. `current_status` (interview progress) needs a `position` filter, otherwise the call is rejected with `current_status needs a position`.

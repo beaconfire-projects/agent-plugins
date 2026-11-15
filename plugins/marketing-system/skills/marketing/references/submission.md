@@ -8,6 +8,8 @@ These are the one set of submission tools (the old staffing-only submission tool
 
 ## Create or repeat a submission
 
+To resume from an original Submission ID, search with `marketing_list_submissions(q=...)`, verify Person and Position, and use the returned `code` for details and writes. `legacy_pipeline_id` shows which original ID matched.
+
 Follow [Create orchestration](create-orchestration.md); missing supported dependencies do not require a new confirmation for each create.
 
 1. `marketing_search_submission_candidates(q, page, page_size)` resolves an eligible person (no target-position filter); `marketing_search_submission_positions(q, page, page_size)` resolves a scoped position and its allowed levels. These selectors use page 1, size 25 by default, max 100. If position is missing, create it and any missing Vendor/Client dependencies using [Position](position.md), then refresh the selector. For a missing eligible candidate, use [Create candidate](create-candidate.md) to resolve identity and create/convert when supported, then re-query eligibility before continuing. An existing Person alone is insufficient; unresolved identity, batch/readiness or scope stops that branch.
@@ -40,6 +42,8 @@ Read exact submission/version and confirm each action separately:
 - Rejected → Active: `marketing_reopen_submission(code, request={version})`. It clears the rejecting party and reason (the old values stay in the change history) and is the only way back; tell the user that.
 
 Read back status, party, reason and version. No deletion. Legacy rejections show `rejected_by` empty ("unknown (legacy)"); old `Closed`/blank states cannot use these actions.
+
+If the connected client does not expose `marketing_reopen_submission`, report the current status and that reopening is unavailable in that client.
 
 ## Recovery
 

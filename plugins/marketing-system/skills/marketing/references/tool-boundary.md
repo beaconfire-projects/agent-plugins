@@ -1,6 +1,10 @@
 # Verified tool boundary
 
-The combined capability contract lists **55 tools** (companies 6, candidates 4, positions/vendors 7, submissions 11, offers 11, people 8, interviews 8). The 52 entries that existed before the candidate change were individually rechecked against their actual decorators in the local backend checkout for this documentation change. This is source-contract verification, not a claim that the connected deployment has these tools. The four candidate tools were checked against the deployed backend (image 0.1.0-169): their tags include `marketing`; local declarations alone do not establish deployed availability. Allow only tools whose actual decorator tags include `marketing`. The connected deployment must expose the matching schema; stop on missing tools, unverified tags or incompatible schemas. This list does not authorize future tools solely because their names look similar.
+Allow the tools listed here when the connection exposes them and the server declares the `marketing` tag. If a capability is missing or its schema differs, verify the installed connector version. Use a documented Marketing lookup for read-only alternatives and report a missing write capability.
+
+## Shared scope options (1)
+
+Source: `modules/marketing/mcp/scope_options.py`. `marketing_list_scope_options` has tags `marketing`, `options`. See [Scope filters](scope-filters.md) for the position search fallback.
 
 Source paths below are code provenance under `backend/app/`, not runtime calls or relative file links.
 

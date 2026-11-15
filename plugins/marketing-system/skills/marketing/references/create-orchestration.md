@@ -15,6 +15,15 @@ Exceptions that always retain explicit review/confirmation:
 
 ## Actual dependencies and scope
 
+Use the starting point that matches the request:
+
+| Starting point | Workflow |
+| --- | --- |
+| A genuinely new candidate | Create the candidate with legal names, email and candidate type in one call. Find an eligible position and check the pair before submitting. |
+| An existing Person | Read back the Person, confirm the intended candidate type and check the Bench selector. If a genuine Batch is known and missing, have the Person record updated before conversion. |
+| An existing Submission | Use its current code to review the exact Person and Position. Choose Interview context for scheduling or Offer preview for a formal Offer. Review the empty interview list when applicable. |
+| An Offer or an interrupted workflow | Resolve the Offer by current code or by original ID plus Person. Read the exact record and its version. Verify the last completed action and continue there. Reuse saved dependency codes. |
+
 | Goal | Resolve/create order and limits |
 | --- | --- |
 | Company | Search shared companies, check identity, then [company create/role attachment](company.md). Vendor/Client are roles on the same company; do not create duplicate companies for the two roles. Require `name`, `legal_name` and a supported role/flag. Vendor addition requires capabilities/unique operator identity and automatically binds the AM; never create a Person to repair that identity implicitly. |

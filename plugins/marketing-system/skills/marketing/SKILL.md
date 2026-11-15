@@ -11,6 +11,8 @@ Use only the connected `marketing-system` MCP tools in the [verified tag invento
 
 For Vendor / Client / Position choices, filters and search words on any list tool, read [Scope filters](references/scope-filters.md). For any create goal, load [Create orchestration](references/create-orchestration.md) first, then only the entity references needed for its dependencies.
 
+Start from the record the user already has. A Person needs a Candidate eligibility check before a new Submission. A Submission ID goes straight to exact Submission detail, then Interview context or Offer preview. An Offer ID from a historical import goes to Offer search so you can match the Person before taking any action. Keep the returned codes as you move through the workflow.
+
 | Request | Reference |
 | --- | --- |
 | Create a person manually or import approved HR Sheet structured rows | [Create person](references/create-person.md) |
@@ -18,7 +20,7 @@ For Vendor / Client / Position choices, filters and search words on any list too
 | Search/edit/delete one shared person, contact, HR, work authorization or batch | [Person](references/person.md) |
 | Find/create/edit a position, parse a JD, select Vendor/Client | [Position](references/position.md) |
 | Find/create/edit a company, add Vendor/Client roles or PO flags | [Company](references/company.md) |
-| Find/create/edit/reject a submission or mark it Offered | [Submission](references/submission.md) |
+| Find, create, edit, reject or reopen a Submission | [Submission](references/submission.md) |
 | Find a submission by person/name/ID/email, position, vendor/client; create/read/edit/delete one interview; inspect its history | [Interview](references/interview.md) |
 | Review interviews, create/edit a formal offer, inspect history | [Offer](references/offer.md) |
 | Set or correct expected/actual start and last day (the status is derived), cancel or undo an offer, or maintain the HR checklist | [Offer lifecycle](references/offer-lifecycle.md) |
