@@ -1,6 +1,6 @@
 # Verified tool boundary
 
-The combined capability contract lists **55 tools** (companies 6, candidates 4, positions/vendors 7, submissions 11, offers 11, people 8, interviews 8). The 52 entries that existed before the candidate change were individually rechecked against their actual decorators in the local backend checkout for this documentation change. This is source-contract verification, not a claim that the connected deployment has these tools. The four candidate tools were checked against the deployed backend (image 0.1.0-169): their tags include `marketing`; local declarations alone do not establish deployed availability. Allow only tools whose actual decorator tags include `marketing`. The connected deployment must expose the matching schema; stop on missing tools, unverified tags or incompatible schemas. This list does not authorize future tools solely because their names look similar.
+The combined capability contract lists **58 tools** (companies 6, candidates 4, positions/vendors 7, Vendor AMs 3, submissions 11, offers 11, people 8, interviews 8). The 52 entries that existed before the candidate change were individually rechecked against their actual decorators in the local backend checkout for this documentation change. This is source-contract verification, not a claim that the connected deployment has these tools. The four candidate tools were checked against the deployed backend (image 0.1.0-169): their tags include `marketing`; local declarations alone do not establish deployed availability. Allow only tools whose actual decorator tags include `marketing`. The connected deployment must expose the matching schema; stop on missing tools, unverified tags or incompatible schemas. This list does not authorize future tools solely because their names look similar.
 
 Source paths below are code provenance under `backend/app/`, not runtime calls or relative file links.
 
@@ -102,6 +102,14 @@ Source: `modules/marketing/mcp/position_tools.py`; each listed decorator checked
 - `marketing_parse_position_jd`
 
 These names previously belonged to Staffing; require the deployed Marketing tags before using them. Vendor queries now have independent Marketing service/repository ownership.
+
+## Vendor AMs (3)
+
+Source: `modules/marketing/mcp/vendor_ams.py`; each listed decorator checked: tags `marketing`, `vendors`, and the tool-level auth `VENDOR_AM_ACCESS` (role codes `admin` or `am-manager`), so other users do not see them. See [Vendor AMs](vendor-am.md).
+
+- `marketing_list_vendor_ams`
+- `marketing_assign_vendor_ams`
+- `marketing_unassign_vendor_ams`
 
 ## Explicit exclusions
 

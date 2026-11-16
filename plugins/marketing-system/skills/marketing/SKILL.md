@@ -1,6 +1,6 @@
 ---
 name: marketing
-description: Manage the Marketing workspace's companies, candidates (new intake or existing-Person Bench conversion), positions/JDs, submissions, independent formal offers, shared Person/HR records and HR imports, including single-person deletion. Also create interviews by selecting an existing submission and manage or delete one interview explicitly in the Marketing/Interview Management workflow. Use staffing for its existing candidate-based interview-result, Slot and ONB workflows; do not mix their follow-on rules into this skill. Only verified tools tagged marketing are allowed.
+description: Manage the Marketing workspace's companies, candidates (new intake or existing-Person Bench conversion), positions/JDs, submissions, independent formal offers, shared Person/HR records and HR imports, including single-person deletion, and Vendor AM assignment in bulk (admin / am-manager only). Also create interviews by selecting an existing submission and manage or delete one interview explicitly in the Marketing/Interview Management workflow. Use staffing for its existing candidate-based interview-result, Slot and ONB workflows; do not mix their follow-on rules into this skill. Only verified tools tagged marketing are allowed.
 ---
 
 # Marketing workspace
@@ -18,6 +18,7 @@ For Vendor / Client / Position choices, filters and search words on any list too
 | Search/edit/delete one shared person, contact, HR, work authorization or batch | [Person](references/person.md) |
 | Find/create/edit a position, parse a JD, select Vendor/Client | [Position](references/position.md) |
 | Find/create/edit a company, add Vendor/Client roles or PO flags | [Company](references/company.md) |
+| See which AMs look after which Vendors, assign or unassign AMs to Vendors in bulk | [Vendor AMs](references/vendor-am.md) |
 | Find/create/edit/reject a submission or mark it Offered | [Submission](references/submission.md) |
 | Find a submission by person/name/ID/email, position, vendor/client; create/read/edit/delete one interview; inspect its history | [Interview](references/interview.md) |
 | Review interviews, create/edit a formal offer, inspect history | [Offer](references/offer.md) |
