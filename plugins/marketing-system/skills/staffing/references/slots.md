@@ -11,7 +11,6 @@ Slot `state` as returned by `marketing_list_slots`:
 | `available` | free; the only state a candidate can be put on |
 | `held` | a candidate holds it and no interview exists yet; `warnings` appear within 90 minutes of the start |
 | `scheduled` | the holding candidate's interview exists (`interview_code`); it is the interview now, not a slot |
-| `taken` | the recruiter already has another interview at that time; not free |
 
 A candidate's status while holding a slot is `L1 Slot Held` or `L2 Slot Held`. It becomes `L1 Scheduled` / `L2 Scheduled` only when the interview exists.
 
@@ -34,7 +33,7 @@ The user pastes a day, a round and, for each recruiter, a list of times (`X 10AM
 2. `marketing_list_slots` for the day (and recruiter or round if given) and choose among `available` slots only.
 3. Confirm: candidate, slot ID, recruiter, round, date and time. Then call `marketing_hold_slot` with the `version` you just read.
 4. Show every item in the response `warnings` (for example "No L1 interview on record for this candidate"), and report the candidate's new status (`L1 Slot Held` or `L2 Slot Held`).
-5. **An L2 slot must be with the same recruiter as the candidate's L1.** If the call is refused for that reason, say which recruiter the L1 was with and offer that recruiter's L2 slots. The recruiter of an L1 that ended as `Need to Reschedule` is not counted; the L1 that follows it decides.
+5. A slot's recruiter and an interview's `vendor_recruiter` (a typed name) are not linked: an L2 slot may be with a different recruiter than the L1, and another interview at that time does not use the slot up.
 6. Tell the user the candidate is not scheduled yet: once the invitation email arrives the interview appears and the status changes. If a held slot is close to its start with no interview, `marketing_list_slots` shows a warning; suggest checking whether the invitation was sent.
 
 ## B2. Put several candidates on slots (batch)
@@ -45,13 +44,13 @@ The user pastes a list like `PER-010012 10AM, PER-010020 10AM` or `Alex Morgan 1
 2. Resolve **each candidate to exactly one record** (rules in `SKILL.md`). If some names are ambiguous, ask about those only; the rest wait in the list.
 3. Call `marketing_list_slots` **once** for the day and round and keep only `available` slots. For each candidate pick the slot at the requested time:
    - exactly one available slot at that time: use it;
-   - several recruiters have a slot at that time: for an **L2**, take the recruiter of the candidate's L1 (read it with `marketing_get_candidate`); for an **L1**, or when the L1's recruiter has no slot then, list the recruiters and ask the user to choose;
+   - several recruiters have a slot at that time: list the recruiters and ask the user to choose (the recruiter of the candidate's L1 is not required);
    - no available slot at that time: mark the row "no free slot" and show the nearest available times of that round.
    - Two candidates must never be given the same slot. If two ask for a time that has only one slot, mark the second one as a conflict and ask.
-4. **Preview with the server.** Call `marketing_hold_slots` with `dry_run: true` and one entry per row (`slot_code`, `candidate_code` and the slot's `version` you just read). Nothing is written. Every row comes back `ok` or with the reason it would be refused (not available any more, the candidate already holds a slot of that round or already has that round's interview, an L2 slot with the wrong recruiter, the same slot asked for twice). A preview sees the effect of earlier rows on later ones.
+4. **Preview with the server.** Call `marketing_hold_slots` with `dry_run: true` and one entry per row (`slot_code`, `candidate_code` and the slot's `version` you just read). Nothing is written. Every row comes back `ok` or with the reason it would be refused (not available any more, the candidate already holds a slot of that round or already has that round's interview, the same slot asked for twice). A preview sees the effect of earlier rows on later ones.
 5. Show **one confirmation table** with a row per candidate: candidate (ID, name), round, date and time, recruiter, slot ID, and the preview result (the reason and any `warnings` for rows that would fail or carry a warning). Take problem rows out of the batch, or fix them with the user, and preview again if you changed anything. Wait for a clear yes for the whole table.
 6. Send **the same `holds` again without `dry_run`**, once. A refusal on one row does not stop the others. If a row is rejected as stale, read that slot again; if it is still available, retry that row once (it may be previewed again first), otherwise report it. Then **report a result table**: for every row, held or not (with the reason), the candidate's new status (`L1 Slot Held` or `L2 Slot Held`) and every item in `warnings`. Say plainly which candidates are still not on a slot, and remind the user that nobody is scheduled yet: the interview appears when the invitation email arrives.
-7. An L2 slot must be with the L1's recruiter (see B.5); say so for any row refused for that reason and offer that recruiter's other L2 slots. Use `marketing_hold_slot` (single) only when the user asks for one candidate.
+7. Use `marketing_hold_slot` (single) only when the user asks for one candidate.
 
 ## C. Need to Reschedule
 
@@ -59,7 +58,7 @@ The interview did not pass or did not happen, but the candidate is still good an
 
 - Set the interview result to `Need to Reschedule` with `marketing_update_interview` (see `references/interview.md`). It is a final result like Passed and Failed, and the candidate's status becomes `Need to Reschedule`.
 - To try again, **create a new interview or hold a new slot for the same round**; the old interview does not block it. Do not edit the old interview back to Scheduled.
-- A retried **L1** may use a different recruiter. A retried **L2** keeps the L1's recruiter (the interviewer may change, the recruiter does not).
+- A retried L1 or L2 may use any recruiter's slot; there is no rule tying L2 to the L1's recruiter.
 
 ## D. Release or cancel
 
