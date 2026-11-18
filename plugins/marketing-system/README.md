@@ -13,6 +13,10 @@
 
 ## 工具名与版本
 
+v0.28.1：Marketing skill 新增 `references/business-codes.md`，说明 PER-/COM-/REL-/POS-/SUB-/INT-/OFR- 等业务编号的含义和使用规则，`SKILL.md` 加入口。
+
+v0.28.0：配套后端新增面试题目：`marketing_search_interview_questions`（关键词加条件过滤，传 `query_text` 时按向量相似度排序，OpenAI 不可用自动回退关键词并在 `notes` 说明）、`marketing_get_question_frequency`（按归一化文本精确合并计数）、`marketing_get_interview_document`、`marketing_refresh_interview_questions`（标签 `marketing`、`interview-questions`，范围沿用数据范围规则）；Marketing skill 新增 `references/interview-questions.md`，`tool-boundary.md` 工具数改为 62。题目由面试保存后的 Interview Questions Link 事件在后台抓取、拆题、向量化，需要后端打开 `INTERVIEW_QUESTIONS_ENABLED`。
+
 v0.27.0：配套后端新增 Vendor 的 AM 分配：`marketing_list_vendor_ams`、`marketing_assign_vendor_ams`、`marketing_unassign_vendor_ams`（标签 `marketing`、`vendors`，只有角色代码 `admin` / `am-manager` 能看到；分配的邮箱必须是 Authsome 里的成员，一次可多个 Vendor × 多个邮箱，全部校验通过才写，可重复运行），Marketing skill 新增 `references/vendor-am.md`；`marketing_search_candidates` 新增筛选 `batch_stack`（按当前批次的 family，即技术栈，选项在 `marketing_list_options` 的 `batch_stacks`，`Not set` 表示没有当前批次或批次没有 family），Staffing skill 的候选人筛选说明同步补上 `batch`、`batch_stack`、`assigned_am`。
 
 v0.26.0：配套后端清理旧的 Vendor / Client / Position 选项：`marketing_submission_options` 的返回里不再有 `vendors`、`clients`、`positions`，只剩 `statuses`；这三类选项一律用 `marketing_list_scope_options`。没有删除任何工具（`marketing_offer_options`、`marketing_list_options` 本来就不含这三类）；`marketing_list_vendors`、`marketing_list_position_clients`、`marketing_search_submission_positions` 保留，它们服务创建岗位 / 创建 Submission，不是筛选范围。请先发后端、再更新插件。

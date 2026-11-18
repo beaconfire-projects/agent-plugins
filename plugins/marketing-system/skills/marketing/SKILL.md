@@ -21,10 +21,16 @@ For Vendor / Client / Position choices, filters and search words on any list too
 | See which AMs look after which Vendors, assign or unassign AMs to Vendors in bulk | [Vendor AMs](references/vendor-am.md) |
 | Find/create/edit/reject a submission or mark it Offered | [Submission](references/submission.md) |
 | Find a submission by person/name/ID/email, position, vendor/client; create/read/edit/delete one interview; inspect its history | [Interview](references/interview.md) |
+| Search historical interview questions, see the most frequently asked questions, read or re-fetch the stored question document of one interview | [Interview questions](references/interview-questions.md) |
+| Identify what a code such as PER-/COM-/POS-/SUB-/INT-/OFR- means | [Business codes](references/business-codes.md) |
 | Review interviews, create/edit a formal offer, inspect history | [Offer](references/offer.md) |
 | Set or correct expected/actual start and last day (the status is derived), cancel or undo an offer, or maintain the HR checklist | [Offer lifecycle](references/offer-lifecycle.md) |
 
 Business context: person intake → candidate readiness → company/position selection → submission → interviews → offer → actual start → offboarding/possible return to marketing. Supported dependencies can be created within an explicit goal using multiple calls, not nested requests or an unrequested end-to-end pipeline. Candidate creation/Bench conversion is supported through [Create candidate](references/create-candidate.md). Mailbox ingestion and standalone candidate marketing-status changes have no allowed tools here. Offer cancellation/undo uses the Offer lifecycle reference. Interview writes use the selected submission and its position-specific choices; follow [Interview](references/interview.md). Stop for manual completion of unsupported steps; never silently switch to staffing. Formal Offer actions are not staffing onboarding/offboarding workflows.
+
+## Business codes
+
+Every record is addressed by a prefixed `code`, not an internal ID: `PER-` Person/Candidate, `COM-` Company, `REL-` Vendor–Client relationship, `POS-` Position, `SUB-` Submission, `INT-` Interview, `OFR-` Offer, plus `ONB-`/`OFB-`/`SLT-`/`FUP-` and legacy `CAN-`. Read [Business codes](references/business-codes.md) for each prefix's meaning and the rules for using them; never guess an entity from digits or invent a code.
 
 ## Boundary with staffing
 

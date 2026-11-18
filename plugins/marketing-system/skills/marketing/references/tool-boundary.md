@@ -1,6 +1,6 @@
 # Verified tool boundary
 
-The combined capability contract lists **58 tools** (companies 6, candidates 4, positions/vendors 7, Vendor AMs 3, submissions 11, offers 11, people 8, interviews 8). The 52 entries that existed before the candidate change were individually rechecked against their actual decorators in the local backend checkout for this documentation change. This is source-contract verification, not a claim that the connected deployment has these tools. The four candidate tools were checked against the deployed backend (image 0.1.0-169): their tags include `marketing`; local declarations alone do not establish deployed availability. Allow only tools whose actual decorator tags include `marketing`. The connected deployment must expose the matching schema; stop on missing tools, unverified tags or incompatible schemas. This list does not authorize future tools solely because their names look similar.
+The combined capability contract lists **62 tools** (companies 6, candidates 4, positions/vendors 7, Vendor AMs 3, submissions 11, offers 11, people 8, interviews 8, interview questions 4). The 52 entries that existed before the candidate change were individually rechecked against their actual decorators in the local backend checkout for this documentation change. This is source-contract verification, not a claim that the connected deployment has these tools. The four candidate tools were checked against the deployed backend (image 0.1.0-169): their tags include `marketing`; local declarations alone do not establish deployed availability. Allow only tools whose actual decorator tags include `marketing`. The connected deployment must expose the matching schema; stop on missing tools, unverified tags or incompatible schemas. This list does not authorize future tools solely because their names look similar.
 
 Source paths below are code provenance under `backend/app/`, not runtime calls or relative file links.
 
@@ -25,6 +25,15 @@ Source: `modules/staffing/mcp/tools.py`. Actual decorator tags: `staffing`, `mar
 - `marketing_get_candidate_detail`
 
 `marketing_add_candidate(candidate={...})` takes new-intake fields, or only `person_code` for existing-Person Bench conversion. The other three find and read back candidates; see [Create candidate](create-candidate.md). The candidate update, responsible-AM assignment, note and history tools carry the same tags but have no workflow in this skill, so they are not authorized here.
+
+## Interview questions (4)
+
+Source: `modules/marketing/mcp/interview_questions.py`. Each listed decorator has tags `marketing`, `interview-questions`. Workflow: [Interview questions](interview-questions.md).
+
+- `marketing_get_interview_document`
+- `marketing_get_question_frequency`
+- `marketing_refresh_interview_questions`
+- `marketing_search_interview_questions`
 
 ## Submissions (11)
 
