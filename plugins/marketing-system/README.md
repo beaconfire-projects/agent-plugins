@@ -13,6 +13,8 @@
 
 ## 工具名与版本
 
+v0.31.0：配套后端新增岗位类型：`marketing_create_position` 的 `position_type`（`normal` 默认 / `fake` 练习岗位，创建后不能改；fake 默认只有 Practice 轮次），`marketing_list_positions` 和 `marketing_search_submission_positions` 新增 `position_type` 筛选（创建 Submission 先选类型再选岗位），`marketing_list_interviews` 的 `round`、`result` 可传多个值。没有新增或删除工具。
+
 v0.30.0：配套后端新增 Candidate 的 Marketability（High / Mid / Low / None，由技术分和沟通分现算、不存库，两项取较低的一档，缺分数是 `None`，不按候选人类型限制）：`marketing_search_candidates` 新增 `marketability` 筛选（可多选），搜索结果和 `marketing_get_candidate_detail` 都返回 `marketability`；Staffing skill 的候选人参考文档同步说明口径和用法。没有新增或删除工具。
 
 v0.29.0：Marketing skill 新增 `references/consultant-form-resume.md`：给 Candidate 发 Consultant Details 表单邮件（一次性链接）、查看是否已提交、上传简历（预签名直传 S3，大文件分片，异步向量化）和查看处理状态；对应 5 个带 `marketing` 标签的 MCP 工具。
