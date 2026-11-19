@@ -21,6 +21,7 @@ For Vendor / Client / Position choices, filters and search words on any list too
 | See which AMs look after which Vendors, assign or unassign AMs to Vendors in bulk | [Vendor AMs](references/vendor-am.md) |
 | Find/create/edit/reject a submission or mark it Offered | [Submission](references/submission.md) |
 | Find a submission by person/name/ID/email, position, vendor/client; create/read/edit/delete one interview; inspect its history | [Interview](references/interview.md) |
+| Email a candidate the one-time Consultant Details form link, check whether it was submitted, upload a candidate's resume (PDF/DOCX) or check its processing | [Consultant form and resume](references/consultant-form-resume.md) |
 | Search historical interview questions, see the most frequently asked questions, read or re-fetch the stored question document of one interview | [Interview questions](references/interview-questions.md) |
 | Identify what a code such as PER-/COM-/POS-/SUB-/INT-/OFR- means | [Business codes](references/business-codes.md) |
 | Review interviews, create/edit a formal offer, inspect history | [Offer](references/offer.md) |

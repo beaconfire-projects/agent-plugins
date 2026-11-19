@@ -13,6 +13,8 @@
 
 ## 工具名与版本
 
+v0.29.0：Marketing skill 新增 `references/consultant-form-resume.md`：给 Candidate 发 Consultant Details 表单邮件（一次性链接）、查看是否已提交、上传简历（预签名直传 S3，大文件分片，异步向量化）和查看处理状态；对应 5 个带 `marketing` 标签的 MCP 工具。
+
 v0.28.1：Marketing skill 新增 `references/business-codes.md`，说明 PER-/COM-/REL-/POS-/SUB-/INT-/OFR- 等业务编号的含义和使用规则，`SKILL.md` 加入口。
 
 v0.28.0：配套后端新增面试题目：`marketing_search_interview_questions`（关键词加条件过滤，传 `query_text` 时按向量相似度排序，OpenAI 不可用自动回退关键词并在 `notes` 说明）、`marketing_get_question_frequency`（按归一化文本精确合并计数）、`marketing_get_interview_document`、`marketing_refresh_interview_questions`（标签 `marketing`、`interview-questions`，范围沿用数据范围规则）；Marketing skill 新增 `references/interview-questions.md`，`tool-boundary.md` 工具数改为 62。题目由面试保存后的 Interview Questions Link 事件在后台抓取、拆题、向量化，需要后端打开 `INTERVIEW_QUESTIONS_ENABLED`。
