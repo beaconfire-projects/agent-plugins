@@ -1,35 +1,57 @@
-# Offer onboarding, offboarding and HR follow-up
+# Offer dates, start and end, cancellation, HR follow-up
 
-This is the **formal Offer** lifecycle, keyed by `OFR-…`, not staffing onboarding/offboarding keyed by other record codes. Always use returned `stage` rather than inferring it from a start date. Current mapping: In Progress → created; Active → onboarded; Offboarded/Remap/Quit/Fired → offboarded; withdrawn or other statuses → legacy. No lifecycle action is available for legacy, and no undo is exposed.
+This is the **formal Offer** lifecycle, keyed by `OFR-…`. There are no onboard / offboard actions and no stage field: the status (Offered, On Project, Off Project, Canceled) is derived from the dates and from cancellation, so every change below is a `marketing_update_offer` call with the dates or a cancel call.
+
+| Status | When (business days, US Eastern) |
+|---|---|
+| Canceled | the offer was canceled, at any stage |
+| Off Project | today is after the **actual last day** (the offer ends the day after it) |
+| On Project | today is on or after the **actual start date** |
+| Offered | otherwise |
+
+Expected dates (`onboarding_tentative_start_date`, `offboarding_tentative_last_day`) are informational and never change the status. Actual dates may be in the future (the response shows `start_scheduled` / `end_scheduled`), can be corrected and can be cleared with `null`. A daily job refreshes the status and the candidate's marketing status when a date arrives; a status an AM set by hand is not overwritten by it.
 
 ## Confirm actual start
 
-Scenario: the person actually started, not merely accepted an offer or received a tentative date.
+Scenario: the person actually started (or has a confirmed start date), not merely accepted an offer or got an expected date.
 
-1. `marketing_get_offer(code)`; require stage `created`. `marketing_offer_options()` supplies PO companies and work states; `marketing_search_offer_po_vendors(query)` resolves any optional PO Vendor.
-2. Review actual-start evidence and merged required fields: `onboarding_actual_start_date`, `po_company` (currently Invct/BSS/BFS), and `work_location.state` (50 US states, no DC). Values may already be saved or be supplied in this action. Work address components cannot contain commas; preserve intended components when replacing the object. Validate any existing last day is not before actual start.
-3. Show current → proposed fields and lifecycle `In Progress → Active`, explain this confirms actual employment, and wait for explicit consent.
-4. `marketing_onboard_offer(code, request={version, ...changed_onboarding_fields})`. It accepts onboarding fields listed in [offer](offer.md), not HR-only checklist/shipping or offboarding fields. It does not require all BGC/PO checklist boxes checked; do not invent that gate or auto-check them.
-5. `marketing_get_offer(code)` and, if history is requested, `marketing_get_offer_history(code)`. Verify stage `onboarded`, status Active, actual date, PO Company, work state and new version. No claim of staffing or person-status changes.
+1. `marketing_get_offer(code)`; read the version. `marketing_offer_options()` supplies PO companies and work states; `marketing_search_offer_po_vendors(query)` resolves an optional PO Vendor.
+2. Collect `onboarding_actual_start_date`, `po_company` (Invct/BSS/BFS) and `work_location.state` (50 US states, no DC). Values may already be saved or be supplied in this call. Work address components cannot contain commas; preserve intended components when replacing the object. An existing actual last day must not be before the new start.
+3. Show `old → new` fields and the resulting status (On Project now, or Offered until the future date arrives), and wait for explicit consent. It does not require the BGC / PO checklist to be complete; do not invent that gate or auto-check them.
+4. `marketing_update_offer(code, request={version, ...changed_fields})`, then `marketing_get_offer(code)`: verify status, the actual date, PO Company, work state and the new version.
 
 ## Confirm actual end
 
-Scenario: actual offboarding of an `onboarded` offer, not offer rejection/cancellation or merely a future scheduled end.
+Scenario: the person's last working day is confirmed. Requires an actual start date on the offer; the actual last day must not be before it.
 
-1. Read exact offer/version and `marketing_offer_options()`.
-2. Review the five optional business fields: `offboarding_last_day`, `offboarding_current_status`, `offboarding_reason`, `offboarding_next_step`, `offboarding_notes`. Current-status choices are `Remap`, `Quit`, `Fired` (not returned as a dedicated options list). Reasons and next steps must match options: reasons include Vendor/Client FT Conversion, Project ended, Visa issue, client release for Performance/Budget, Other; next steps include Back to Marketing, FT, MIA, Return to Training, Other. Use exact returned spelling.
-3. Explain that **all five fields are optional: sending only `version` still ends the offer**. Missing last day does not block the action. If provided, last day cannot precede actual start. Show lifecycle Active → Offboarded and the merged fields; obtain explicit confirmation of actual end, even for an otherwise empty form.
-4. `marketing_offboard_offer(code, request={version, ...changed_offboarding_fields})`.
-5. Read exact offer again. Verify stage `offboarded`, status **Offboarded**, fields and version. `offboarding_current_status=Remap/Quit/Fired` is separate from offer status. `offboarding_next_step=Back to Marketing` records intent only: it does not change the person's candidate marketing status. If return-to-marketing is requested, stop for authorized manual completion, not a staffing call.
+1. Read the exact offer and `marketing_offer_options()`.
+2. Collect `offboarding_last_day` (actual) and, when the user gives them, `offboarding_current_status` (`Remap`, `Quit`, `Fired`), `offboarding_reason`, `offboarding_next_step`, `offboarding_notes`. Reasons: Vendor FT Conversion, Client FT Conversion, Project ended, Visa issue, Released by client: Performance issue, Released by client: Budget issue, Other. Next steps: Back to Marketing, FT, MIA, Return to Training, Other. Use exact returned spelling. A planned date goes to `offboarding_tentative_last_day`, never to the actual field.
+3. Show `old → new` and the resulting status (Off Project the day after the last day; until then still On Project), obtain explicit confirmation.
+4. `marketing_update_offer(code, request={version, ...fields})`, then read the offer again and verify. The candidate's marketing status follows automatically once the offer ends (Quit / Fired / Remap by `offboarding_current_status`; no outcome falls back to In Marketing). `Back to Marketing` as next step is only a record; it does not change the status by itself.
+
+## Correct or clear a date
+
+Show `old → new` and the resulting status. An actual start cannot be cleared while an actual last day is set (clear the last day first); an actual last day cannot be set without an actual start or before it. The server rejects violations; ask the user for real values and reconfirm.
+
+## Cancel an offer, or undo it
+
+Cancel when the candidate turned the offer down or the company rescinded it. It is allowed at any stage, including after the actual start date. It does not change the submission.
+
+1. Read the offer and its version; if it is already Canceled, offer an undo instead.
+2. Get the party from the user's words: `Candidate` (turned it down, declined) or `Company` (rescinded, the client pulled it). If unclear, ask; never guess. A short `reason` is optional.
+3. Confirm the offer, the party, the reason and `status → Canceled`, then call `marketing_cancel_offer(code, request={version, party, reason?})`.
+4. Undo ("the offer is back on"): `marketing_undo_cancel_offer(code, request={version})` after confirmation; the status is derived again from the dates.
+
+A canceled offer cannot be edited.
 
 ## HR checklist and shipping maintenance
 
-Precondition: exact visible offer and verified completion/data, not a request to execute external HR operations. Read → confirm diff → `marketing_update_offer(code, request={version, ...changed_fields})` → readback. This is a data update, **not** an onboarding/offboarding action.
+Precondition: exact visible offer and verified completion/data, not a request to execute external HR operations. Read → confirm diff → `marketing_update_offer(code, request={version, ...changed_fields})` → readback. These are data updates and never change the status.
 
-HR fields: `onboarding_i9_completed`, `onboarding_everify_completed`, `onboarding_ts_setup_done`, `offboarding_hr_email_sent`, `offboarding_equipment_returned`, `offboarding_adp_status_updated`, `offboarding_final_paycheck_processed`, `offboarding_hr_admin_complete` (boolean/null); `offboarding_hr_notified_date`, `offboarding_hr_notes`; `onboarding_shipping_address`. Shipping address is independent, wholly empty or with line1/city/state/zipcode, with optional line2. Do not copy the work address without consent. There is no extra HR-only role gate in this offer service beyond the offer's vendor visibility; do not confuse it with restricted shared-person management.
+HR fields: `onboarding_i9_completed`, `onboarding_everify_completed`, `onboarding_ts_setup_done`, `offboarding_hr_email_sent`, `offboarding_equipment_returned`, `offboarding_adp_status_updated`, `offboarding_final_paycheck_processed`, `offboarding_hr_admin_complete` (boolean/null); `offboarding_hr_notified_date`, `offboarding_hr_notes`; `onboarding_shipping_address`. Shipping address is independent, wholly empty or with line1/city/state/zipcode, with optional line2. Do not copy the work address without consent. There is no extra HR-only role gate beyond the offer's vendor visibility.
 
-Do not claim that saving these fields sends mail, runs E-Verify, completes I9, ships equipment or processes pay. No allowed tool executes those external steps.
+Do not claim that saving these fields sends mail, runs E-Verify, completes I9, ships equipment or processes pay. No tool executes those external steps.
 
-## Recovery for each action
+## Recovery
 
-`invalid_transition`: re-read and explain current stage; do not retry via a different workflow or PATCH status. `version_conflict`: get latest values and reconfirm. Missing required onboarding values or invalid options/date/address: ask for real values and confirm corrected payload. Unknown outcome: get exact offer/history before retry; an action may have committed. If already in target stage, report verified state rather than executing again. Stop for inaccessible records or unsupported cancellation/undo. Success means verified database state, not external HR completion or immediate sheet sync.
+`version_conflict`: get the latest values and reconfirm. `invalid_transition` (cancel / undo on the wrong state) and `offer_canceled` (edit of a canceled offer): re-read, explain the current status, do not retry through another route. Missing required onboarding values or invalid options/dates/addresses: ask for real values and confirm the corrected payload. Unknown outcome: read the exact offer and its history before any retry; the action may have committed. Success means verified database state, not external HR completion or immediate sheet sync.

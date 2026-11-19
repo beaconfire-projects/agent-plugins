@@ -95,7 +95,7 @@
     {
       "name": "marketing-system",
       "source": "./plugins/marketing-system",
-      "description": "Connect Claude Code to the Beaconfireinc Marketing System MCP server with guided staffing workflows for interviews, interview slots, onboarding, candidate information and submissions.",
+      "description": "Connect Claude Code to the Beaconfireinc Marketing System MCP server with guided staffing workflows for interviews, interview slots, offers (create, start and end dates, cancel), candidate information and submissions.",
       "category": "integration",
       "tags": [
         "mcp",
