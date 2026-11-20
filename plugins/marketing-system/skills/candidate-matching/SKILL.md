@@ -1,6 +1,6 @@
 ---
 name: candidate-matching
-description: Recommend up to five candidates from the Marketing pool (In Marketing / In Preparation) for a job description, a position or reference interview questions. Use for "who fits this JD / position?", shortlisting people, or finding candidates with related interview-question experience. Read-only; ranks by related interview questions, tech stacks and the current resume. Only the verified marketing-tagged tool marketing_match_candidates is allowed.
+description: Recommend up to five candidates from the Marketing pool (In Marketing) for a job description, a position or reference interview questions. Use for "who fits this JD / position?", shortlisting people, or finding candidates with related interview-question experience. Read-only; ranks by related interview questions, tech stacks and the current resume. Only the verified marketing-tagged tool marketing_match_candidates is allowed.
 ---
 
 # Candidate matching
@@ -11,13 +11,13 @@ Other Marketing work (reading a candidate, creating a submission, checking a res
 
 ## What it does
 
-The backend recommends up to five distinct people from the marketing pool (marketing status `In Marketing` or `In Preparation`). The unit is a person, never a resume file. It is read-only; nothing is written. Three kinds of evidence are scored and fused with weights 5:3:2:
+The backend recommends up to five distinct people from the marketing pool (marketing status `In Marketing` only; `In Preparation` is not in the pool). The unit is a person, never a resume file. It is read-only; nothing is written. Three kinds of evidence are scored and fused with weights 3:4:3 (policy `candidate-fusion-v3`):
 
-1. **Question** (5): the person's own interview questions that resemble the reference questions. Related exposure, not mastery. Interview results and scores are never ranking features.
-2. **Skill** (3): the JD against the person's `additional_tech_stacks` (stored vector).
-3. **Resume** (2): the JD against the person's current resume (status `embedded`, all chunks ready).
+1. **Question** (3): the person's own interview questions that resemble the reference questions. Related exposure, not mastery. Interview results and scores are never ranking features.
+2. **Skill** (4): the JD against the person's `additional_tech_stacks` (stored vector).
+3. **Resume** (3): the JD against the person's current resume (status `embedded`, all chunks ready).
 
-Evidence that does not exist is left out of the average and is not a penalty. Evidence that exists but is pending, stale or failed (for example a tech stack edited a moment ago whose vector is still being regenerated) withholds the person, so a half-processed profile can never rank better by being incomplete. A person needs one source at or above 0.70 and a fused score at or above 0.65. Location is not considered; say so when presenting results. YOE is `person.years_of_experience`; when the JD states a range the pool is filtered to that range plus or minus two years, and unknown YOE passes and is flagged `yoe_unknown`.
+Evidence that does not exist is left out of the average and is not a penalty. Evidence that exists but is pending, stale or failed (for example a tech stack edited a moment ago whose vector is still being regenerated) withholds the person, so a half-processed profile can never rank better by being incomplete. For each kind of evidence only the top 50 people with a positive score enter the candidate pool (at most 150 in all); nobody outside it is added later. Within the pool a person is `standard` when some source and the fused score are both at least 0.50. Other people with a positive score fill the remaining places as `fallback`: they carry the `low_match` risk and their true score, which is never raised. Standard results always rank before fallback ones. Fewer than five results is normal; no one is invented to fill the list. Location is not considered; say so when presenting results. YOE is `person.years_of_experience`; when the JD states a range the pool is filtered to that range plus or minus two years, and unknown YOE passes and is flagged `yoe_unknown`.
 
 ## Prerequisites and order
 
@@ -34,13 +34,13 @@ Evidence that does not exist is left out of the average and is not a penalty. Ev
 | --- | --- |
 | `ok` | Present the candidates. |
 | `degraded` | Candidates are valid, but some people were withheld for pending or failed evidence (`withheld_count`). Say coverage is incomplete. |
-| `no_match` | No one cleared the gates. Say so; do not lower gates or pad the list. |
+| `no_match` | No eligible person has a positive, usable score. Say so; do not pad the list. |
 | `needs_jd` | The JD is shorter than 100 characters or names no required skills or responsibilities. Ask the user for a fuller JD (`missing_fields`). Never invent or pad one. |
 | `needs_reference` | No JD and no usable questions. Ask for one. |
 | `not_found` | The position or interview does not exist or is outside the caller's scope. Do not search for a way around the scope. |
 | `error` | Embedding service unavailable or too many explicit reference questions (max 64). Report `rejection_reason`; no fallback ranking exists. |
 
-Present a compact ranked table first: rank, `name (person_code)`, `overall` (0-100, do not recompute), one or two evidence-grounded reasons from `reasons`, and risks (`yoe_unknown` as "YOE unknown"). Keep `warnings` and the location note to one or two sentences after the table. Put `resume_url` in an "original resume" column as a clickable link when it is present; it is the Google Drive copy of the current resume. When it is null the resume has not been copied to Drive: show "not provided" and never construct a link from an ID. Show `resume_id` only as an identifier; use the Consultant form and resume workflow for resume status. Expand evidence only when asked.
+Present a compact ranked table first: rank, `name (person_code)`, `overall` (0-100, do not recompute), one or two evidence-grounded reasons from `reasons`, a tier column (`recommendation_tier`: `standard` as "recommended", `fallback` as "weak match, for reference only"), and risks (`yoe_unknown` as "YOE unknown", `low_match` as "low match"). List standard rows first as returned; never present a fallback as a firm recommendation. Keep `warnings` and the location note to one or two sentences after the table. Put `resume_url` in an "original resume" column as a clickable link when it is present; it is the Google Drive copy of the current resume. When it is null the resume has not been copied to Drive: show "not provided" and never construct a link from an ID. Show `resume_id` only as an identifier; use the Consultant form and resume workflow for resume status. Expand evidence only when asked.
 
 ## Business constraints
 

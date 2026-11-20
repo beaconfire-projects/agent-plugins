@@ -13,7 +13,7 @@
 
 ## 工具名与版本
 
-v0.30.0：新增独立的 `candidate-matching` Skill：从营销池（In Marketing / In Preparation）按 JD、岗位或参考面试题推荐最多 5 人，只调用带 `marketing` 标签的 `marketing_match_candidates`（只读）。证据为相关面试题（权重 5）、`additional_tech_stacks`（3）、当前简历（2），年限取 `person.years_of_experience`；岗位 JD 和技术栈的向量在保存后由事件异步生成，相似岗位自动发现。
+v0.30.0：新增独立的 `candidate-matching` Skill：从营销池（In Marketing）按 JD、岗位或参考面试题推荐最多 5 人，只调用带 `marketing` 标签的 `marketing_match_candidates`（只读）。规则 candidate-fusion-v3：证据为相关面试题（权重 3）、`additional_tech_stacks`（4）、当前简历（3），各取正分前 50 名并集；达到 0.50 门槛的为 standard，其余正分者作为 fallback（`low_match`）补位，年限取 `person.years_of_experience`；岗位 JD 和技术栈的向量在保存后由事件异步生成，相似岗位自动发现。
 
 v0.29.0：Marketing skill 新增 `references/consultant-form-resume.md`：给 Candidate 发 Consultant Details 表单邮件（一次性链接）、查看是否已提交、上传简历（预签名直传 S3，大文件分片，异步向量化）和查看处理状态；对应 5 个带 `marketing` 标签的 MCP 工具。
 
