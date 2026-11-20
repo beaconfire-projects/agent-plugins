@@ -108,7 +108,7 @@ Source: `modules/staffing/mcp/tools.py`. Tags contain `marketing`, `interviews`;
 - `marketing_delete_interview`
 - `marketing_update_interview`
 
-Use the submission selector/context for per-position choices. No staffing `marketing_list_options` fallback is needed. A shared tool's tags do not import staffing's workflow/automatic ONB rules into marketing.
+Use the submission selector/context for per-position choices. No staffing option tool (`marketing_list_candidate_options`, `marketing_list_interview_options`, `marketing_list_slot_options`) fallback is needed. A shared tool's tags do not import staffing's workflow/automatic ONB rules into marketing.
 
 ## Positions and Vendor selection (7)
 
