@@ -40,7 +40,7 @@ Evidence that does not exist is left out of the average and is not a penalty. Ev
 | `not_found` | The position or interview does not exist or is outside the caller's scope. Do not search for a way around the scope. |
 | `error` | Embedding service unavailable or too many explicit reference questions (max 64). Report `rejection_reason`; no fallback ranking exists. |
 
-Present a compact ranked table first: rank, `name (person_code)`, `overall` (0-100, do not recompute), one or two evidence-grounded reasons from `reasons`, and risks (`yoe_unknown` as "YOE unknown"). Keep `warnings` and the location note to one or two sentences after the table. Show `resume_id` only as an identifier; use the Consultant form and resume workflow for resume status. Expand evidence only when asked.
+Present a compact ranked table first: rank, `name (person_code)`, `overall` (0-100, do not recompute), one or two evidence-grounded reasons from `reasons`, and risks (`yoe_unknown` as "YOE unknown"). Keep `warnings` and the location note to one or two sentences after the table. Put `resume_url` in an "original resume" column as a clickable link when it is present; it is the Google Drive copy of the current resume. When it is null the resume has not been copied to Drive: show "not provided" and never construct a link from an ID. Show `resume_id` only as an identifier; use the Consultant form and resume workflow for resume status. Expand evidence only when asked.
 
 ## Business constraints
 
