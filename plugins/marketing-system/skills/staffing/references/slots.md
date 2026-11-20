@@ -1,6 +1,6 @@
 # Interview slots
 
-Tools: `marketing_list_slots`, `marketing_create_slots`, `marketing_hold_slot`, `marketing_hold_slots`, `marketing_release_slot`, `marketing_cancel_slots`, plus `marketing_search_candidates`, `marketing_get_candidate`, `marketing_list_options`.
+Tools: `marketing_list_slots`, `marketing_create_slots`, `marketing_hold_slot`, `marketing_hold_slots`, `marketing_release_slot`, `marketing_cancel_slots`, plus `marketing_search_candidates`, `marketing_get_candidate`, `marketing_list_slot_options`.
 
 A **slot** is a time a recruiter is free to interview, for one round (L1 or L2). It is not an interview: holding a slot reserves it for a candidate, and the interview only exists once the recruiter's calendar invitation email arrives (the system creates it from the email). Never create an interview to "finish" a held slot.
 
@@ -24,7 +24,7 @@ The user pastes a day, a round and, for each recruiter, a list of times (`X 10AM
    - **Every real call adds slots on top of the existing ones** (each time gets `count` new slots, default 1). So also read that day and round with `marketing_list_slots` and mark the times that already have a slot; if the user only wanted the missing ones, leave those times out of the request.
    - Wait for a clear yes. A misread date, AM/PM or a missing recruiter is the main risk, and the user can spot it in this table.
 4. After a clear yes, send **the same request again without `dry_run`**, once. Report `created` and `skipped`. If something was wrong, `marketing_cancel_slots` voids the slots.
-5. A recruiter name that is not in the recruiter list rejects the whole batch. Show the names from `marketing_list_options` and ask; never create a recruiter. Recruiters are managed on the Recruiters page of the web app, so tell the user to add the missing one there.
+5. A recruiter name that is not in the recruiter list rejects the whole batch. Show the names from `marketing_list_slot_options` (call it with the position's `position_code`; without one the recruiter list is empty) and ask; never create a recruiter. Recruiters are managed on the Recruiters page of the web app, so tell the user to add the missing one there.
 6. **Never run the real call again after it succeeded**: that creates duplicates. If you are not sure it went through (a timeout, a lost reply), check with `marketing_list_slots` first. A call that failed creates nothing, so after fixing the cause it can be sent again. A `dry_run` call can be repeated any time.
 
 ## B. Put a candidate on a slot
