@@ -56,7 +56,7 @@ The user pastes a list like `PER-010012 10AM, PER-010020 10AM` or `Alex Morgan 1
 
 The interview did not pass or did not happen, but the candidate is still good and can be tried again.
 
-- Set the interview result to `Need to Reschedule` with `marketing_update_interview` (see `references/interview.md`). It is a final result like Passed and Failed, and the candidate's status becomes `Need to Reschedule`.
+- Set the interview result to `Need to Reschedule` with `marketing_update_interview` (see `references/interview.md`). It is a final result like Cleared and Failed, and the candidate's status becomes `Need to Reschedule`.
 - To try again, **create a new interview or hold a new slot for the same round**; the old interview does not block it. Do not edit the old interview back to Scheduled.
 - A retried L1 or L2 may use any recruiter's slot; there is no rule tying L2 to the L1's recruiter.
 
