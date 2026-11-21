@@ -38,7 +38,7 @@ The candidate's marketing status follows the offers automatically (any On Projec
 
 ### After an L2 pass
 
-An interview write that sets L2 to Passed can return `onboarding_suggestion` (the field keeps its name). **Do not create the offer silently**: an offer needs a PO Company and the user must review the interviews. Say in the same reply that the candidate is ready for an offer, and ask for the PO Company and any dates; then follow the steps above (find the candidate's submission with `marketing_get_candidate_detail`). For several candidates, list them in one table and ask once for the PO Company of each.
+An interview write that sets L2 to Cleared can return `onboarding_suggestion` (the field keeps its name). **Do not create the offer silently**: an offer needs a PO Company and the user must review the interviews. Say in the same reply that the candidate is ready for an offer, and ask for the PO Company and any dates; then follow the steps above (find the candidate's submission with `marketing_get_candidate_detail`). For several candidates, list them in one table and ask once for the PO Company of each.
 
 ## Change fields, dates and checklists
 

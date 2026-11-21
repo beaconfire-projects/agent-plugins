@@ -13,6 +13,8 @@
 
 ## 工具名与版本
 
+v0.34.0：配套后端把面试结果 `Passed` 统一改名 `Cleared`（表示面试通过，`Passed` 容易被读成被 pass 掉）：库里的值、Current Status 名（`L1 Cleared - Pending L2 Schedule`、`L2 Cleared`）、L2 通过后的 Offer 提示都用新词；旧写法 `Passed` 仍被接受（写入和 `marketing_list_interviews` 的 `result` 筛选都按 `Cleared` 处理），所以旧脚本不会报错；各 Skill 的说明和示例同步改用 `Cleared`。
+
 v0.33.0：配套后端把 `marketing_list_options` 拆成三个不依赖“当前岗位”的选项工具，旧名直接删除、不留别名：`marketing_list_interview_options`（轮次、结果、面试时间、时区、Current Status，无参数）、`marketing_list_slot_options`（Slot 的时间、时区和 Recruiter，Recruiter 随岗位，传 `position_code` 才有，否则为空）、`marketing_list_candidate_options`（Candidate Type 分组、批次、Batch Stack、Assigned AM、签证、州）。Staffing skill 的 `SKILL.md`、`candidate.md`、`interview.md`、`slots.md` 同步改用新工具；岗位的 Level 在岗位上（`marketing_get_position`），不再出现在选项里。请先发后端、再更新插件。HR 角色可用 `marketing_list_candidate_options`。
 
 v0.32.0：新增独立的 `candidate-matching` Skill：从营销池（In Marketing）按 JD、岗位或参考面试题推荐最多 5 人，只调用带 `marketing` 标签的 `marketing_match_candidates`（只读）。规则 candidate-fusion-v3：证据为相关面试题（权重 3）、`additional_tech_stacks`（4）、当前简历（3），各取正分前 50 名并集；达到 0.50 门槛的为 standard，其余正分者作为 fallback（`low_match`）补位，年限取 `person.years_of_experience`；岗位 JD 和技术栈的向量在保存后由事件异步生成，相似岗位自动发现。
@@ -67,7 +69,7 @@ Interview Management 支持用人名、PER ID、邮箱/电话、Submission ID、
 | --- | --- | --- |
 | 查询面试 | 只读：某人有几个面试、每场的轮次、时间、结果和评分（重名先问是哪一个；已取消、Need to Reschedule 的保留为历史并标出当前有效的一场）；按 Interview 编号直接读一场；按轮次和日期查日程 | `references/interview.md` |
 | 修改面试时间或结果 | 改日期、时间、时区、结果（含 Need to Reschedule）、评分、会议链接、Vendor recruiter（对方公司的 Recruiter，手填名字）、面试官（客户方评估人，聊天反馈里的 Evaluator，手填名字）、备注；多个名字只能用英文逗号分隔（如 `Jai, Preethi`），`;`、`/`、`&`、`and` 等会被拒绝；已取消或标了 Need to Reschedule 的面试重约会新建一条面试 | `references/interview.md` |
-| Offer | 从 Submission 创建 Offer（必填 PO Company，日期可空；创建前要看过全部面试）；查询 Offer（同一 Submission 可有多条）；设置、修改、清除预计或实际入职日 / 最后工作日（状态由日期推导，不能直接改；实际日期可填未来；实际离职需要实际入职且不早于它）；确认入职、确认离职（Remap / Quit / Fired，原因和下一步取自业务表单）；BGC、HR 清单、地址、费率等字段；取消 offer（候选人拒绝 `Candidate` 或公司撤回 `Company`，任何阶段都可，可撤销，不动 Submission）。L2 改成 Passed 后返回 `onboarding_suggestion` 时要提示并询问 PO Company，不自动建 | `references/offer.md` |
+| Offer | 从 Submission 创建 Offer（必填 PO Company，日期可空；创建前要看过全部面试）；查询 Offer（同一 Submission 可有多条）；设置、修改、清除预计或实际入职日 / 最后工作日（状态由日期推导，不能直接改；实际日期可填未来；实际离职需要实际入职且不早于它）；确认入职、确认离职（Remap / Quit / Fired，原因和下一步取自业务表单）；BGC、HR 清单、地址、费率等字段；取消 offer（候选人拒绝 `Candidate` 或公司撤回 `Company`，任何阶段都可，可撤销，不动 Submission）。L2 改成 Cleared 后返回 `onboarding_suggestion` 时要提示并询问 PO Company，不自动建 | `references/offer.md` |
 | 创建、修改学员信息 | 创建 Candidate（必填类型、First、Last、Email，其余都可空：年限、签证类型和起止日期、电话、地址、出生日期、性别、LinkedIn、Facebook、手机和电脑偏好；Bench 不新建，从已有的人里添加（`marketing_search_addable_people`））；修改时个人资料用 `marketing_update_candidate`（姓名只能改 First / Middle / Last / Preferred，没有 `name`；邮箱和电话不能属于别人；类型必填；地址和出生日期审计只记 changed），SSN 后四位、其他邮箱、city / state 也用 `marketing_update_candidate`（Level、Lead、费率含 updated_rate / rate_deduction、拒绝和重开已归 Submission 统一的工具，见 `references/submission.md`）；确认时显示旧值 → 新值 | `references/candidate.md` |
 | 创建、修改 Submission | 把候选人投递到自己 Vendor 的岗位（可同时给费率、可入职时间、出差、面试可约时间、同客户经历、C2C 雇主及联系人）；读取 Submission 详情；修改投递信息（只改给了的字段，改过的以后 Submission 邮件不再覆盖；投递里的 C2C 雇主和候选人自己的雇主互不影响；Level / Lead / 状态不在这里改） | `references/submission.md` |
 | 面试 Slot | 按用户贴的时间表批量创建某天某轮次的 Slot（先用 `dry_run` 让服务端预览会建几个、跳过几个、为什么，同时核对已有 Slot；确认后用同样的参数只调用一次，成功后不要重复调用，否则会重复新建）、给候选人占 Slot（可以一次贴多人，如 `PER-010012 10AM, PER-010020 10AM`，同一时间有多个 Recruiter 会问；先用 `marketing_hold_slots` 的 `dry_run` 预览每一行会不会成功，整批一张确认表，确认后同样参数再执行；Slot 的 Recruiter 与面试上的 Vendor recruiter 不联动，L2 不要求沿用 L1 的 Recruiter）、释放、作废；占 Slot 后状态是 `L1/L2 Slot Held`，邀请邮件到了建出面试才是 Scheduled | `references/slots.md` |
@@ -75,7 +77,7 @@ Interview Management 支持用人名、PER ID、邮箱/电话、Submission ID、
 | 统计分析 | 只读，只有数字没有姓名：各状态多少人、等 L1 / L2 排期多少人、每月 offer 数、面试通过率、按 Level / 工作授权 / 年限分布、两个口径的对比；数字来自指标服务（Cube），与 Staffing Dashboard 同一口径，**不要靠翻候选人列表自己数**；先 `insights_list_metrics` 取指标和维度，再 `insights_query`；也能按 Vendor（只算 Primary Vendor）/ Client 统计岗位数、Submission 数、Candidate 数、Offer 数和各阶段人数，Submission 按提交时间统计（这部分只有 Admin 能查，其他人目录里没有）；要看具体是谁时改用 `marketing_search_candidates` 等。服务不可用时直接告知，不用别的工具凑数 | `references/insights.md` |
 | 立即处理邮件、读取客户群 | 用户要“现在就处理”时:先用只读的预览工具看会创建/更新多少、哪些要人看、会发哪些飞书告警，确认后再手动运行，再看运行结果 | `references/ingest.md` |
 
-共同规则：先定位到唯一一条记录（重名或多条时必须询问）；写入前展示「字段：旧值 → 新值」并等待明确确认；更新必须带刚读取的 `version`；选项值只用各选项工具（`marketing_list_interview_options`、`marketing_list_slot_options`、`marketing_list_candidate_options`）返回的；入职资料（SSN 后四位、出生日期、地址等）和其他字段一样直接读写（变更记录里只显示 changed）；L2 改成 Passed 后要提示可以建 Offer 并询问 PO Company。
+共同规则：先定位到唯一一条记录（重名或多条时必须询问）；写入前展示「字段：旧值 → 新值」并等待明确确认；更新必须带刚读取的 `version`；选项值只用各选项工具（`marketing_list_interview_options`、`marketing_list_slot_options`、`marketing_list_candidate_options`）返回的；入职资料（SSN 后四位、出生日期、地址等）和其他字段一样直接读写（变更记录里只显示 changed）；L2 改成 Cleared 后要提示可以建 Offer 并询问 PO Company。
 
 ## 依赖的 MCP 工具
 
