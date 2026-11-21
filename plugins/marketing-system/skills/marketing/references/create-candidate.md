@@ -22,7 +22,7 @@ Do not use REST, SQL, scripts, or candidate **update / AM-assignment / note** to
 1. Call `marketing_search_candidates(query=…)` with the supplied code, email or name and compare exact identity. Reuse an unambiguous existing candidate instead of creating another. The search lists only what the caller is allowed to see, so an empty result does not prove the person is absent.
 2. To convert an existing Person, call `marketing_search_addable_people(query=…)`. Without a query it lists only people who are not candidates yet; with a query it also lists people who already are (`is_candidate` true: they cannot be added again, reuse them). Take the exact `person_code` from this result.
 3. If neither finds the person and the request has complete identity for a genuinely new person, create a new one and rely on the server duplicate checks; do not claim comprehensive absence, and do not use create to probe for identities.
-4. Admin/Manager may additionally inspect Person records with `marketing_list_people` / `marketing_get_person` (`marketing,people`). AMs cannot; do not bypass the denial.
+4. Users whose token carries the `people::view` permission may additionally inspect Person records with `marketing_list_people` / `marketing_get_person` (`marketing,people`). If those tools are not in the tool list the user does not have it; do not bypass the denial.
 
 ### Existing Person → Bench
 

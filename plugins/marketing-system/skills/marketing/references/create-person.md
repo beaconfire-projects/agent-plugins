@@ -16,7 +16,7 @@ Optional field meanings and patch rules are in [Person](person.md). No SSN/addre
 
 ## HR import
 
-Use `marketing_import_people(request={rows,dry_run})` for approved HR Sheet-shaped structured rows, with Admin/Manager access. MCP cannot open a caller-local workbook path; do not pass filenames/base64/free-form profile objects in `rows`. The Google Sheet/web HR workbook import is a separate UI using the same service.
+Use `marketing_import_people(request={rows,dry_run})` for approved HR Sheet-shaped structured rows, with the `people::import` permission. MCP cannot open a caller-local workbook path; do not pass filenames/base64/free-form profile objects in `rows`. The Google Sheet/web HR workbook import is a separate UI using the same service.
 
 ## Preconditions and source contract
 

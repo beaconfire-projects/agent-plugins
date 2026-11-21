@@ -1,6 +1,6 @@
 # Shared Person / HR: lookup, edit, single deletion and audit
 
-All eight Person tools require Admin/Manager-style all-vendor access. They use no `position`. Ordinary AM denial must not be bypassed through candidate tools.
+The eight Person tools are gated by Authsome permissions in the token, not by role: `marketing_list_people`, `marketing_get_person`, `marketing_get_person_options`, `marketing_get_person_history` need `people::view`; `marketing_create_person` needs `people::create`; `marketing_update_person` needs `people::edit`; `marketing_delete_person` needs `people::delete`; `marketing_import_people` needs `people::import`. A tool the user lacks the permission for is not in the tool list (calling it is an unknown tool): say which permission is missing and do not bypass it through candidate tools. They use no `position`, and anyone with `people::view` sees every field of every Person.
 
 ## Find the person
 
@@ -17,7 +17,7 @@ For a person who needs an interview, search actual submissions with the [Intervi
 
 ## Delete one Person
 
-Use only `marketing_delete_person(code, version)` for an explicit request to delete **one selected Person**. First read `marketing_get_person(code)` and its current `version` and `submission_count`. Any existing Submission blocks deletion. This is the only business-reference blocker; do not invent additional Interview, Offer, candidate-flag or role checks. Admin/Manager-style access and optimistic version checks still apply.
+Use only `marketing_delete_person(code, version)` for an explicit request to delete **one selected Person**. First read `marketing_get_person(code)` and its current `version` and `submission_count`. Any existing Submission blocks deletion. This is the only business-reference blocker; do not invent additional Interview, Offer, candidate-flag or role checks. The `people::delete` permission and optimistic version checks still apply.
 
 Show the exact PER code, name and minimal identifying contact, and explain that this permanently removes the Person and owned profile/contact/role records while retaining the operation audit. Obtain explicit confirmation for that record, then call once. Never delete a linked Submission to bypass the blocker, offer a cascade, or expand a search result into bulk deletion. There is no bulk-delete tool.
 

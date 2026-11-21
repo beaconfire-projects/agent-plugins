@@ -13,6 +13,10 @@
 
 ## 工具名与版本
 
+v0.35.0：配套后端"加 Vendor AM 不再自动建人"。`marketing_assign_vendor_ams` 找不到 Vendor 或 AM（本系统里没有这个邮箱的人）时整次拒绝，并**一次列出全部**找不到的 Vendor 编号和 AM 邮箱，不再从 HR 主档自动创建，返回里也没有 `created_people`。要新增一个还不在系统里的 AM，由 skill 编排：用户明确同意、且有 `marketing_create_person`（Admin / HR）时，按 `create-person.md` 的手动创建先建人，再重新分配；没有该工具（如 am-manager）就提示让 HR / Admin 先在 People 里创建。`vendor-am.md` 的 Assign 第 3、4 条已改。请先发后端、再更新插件。
+
+同一个版本还包含 People 权限改按令牌 `scope`（后端 `core/auth/scope_policy.py`）：`marketing_list_people` / `get_person` / `get_person_options` / `get_person_history` 需要 `people::view`，`marketing_create_person` 需要 `people::create`，`marketing_update_person` 需要 `people::edit`，`marketing_delete_person` 需要 `people::delete`，`marketing_import_people` 需要 `people::import`；不再按 Admin / Manager 角色判断，没有对应权限的工具不在工具列表里。`SKILL.md`、`person.md`、`create-person.md`、`create-orchestration.md`、`create-candidate.md`、`vendor-am.md` 的相关说法已同步。权限由 Authsome 颁发，改了要重新登录并让 MCP 断开重连。
+
 v0.34.0：配套后端把面试结果 `Passed` 统一改名 `Cleared`（表示面试通过，`Passed` 容易被读成被 pass 掉）：库里的值、Current Status 名（`L1 Cleared - Pending L2 Schedule`、`L2 Cleared`）、L2 通过后的 Offer 提示都用新词；旧写法 `Passed` 仍被接受（写入和 `marketing_list_interviews` 的 `result` 筛选都按 `Cleared` 处理），所以旧脚本不会报错；各 Skill 的说明和示例同步改用 `Cleared`。
 
 v0.33.0：配套后端把 `marketing_list_options` 拆成三个不依赖“当前岗位”的选项工具，旧名直接删除、不留别名：`marketing_list_interview_options`（轮次、结果、面试时间、时区、Current Status，无参数）、`marketing_list_slot_options`（Slot 的时间、时区和 Recruiter，Recruiter 随岗位，传 `position_code` 才有，否则为空）、`marketing_list_candidate_options`（Candidate Type 分组、批次、Batch Stack、Assigned AM、签证、州）。Staffing skill 的 `SKILL.md`、`candidate.md`、`interview.md`、`slots.md` 同步改用新工具；岗位的 Level 在岗位上（`marketing_get_position`），不再出现在选项里。请先发后端、再更新插件。HR 角色可用 `marketing_list_candidate_options`。
