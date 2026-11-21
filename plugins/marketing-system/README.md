@@ -13,6 +13,8 @@
 
 ## 工具名与版本
 
+v0.37.0：配套后端对 People 的签证类型做了统一和限制：`U.S. Citizen` 并入 `USC`、`Green Card` 并入 `GC`（历史数据已一次性改过）；`marketing_create_person`、`marketing_update_person`、`marketing_import_people` 的 `work_authorization_type` 只接受 `marketing_get_person_options` 的 `work_authorizations`（25 个，不区分大小写），集合外的值（含 `Unknown`）直接拒绝，清空用空值；`visa_types` 是库里实际出现过的类型，用于筛选。没有新增或删除工具。
+
 v0.36.0：配套后端 People 列表新增结构化筛选：`marketing_list_people` 多了 `batch`（当前批次编号）、`visa_type`、`batch_stack`（当前批次的技术栈）、`employment_status`，几项之间是 AND、同一项多个值是 OR，都可以用 `Not set` 找没有这项信息的人；`marketing_get_person_options` 多返回 `batch_stacks` 和 `employment_statuses`。搜索本来就支持 WeCom ID。没有新增或删除工具。
 
 v0.35.0：配套后端"加 Vendor AM 不再自动建人"。`marketing_assign_vendor_ams` 找不到 Vendor 或 AM（本系统里没有这个邮箱的人）时整次拒绝，并**一次列出全部**找不到的 Vendor 编号和 AM 邮箱，不再从 HR 主档自动创建，返回里也没有 `created_people`。要新增一个还不在系统里的 AM，由 skill 编排：用户明确同意、且工具列表里有 `marketing_create_person`（需要 `people::create` 权限）时，按 `create-person.md` 的手动创建先建人，再重新分配；没有该工具就提示让有 `people::create` 权限的人（按目前 Authsome 的配置是 HR 和 Admin）先在 People 里创建。`vendor-am.md` 的 Assign 第 3、4 条已改。请先发后端、再更新插件。
