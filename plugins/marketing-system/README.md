@@ -13,7 +13,7 @@
 
 ## 工具名与版本
 
-v0.35.0：配套后端"加 Vendor AM 不再自动建人"。`marketing_assign_vendor_ams` 找不到 Vendor 或 AM（本系统里没有这个邮箱的人）时整次拒绝，并**一次列出全部**找不到的 Vendor 编号和 AM 邮箱，不再从 HR 主档自动创建，返回里也没有 `created_people`。要新增一个还不在系统里的 AM，由 skill 编排：用户明确同意、且有 `marketing_create_person`（Admin / HR）时，按 `create-person.md` 的手动创建先建人，再重新分配；没有该工具（如 am-manager）就提示让 HR / Admin 先在 People 里创建。`vendor-am.md` 的 Assign 第 3、4 条已改。请先发后端、再更新插件。
+v0.35.0：配套后端"加 Vendor AM 不再自动建人"。`marketing_assign_vendor_ams` 找不到 Vendor 或 AM（本系统里没有这个邮箱的人）时整次拒绝，并**一次列出全部**找不到的 Vendor 编号和 AM 邮箱，不再从 HR 主档自动创建，返回里也没有 `created_people`。要新增一个还不在系统里的 AM，由 skill 编排：用户明确同意、且工具列表里有 `marketing_create_person`（需要 `people::create` 权限）时，按 `create-person.md` 的手动创建先建人，再重新分配；没有该工具就提示让有 `people::create` 权限的人（按目前 Authsome 的配置是 HR 和 Admin）先在 People 里创建。`vendor-am.md` 的 Assign 第 3、4 条已改。请先发后端、再更新插件。
 
 同一个版本还包含 People 权限改按令牌 `scope`（后端 `core/auth/scope_policy.py`）：`marketing_list_people` / `get_person` / `get_person_options` / `get_person_history` 需要 `people::view`，`marketing_create_person` 需要 `people::create`，`marketing_update_person` 需要 `people::edit`，`marketing_delete_person` 需要 `people::delete`，`marketing_import_people` 需要 `people::import`；不再按 Admin / Manager 角色判断，没有对应权限的工具不在工具列表里。`SKILL.md`、`person.md`、`create-person.md`、`create-orchestration.md`、`create-candidate.md`、`vendor-am.md` 的相关说法已同步。权限由 Authsome 颁发，改了要重新登录并让 MCP 断开重连。
 
