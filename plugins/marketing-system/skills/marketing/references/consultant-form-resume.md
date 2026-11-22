@@ -10,7 +10,7 @@ Use this reference when the user wants to (1) email a candidate the one-time **C
 
 ## Prerequisites
 
-- The candidate must exist and be visible to the caller (otherwise `not_found`). The caller must be allowed to **edit** the candidate (the same rule as editing candidate details: Admin/Manager, the assigned AM, or an AM of the offer's Vendor). HR-only roles cannot send forms or upload resumes (`forbidden`).
+- The candidate must exist and be visible to the caller (otherwise `not_found`). **Permissions come from the token, not from a role name:** reading the form status or the resume status needs `candidate::view`; sending the form email and uploading a resume need `candidate::edit`. A tool that is not in the tool list means the user was not granted that permission: say so and stop. On top of that the caller must be allowed to edit this candidate (the same rule as editing candidate details: Admin/Manager, the assigned AM, or an AM of the offer's Vendor); otherwise `forbidden` with the reason. There is no special rule for HR any more: whether HR may do this depends only on the permissions Authsome grants them.
 - The candidate needs an email address (`no_email` otherwise): fix it through the candidate update workflow first; this skill does not edit contact data.
 - Sending needs the deployment's mail settings; `mail_not_configured` / `mail_failed` mean the email was **not** sent and the new link was canceled. Report it; do not retry in a loop.
 
@@ -48,4 +48,5 @@ If the PUT itself fails (for example 403 after the URLs expired), start again fr
 - Never ask for, display or log resume content, SSN or other form answers; the tools do not return them.
 - The form answers overwrite existing candidate data by design (business decision); there is no review step. Warn the user that a submission replaces the candidate's current phone, email, address, work authorization and education.
 - A `422 invalid_answers` style error comes from the candidate-facing page, not from these tools.
-- Do not use this workflow to change marketing status, submit the candidate or run matching.
+- Do not use this workflow to change marketing status or submit the candidate. Running candidate matching is a separate skill (`candidate-matching`, tool `marketing_match_candidates`, needs `candidate::view`).
+- Deleting a resume, downloading the original file and aborting an upload are web-only: there is no tool for them.
