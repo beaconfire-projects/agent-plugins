@@ -1,6 +1,6 @@
 # Consultant form email and resume upload
 
-Use this reference when the user wants to (1) email a candidate the one-time **Consultant Details form** link, (2) check whether the candidate filled it in, (3) upload a candidate's **resume** (PDF or DOCX) or check its processing status. It uses only the five tools listed under "Consultant form and resume" in [Tool boundary](tool-boundary.md), all carrying the `marketing` tag. If one is missing, its tag cannot be verified or its schema differs, stop and report the gap; never fall back to staffing tools, REST, SQL, shell uploads outside the steps below, or scripts.
+Use this reference when the user wants to (1) email a candidate the one-time **Consultant Details form** link, (2) check whether the candidate filled it in, (3) upload a candidate's **resume** (PDF or DOCX) or check its processing status. It uses only the six tools listed under "Consultant form and resume" in [Tool boundary](tool-boundary.md), all carrying the `marketing` tag. If one is missing, its tag cannot be verified or its schema differs, stop and report the gap; never fall back to staffing tools, REST, SQL, shell uploads outside the steps below, or scripts.
 
 ## What the backend does
 
@@ -22,6 +22,7 @@ Use this reference when the user wants to (1) email a candidate the one-time **C
 | Did the candidate fill it in? | `marketing_get_consultant_form_status(candidate_code)` |
 | Upload a resume | `marketing_create_candidate_resume_upload` → PUT to S3 → `marketing_complete_candidate_resume_upload` |
 | Resume progress | `marketing_get_candidate_resume_status(candidate_code)` |
+| Open or download a resume | `marketing_get_candidate_resume_status` → `marketing_get_candidate_resume_download(candidate_code, resume_id, inline?)` |
 
 ### Form email
 
@@ -45,6 +46,7 @@ If the PUT itself fails (for example 403 after the URLs expired), start again fr
 
 ## Business constraints
 
+- The download tool returns a presigned S3 link valid for 30 minutes: give it to the user to open, do not store or log it, and request a new one after it expires. `no_s3_copy` means the resume has not been synced to S3 yet; report it, do not fall back to Drive links. Show this link instead of any Drive link.
 - Never ask for, display or log resume content, SSN or other form answers; the tools do not return them.
 - The form answers overwrite existing candidate data by design (business decision); there is no review step. Warn the user that a submission replaces the candidate's current phone, email, address, work authorization and education.
 - A `422 invalid_answers` style error comes from the candidate-facing page, not from these tools.
