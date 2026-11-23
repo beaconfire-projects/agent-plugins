@@ -1,6 +1,6 @@
 # Verified tool boundary
 
-The combined capability contract lists **68 tools** (companies 6, candidates 4, consultant form and resume 6, positions/vendors 7, Vendor AMs 3, submissions 11, offers 11, people 8, interviews 8, interview questions 4). The 52 entries that existed before the candidate change were individually rechecked against their actual decorators in the local backend checkout for this documentation change. This is source-contract verification, not a claim that the connected deployment has these tools. The four candidate tools were checked against the deployed backend (image 0.1.0-169): their tags include `marketing`; local declarations alone do not establish deployed availability. Allow only tools whose actual decorator tags include `marketing`. The connected deployment must expose the matching schema; stop on missing tools, unverified tags or incompatible schemas. This list does not authorize future tools solely because their names look similar.
+The combined capability contract lists **67 tools** (companies 6, candidates 4, consultant form and resume 5, positions/vendors 7, Vendor AMs 3, submissions 11, offers 11, people 8, interviews 8, interview questions 4). The 52 entries that existed before the candidate change were individually rechecked against their actual decorators in the local backend checkout for this documentation change. This is source-contract verification, not a claim that the connected deployment has these tools. The four candidate tools were checked against the deployed backend (image 0.1.0-169): their tags include `marketing`; local declarations alone do not establish deployed availability. Allow only tools whose actual decorator tags include `marketing`. The connected deployment must expose the matching schema; stop on missing tools, unverified tags or incompatible schemas. This list does not authorize future tools solely because their names look similar.
 
 Source paths below are code provenance under `backend/app/`, not runtime calls or relative file links.
 
@@ -26,7 +26,7 @@ Source: `modules/marketing/mcp/candidates.py` (moved from Staffing on 2026-11-22
 
 `marketing_add_candidate(candidate={...})` takes new-intake fields, or only `person_code` for existing-Person Bench conversion. The other three find and read back candidates; see [Create candidate](create-candidate.md). The candidate update, responsible-AM assignment, note and history tools carry the same tags but have no workflow in this skill, so they are not authorized here.
 
-## Consultant form and resume (6)
+## Consultant form and resume (5)
 
 Source: `modules/marketing/mcp/candidate_form.py`. Since 2026-11-22 these five are gated by token permissions too: `marketing_get_consultant_form_status` and `marketing_get_candidate_resume_status` need `candidate::view`, the other three need `candidate::edit` (they are no longer governed by role names). Actual decorator tags: `marketing`, `candidates`, `staffing` (the `staffing` tag is kept for compatibility, like the other candidate tools). Workflow: [Consultant form and resume](consultant-form-resume.md).
 
@@ -35,9 +35,8 @@ Source: `modules/marketing/mcp/candidate_form.py`. Since 2026-11-22 these five a
 - `marketing_create_candidate_resume_upload`
 - `marketing_complete_candidate_resume_upload`
 - `marketing_get_candidate_resume_status`
-- `marketing_get_candidate_resume_download`
 
-These six were checked against their decorators in the local backend checkout; verify the tags on the connected deployment before use.
+These five were checked against their decorators in the local backend checkout; verify the tags on the connected deployment before use.
 
 ## Interview questions (4)
 
