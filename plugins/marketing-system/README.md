@@ -13,6 +13,8 @@
 
 ## 工具名与版本
 
+v0.39.0：配套后端的 `marketing_get_candidate_detail` 补齐 Consultant Details 表的全部字段：`marketing_phone`（Freetone / Google Voice）、`personal_phone`、`marketing_email`、`personal_email`、`ssn_last4`、`home_address`（含 Unit）、`emergency_contact`（姓名、电话、邮箱）、`education`（Bachelor / Master：学校、专业、入学和毕业 MM/YYYY）。营销邮箱密码不存在于任何工具输出里，仍不返回。没有新增或删除工具；Staffing skill 的 Candidate 参考文档同步说明。
+
 v0.38.0：配套后端把 Candidate 的入口权限全部改按令牌权限串 `candidate::view / create / edit / note / delete / assign_am`（不再按角色名准入），表单邮件和简历（`marketing_send_consultant_form_email`、`marketing_get_consultant_form_status`、`marketing_create_candidate_resume_upload`、`marketing_complete_candidate_resume_upload`、`marketing_get_candidate_resume_status`）和 `marketing_match_candidates` 也一并改成按这些权限串，不再对 HR 角色码做特殊拒绝；没有对应权限的用户在工具列表里看不到相应工具，Skill 要求直接说明缺哪个权限并停止，不要换别的工具绕过。新增营销状态 `Pause Marketing`（Marketing 之前的阶段，营销暂停，全体 AM 可见，可手动设置）。Staffing Skill 的 Candidate 参考文档补齐了备注（`marketing_list/add/update/delete_candidate_note`）、负责 AM（`marketing_list_assignable_ams`、`marketing_assign_candidate_am`、`marketing_assign_candidates_am`、`marketing_unassign_candidate_am`）和评估 Trainer（`marketing_list_assignable_trainers`）的用法。后端已下线 Settings 里的业务角色页，People 导入结果不再有 `recruiter_roles_created` / `unresolved_recruiter_ids`；表格里新增 Vendor 不再可用（网页和 MCP 不变，仍要 token 里的 `am` / `admin` / `am-manager`）。发布前需要先在 Authsome 给相应角色配好这些权限串。
 
 v0.37.0：配套后端对 People 的签证类型做了统一和限制：`U.S. Citizen` 并入 `USC`、`Green Card` 并入 `GC`（历史数据已一次性改过）；`marketing_create_person`、`marketing_update_person`、`marketing_import_people` 的 `work_authorization_type` 只接受 `marketing_get_person_options` 的 `work_authorizations`（25 个，不区分大小写），集合外的值（含 `Unknown`）直接拒绝，清空用空值；`visa_types` 是库里实际出现过的类型，用于筛选。没有新增或删除工具。
