@@ -9,6 +9,8 @@ Use only the connected `marketing-system` MCP tool `marketing_match_candidates`,
 
 Other Marketing work (reading a candidate, creating a submission, checking a resume upload) belongs to the `marketing` skill; this skill only produces the shortlist.
 
+The tool needs the `candidate::view` permission in the user's token (since 2026-11-22; before it only needed an admitted role). If `marketing_match_candidates` is not in the tool list, the user does not have that permission: say so and stop; do not substitute candidate searches or other tools.
+
 ## What it does
 
 The backend recommends up to five distinct people from the marketing pool (marketing status `In Marketing` only; `In Preparation` is not in the pool). The unit is a person, never a resume file. It is read-only; nothing is written. Three kinds of evidence are scored and fused with weights 3:4:3 (policy `candidate-fusion-v3`):

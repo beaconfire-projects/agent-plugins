@@ -17,7 +17,7 @@ Source: `modules/marketing/mcp/tools.py`. Each listed decorator has tags `market
 
 ## Candidates (4)
 
-Source: `modules/staffing/mcp/tools.py`. Actual decorator tags: `staffing`, `marketing`, `candidates` (the `staffing` tag is kept for compatibility, like the shared interview tools).
+Source: `modules/marketing/mcp/candidates.py` (moved from Staffing on 2026-11-22). Actual decorator tags: `staffing`, `marketing`, `candidates` (the `staffing` tag is kept for compatibility, like the shared interview tools). Every candidate tool carries an `auth=` rule on the token permissions (`candidate::view`, `create`, `edit`, `note`, `delete`, `assign_am`), so a tool is only listed for a user who holds the matching permission; the four below need `view` (search, detail) or `create` (add, search addable people).
 
 - `marketing_add_candidate`
 - `marketing_search_candidates`
@@ -28,7 +28,7 @@ Source: `modules/staffing/mcp/tools.py`. Actual decorator tags: `staffing`, `mar
 
 ## Consultant form and resume (6)
 
-Source: `modules/marketing/mcp/candidate_form.py`. Actual decorator tags: `marketing`, `candidates`, `staffing` (the `staffing` tag is kept for compatibility, like the other candidate tools). Workflow: [Consultant form and resume](consultant-form-resume.md).
+Source: `modules/marketing/mcp/candidate_form.py`. Since 2026-11-22 these five are gated by token permissions too: `marketing_get_consultant_form_status` and `marketing_get_candidate_resume_status` need `candidate::view`, the other three need `candidate::edit` (they are no longer governed by role names). Actual decorator tags: `marketing`, `candidates`, `staffing` (the `staffing` tag is kept for compatibility, like the other candidate tools). Workflow: [Consultant form and resume](consultant-form-resume.md).
 
 - `marketing_send_consultant_form_email`
 - `marketing_get_consultant_form_status`
@@ -109,7 +109,7 @@ Source: `modules/staffing/mcp/tools.py`. Tags contain `marketing`, `interviews`;
 - `marketing_delete_interview`
 - `marketing_update_interview`
 
-Use the submission selector/context for per-position choices. No staffing `marketing_list_options` fallback is needed. A shared tool's tags do not import staffing's workflow/automatic ONB rules into marketing.
+Use the submission selector/context for per-position choices. No staffing option tool (`marketing_list_candidate_options`, `marketing_list_interview_options`, `marketing_list_slot_options`) fallback is needed. A shared tool's tags do not import staffing's workflow/automatic ONB rules into marketing.
 
 ## Positions and Vendor selection (7)
 

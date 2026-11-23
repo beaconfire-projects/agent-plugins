@@ -8,7 +8,7 @@ Follow [Create orchestration](create-orchestration.md) for manual creates; HR im
 
 1. Search `marketing_list_people` by the supplied email and name; show possible existing identities. Reuse an unambiguous existing Person for the intended goal; edits require separate diff confirmation. Do not merge people automatically.
 2. Required information: **legal first name, legal last name, primary email**. Middle/preferred names, phone, birth date, professional/preferences, HR, authorization and batch are optional. Ask for missing required values together. Do not infer names from email or split an ambiguous legal name silently.
-3. If a batch, HR recruiter or authorization is requested, get `marketing_get_person_options()`. Use returned batch IDs, HR recruiter IDs and authorization choices. ISO dates, valid email and complete social URLs are required when those values are supplied; authorization expiration must not precede start. Do not add default HR status, checkbox values or an arbitrary batch.
+3. If a batch, HR recruiter or authorization is requested, get `marketing_get_person_options()`. Use returned batch IDs, HR recruiter IDs and authorization choices (`work_authorizations`: the only values accepted for `work_authorization_type`; anything else is rejected). ISO dates, valid email and complete social URLs are required when those values are supplied; authorization expiration must not precede start. Do not add default HR status, checkbox values or an arbitrary batch.
 4. Show the planned fields and the fact this creates only a Person. With complete, unambiguous supplied data and an explicit create goal, call `marketing_create_person(person={first_name,last_name,email,...optional_fields})` once. No client-chosen Person ID or version is sent; the server assigns PER and version 1.
 5. Read `marketing_get_person` and, when needed, `marketing_get_person_history`. Report returned code and saved values. Duplicate conflicts return the existing owner when known; inspect that identity rather than retrying with a fabricated contact. Unknown outcome: search exact email before another create.
 
@@ -16,7 +16,7 @@ Optional field meanings and patch rules are in [Person](person.md). No SSN/addre
 
 ## HR import
 
-Use `marketing_import_people(request={rows,dry_run})` for approved HR Sheet-shaped structured rows, with Admin/Manager access. MCP cannot open a caller-local workbook path; do not pass filenames/base64/free-form profile objects in `rows`. The Google Sheet/web HR workbook import is a separate UI using the same service.
+Use `marketing_import_people(request={rows,dry_run})` for approved HR Sheet-shaped structured rows, with the `people::import` permission. MCP cannot open a caller-local workbook path; do not pass filenames/base64/free-form profile objects in `rows`. The Google Sheet/web HR workbook import is a separate UI using the same service.
 
 ## Preconditions and source contract
 
@@ -31,7 +31,7 @@ Key mappings (input keys are not person-update field names):
 | `preferred_name`, `Work Email`, `Phone#`, `Birth date`, `Sex`, `Notes` | Preferred name, normalized primary email, phone, birth date/raw text, gender, person/HR notes |
 | `recruiter_id` | HR Sheet ID of the referenced Recruiter Person; exact match, not a name or company-contact ID |
 | `person_id` | HR sheet person identifier, **not** chosen database Person code |
-| `Current Visa Status`, `Visa Start Date`, `Visa Expiration Date` | Current authorization; no authorization created without a type |
+| `Current Visa Status`, `Visa Start Date`, `Visa Expiration Date` | Current authorization; no authorization created without a type. The status must be one of the `work_authorizations` values from `marketing_get_person_options` (case-insensitive; U.S. Citizen becomes `USC`, Green Card becomes `GC`); a row with any other status is reported as an error and not imported, so list those rows to the user instead of altering the value |
 | `Internal / Batch`, `batch_start`, `batch_track`, `Batch Type` | Batch resolution inputs, not arbitrary new-batch creation |
 | `Payroll Company`, `w2_start_date`, `Recruiter`, `Employment Status`, `Previous Status`, `Last Day ADP`, `Position` | HR payroll/employment data |
 | `Visa Status Reach Out`, `HR Reporting List`, `HR System`, `Batch Summary`, `Drop Box` | HR flags |

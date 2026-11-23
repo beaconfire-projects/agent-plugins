@@ -12,8 +12,12 @@ An AM sees the data of the vendors they are assigned to; admins and managers see
 
 1. Confirm the vendors and the AM **login emails** with the user. The email must belong to an active member of the Authsome application; the tool checks it, you do not guess or fix emails.
 2. Show the plan (which emails → which vendors) and get a clear yes.
-3. Call `marketing_assign_vendor_ams(vendor_codes, emails)`: up to 100 vendors and 50 emails per call; every email is assigned to every vendor. Everything is validated first and **nothing is written if anything is wrong** (unknown vendor, invalid email, an email that is not an Authsome member, a person who is a candidate, someone not found in the HR master record). Fix the named problem and call again.
-4. A person who is not in this system yet is created from the HR master record with the same ID (reported as `created_people`); no ID is ever issued automatically. Already-assigned pairs change nothing (`unchanged`), so repeating is safe.
+3. Call `marketing_assign_vendor_ams(vendor_codes, emails)`: up to 100 vendors and 50 emails per call; every email is assigned to every vendor. Everything is validated first and **nothing is written if anything is wrong**: a vendor or an AM that cannot be found (every missing vendor code and AM email is listed together in one answer), an invalid email, an email that is not an Authsome member, a person who is a candidate. Fix the named problem and call again.
+4. **This tool never creates a person, and the backend no longer reads the HR master record.** If the answer says `Vendor not found: ...` show the codes to the user and resolve them with `marketing_list_vendor_ams(q)`; never guess or invent a vendor code. If it says `AM not found: ...` show the emails to the user: nobody in this system has them.
+   - Only when the user explicitly asks to add that person as a new AM **and** `marketing_create_person` is in your tool list (it needs the `people::create` permission), follow the manual path in [Create a Person](create-person.md) (legal first name, last name and primary email are required; do not infer names from the email; this creates only a Person, never a candidate), show the plan and get a clear yes, create the person, read it back, and then call `marketing_assign_vendor_ams` again.
+   - If `marketing_create_person` is not available to the user (the user lacks `people::create`), say that HR or an admin has to create the person in People first, and stop. Do not look for another way to create the person.
+   - An AM who exists but is still refused with the Authsome message is an Authsome membership problem, not a missing person: report it as such.
+   Already-assigned pairs change nothing (`unchanged`), so repeating is safe.
 5. Read back with `marketing_list_vendor_ams(q=...)` and report the returned AMs. A change takes effect on the AM's next request.
 
 ## Unassign (batch)

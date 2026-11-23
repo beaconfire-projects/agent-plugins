@@ -1,6 +1,6 @@
 # Change an interview's time, result or score
 
-Tools: `marketing_search_candidates`, `marketing_get_candidate`, `marketing_get_interview`, `marketing_list_interviews`, `marketing_list_options`, `marketing_update_interview`, `marketing_create_interview`. For slots (a recruiter's free times) use `references/slots.md`; to delete an interview created from wrong data use `references/delete.md`.
+Tools: `marketing_search_candidates`, `marketing_get_candidate`, `marketing_get_interview`, `marketing_list_interviews`, `marketing_list_interview_options`, `marketing_update_interview`, `marketing_create_interview`. For slots (a recruiter's free times) use `references/slots.md`; to delete an interview created from wrong data use `references/delete.md`.
 
 ## Looking up interviews (read only)
 
@@ -8,7 +8,7 @@ Tools: `marketing_search_candidates`, `marketing_get_candidate`, `marketing_get_
 
 1. Resolve the candidate as in the SKILL rules: a Candidate ID goes to `marketing_get_candidate`; a name goes to `marketing_search_candidates` first, and if several candidates match, list them (ID, name, email, current status) and ask which one. Never merge the interviews of two people with the same name.
 2. `marketing_get_candidate` returns all of the candidate's interviews. Reply with:
-   - one line: the candidate (ID, name), the current status, and the count, for example "3 interviews: L1 Passed, L2 Canceled, L2 Scheduled";
+   - one line: the candidate (ID, name), the current status, and the count, for example "3 interviews: L1 Cleared, L2 Canceled, L2 Scheduled";
    - a table, oldest first: interview ID, round, date and time with zone, vendor recruiter, interviewer, result, score. Empty values show as `-`.
    - Canceled and Need to Reschedule interviews are history, not the current attempt: keep them in the table and count, and say which interview is the live one for each round.
 3. If the user asked only about one round or one result, answer that and leave the rest out of the table.
@@ -34,14 +34,15 @@ To answer "who is interviewing today", "tomorrow's L1s" or "this week's L2 resul
    - Several interviews can share a round when earlier ones were canceled or ended as Need to Reschedule. "The L2" means the latest one that is neither Canceled nor Need to Reschedule; if more than one qualifies, ask.
 2. **Work out the change.** Fields: `interview_date`, `interview_time`, `time_zone`, `result`, `score`, `meeting_link`, `vendor_recruiter`, `interviewer`, `notes`.
    - **Interviewer** is the client's evaluator (the Evaluator named in the client chat feedback). The system fills it from the chat feedback when it is empty and never replaces one set by hand, so set it yourself only when the user gives a name, and do not confuse it with the vendor recruiter (the recruiter on the vendor side, usually the person whose invitation created the interview). There is no internal Recruiter on an interview. `vendor_recruiter` and `interviewer` are typed names: separate several names with commas (for example `Jai, Preethi`); `;`, `/`, `|`, `&`, the word `and` and line breaks are rejected, as are empty and duplicate names (at most 10 names, 100 characters each). Send an empty string or null to clear.
-   - Results: Scheduled, Pending Feedback, Passed, Failed, No-show, Need to Reschedule, Canceled (use `marketing_list_options` for the exact list).
-   - **Need to Reschedule** is a final result like Passed and Failed: the interview did not pass or did not happen, but the candidate is still good and can be tried again. The candidate's status becomes `Need to Reschedule`.
-   - **Score** is `score/maximum`, for example `9/10`, `7.5/10`, `12/12` (the maximum is not always 10). It is optional, but **whenever you record a final result (Passed, Failed, No-show, Need to Reschedule) and the interview has no score and the user did not give one, ask for it before you write**: "What was the interview score (like 9/10)? Reply "none" if there isn't one." Ask once, together with anything else you still need. If the user says there is no score, leave it out and do not ask again. If the user gives a score without a result, write the score only; do not invent a result. A saved reply that carries a "No score is recorded" warning means you skipped this question: ask now and update the interview.
+   - Results: Scheduled, Pending Feedback, Cleared, Failed, No-show, Need to Reschedule, Canceled (use `marketing_list_interview_options` for the exact list).
+   - **Cleared** means the interview was passed (it replaced the old name Passed, which is still accepted and saved as Cleared); never describe a Cleared interview as "passed over".
+   - **Need to Reschedule** is a final result like Cleared and Failed: the interview did not pass or did not happen, but the candidate is still good and can be tried again. The candidate's status becomes `Need to Reschedule`.
+   - **Score** is `score/maximum`, for example `9/10`, `7.5/10`, `12/12` (the maximum is not always 10). It is optional, but **whenever you record a final result (Cleared, Failed, No-show, Need to Reschedule) and the interview has no score and the user did not give one, ask for it before you write**: "What was the interview score (like 9/10)? Reply "none" if there isn't one." Ask once, together with anything else you still need. If the user says there is no score, leave it out and do not ask again. If the user gives a score without a result, write the score only; do not invent a result. A saved reply that carries a "No score is recorded" warning means you skipped this question: ask now and update the interview.
    - A time needs a date and a time zone to mean anything. If the user changes only the time, keep the existing date and zone and say so in the confirmation.
 3. **Check the situation before confirming**:
    - The interview is **Canceled** and the user gives a new date or time: this is a reschedule, which is a **new interview**. Do not edit the canceled one. Create one with `marketing_create_interview` (`candidate_code`, `round`, date, time, zone, `result` Scheduled) and tell the user the canceled one stays as history.
-   - The interview already has an outcome (Passed, Failed, No-show) and the user changes the time: ask whether they mean to correct the record; do not change the result silently.
-   - A result of Passed or Failed moves the candidate's status (for example L2 Passed). Mention the resulting status in the confirmation.
+   - The interview already has an outcome (Cleared, Failed, No-show) and the user changes the time: ask whether they mean to correct the record; do not change the result silently.
+   - A result of Cleared or Failed moves the candidate's status (for example L2 Cleared). Mention the resulting status in the confirmation.
    - The interview is **Need to Reschedule** and the user gives a new date or time: this is a retry, which is a **new interview** (same as a canceled one). Create it with `marketing_create_interview`; the old one stays as history. A retried L1 may use another recruiter; a retried L2 must keep the L1's recruiter.
    - A **Canceled** result set by hand means the interview did not happen; if it will be rescheduled, offer to create the new interview too.
    - If the interview source is `email` (it came from a calendar invitation), say so: a later invitation update can change the time again.
