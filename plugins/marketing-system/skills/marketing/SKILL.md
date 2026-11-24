@@ -22,6 +22,7 @@ For Vendor / Client / Position choices, filters and search words on any list too
 | Find/create/edit/reject a submission or mark it Offered | [Submission](references/submission.md) |
 | Find a submission by person/name/ID/email, position, vendor/client; create/read/edit/delete one interview; inspect its history | [Interview](references/interview.md) |
 | Email a candidate the one-time Consultant Details form link, check whether it was submitted, upload a candidate's resume (PDF/DOCX) or check its processing | [Consultant form and resume](references/consultant-form-resume.md) |
+| Upload, list, download or delete a candidate's EAD / visa / immigration-status files (filed by visa type such as OPT, STEM OPT, H1B, GC, GC-EAD), passport, Social Security card or driver license files (several per type, the newest is current) | [Candidate attachments](references/candidate-attachments.md) |
 | Search historical interview questions, see the most frequently asked questions, read or re-fetch the stored question document of one interview | [Interview questions](references/interview-questions.md) |
 | Identify what a code such as PER-/COM-/POS-/SUB-/INT-/OFR- means | [Business codes](references/business-codes.md) |
 | Review interviews, create/edit a formal offer, inspect history | [Offer](references/offer.md) |
