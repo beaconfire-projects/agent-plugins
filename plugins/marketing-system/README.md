@@ -13,6 +13,8 @@
 
 ## 工具名与版本
 
+v0.41.0：配套后端新增签证附件的 LLM 自动解析：签证类型的附件上传完成后，后端异步读取证件，把开始日期、到期日期、说明回写工作许可记录（`person_work_authorizations.source_attachment_id` 记录来源附件），`marketing_list_candidate_attachments` 与上传完成返回新增 `parse_status`、`parse_error`；没有新增或删除工具，`references/candidate-attachments.md` 已补充规则。请先发后端、再更新插件。
+
 v0.40.0：配套后端新增 Candidate 附件（签证类文件按签证类型枚举分类，如 `OPT`、`STEM OPT`、`H1B`、`GC`、`GC-EAD`、`H4-EAD`、`Other EAD`，另有 `PASSPORT` 护照、`SSN` 社会安全卡、`DRIVER_LICENSE` 驾照）：新增 5 个工具 `marketing_create_candidate_attachment_upload`、`marketing_complete_candidate_attachment_upload`、`marketing_list_candidate_attachments`、`marketing_get_candidate_attachment_download_url`、`marketing_delete_candidate_attachment`（读需要 `candidate::view`，写和删除需要 `candidate::edit`）。同一个人同一类型可以有多份，生效时间（Drive 同步取文件修改时间、手动上传取上传时间）最新的一份是 current；单个文件 ≤ 20 MB，PDF / JPG / PNG / HEIC。删除是永久删除。Drive 里的 EAD / 签证文件由后端脚本手动同步到 S3，没有 MCP 触发入口。新增 `references/candidate-attachments.md`，`SKILL.md` 路由和 `tool-boundary.md` 清单（72 个工具）同步。请先发后端、再更新插件。
 
 v0.39.0：配套后端的 `marketing_get_candidate_detail` 补齐 Consultant Details 表的全部字段：`marketing_phone`（Freetone / Google Voice）、`personal_phone`、`marketing_email`、`personal_email`、`ssn_last4`、`home_address`（含 Unit）、`emergency_contact`（姓名、电话、邮箱）、`education`（Bachelor / Master：学校、专业、入学和毕业 MM/YYYY）。营销邮箱密码不存在于任何工具输出里，仍不返回。没有新增或删除工具；Staffing skill 的 Candidate 参考文档同步说明。
