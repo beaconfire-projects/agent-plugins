@@ -1,6 +1,6 @@
 # Verified tool boundary
 
-The combined capability contract lists **72 tools** (companies 6, candidates 4, consultant form and resume 5, candidate attachments 5, positions/vendors 7, Vendor AMs 3, submissions 11, offers 11, people 8, interviews 8, interview questions 4). The 52 entries that existed before the candidate change were individually rechecked against their actual decorators in the local backend checkout for this documentation change. This is source-contract verification, not a claim that the connected deployment has these tools. The four candidate tools were checked against the deployed backend (image 0.1.0-169): their tags include `marketing`; local declarations alone do not establish deployed availability. Allow only tools whose actual decorator tags include `marketing`. The connected deployment must expose the matching schema; stop on missing tools, unverified tags or incompatible schemas. This list does not authorize future tools solely because their names look similar.
+The combined capability contract lists **75 tools** (companies 6, candidates 4, consultant form and resume 5, candidate attachments 5, positions/vendors 7, Vendor AMs 3, On-Call Schedule 3, submissions 11, offers 11, people 8, interviews 8, interview questions 4). The 52 entries that existed before the candidate change were individually rechecked against their actual decorators in the local backend checkout for this documentation change. This is source-contract verification, not a claim that the connected deployment has these tools. The four candidate tools were checked against the deployed backend (image 0.1.0-169): their tags include `marketing`; local declarations alone do not establish deployed availability. Allow only tools whose actual decorator tags include `marketing`. The connected deployment must expose the matching schema; stop on missing tools, unverified tags or incompatible schemas. This list does not authorize future tools solely because their names look similar.
 
 Source paths below are code provenance under `backend/app/`, not runtime calls or relative file links.
 
@@ -143,6 +143,14 @@ Source: `modules/marketing/mcp/vendor_ams.py`; each listed decorator checked: ta
 - `marketing_list_vendor_ams`
 - `marketing_assign_vendor_ams`
 - `marketing_unassign_vendor_ams`
+
+## On-Call Schedule (3)
+
+Source: `modules/marketing/mcp/on_call.py` (added 2026-11-24); each listed decorator checked: tags `marketing`, `on-call`. `marketing_list_on_call_schedule` has no role rule (any signed-in user); the other two carry the tool-level auth `ON_CALL_MANAGE` (role codes `admin` or `trainer`), so other users do not see them. See [On-Call Schedule](on-call.md).
+
+- `marketing_list_on_call_schedule`
+- `marketing_set_on_call_week`
+- `marketing_clear_on_call_week`
 
 ## Explicit exclusions
 
